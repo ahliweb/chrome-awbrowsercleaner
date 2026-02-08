@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AW Browser Cleaner</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <img src="icons/icon48.png" alt="Logo" id="header-logo">
+      </div>
+      <h1>AW Browser Cleaner</h1>
+    </header>
+
+    <main>
+      <div class="input-group">
+        <label for="domainInput">Target Domain</label>
+        <div class="input-wrapper">
+          <input type="text" id="domainInput" placeholder="example.com" spellcheck="false">
+          <button id="fillCurrent" title="Use Current Tab" aria-label="Use Current Tab">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="options-group">
+        <div class="options-header">
+          <label>Data to Clear</label>
+          <button id="selectAll" class="text-btn">Select All</button>
+        </div>
+
+        <div class="checkbox-grid">
+          <label class="checkbox-item">
+            <input type="checkbox" value="cache" checked>
+            <span class="custom-check"></span>
+            Cache (Service Workers)
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" value="cookies" checked>
+            <span class="custom-check"></span>
+            Cookies
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" value="localStorage" checked>
+            <span class="custom-check"></span>
+            Local Storage
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" value="indexedDB" checked>
+            <span class="custom-check"></span>
+            IndexedDB
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" value="serviceWorkers" checked>
+            <span class="custom-check"></span>
+            Service Workers
+          </label>
+        </div>
+      </div>
+
+      <div class="action-area">
+        <button id="clearBtn" class="primary-btn">
+          <span class="btn-text">Clear Data</span>
+          <span class="btn-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </span>
+        </button>
+      </div>
+
+      <div id="statusMessage" class="status-message hidden"></div>
+    </main>
+
+    <footer>
+      <small>Powered by AhliWeb.com</small>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+
+</html>

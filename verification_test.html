@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Extension Verification Test</title>
+</head>
+
+<body>
+    <div id="test-results" style="padding: 20px; background: #eee; border-radius: 5px; margin-bottom: 20px;">
+        Running tests...
+    </div>
+
+    <!-- Replicating popup.html structure for the script to interact with -->
+    <div class="container" style="display:none;"> <!-- Hidden UI -->
+        <input type="text" id="domainInput">
+        <button id="fillCurrent"></button>
+        <button id="selectAll"></button>
+        <div class="checkbox-grid">
+            <input type="checkbox" value="cache" checked>
+            <input type="checkbox" value="cookies" checked>
+            <input type="checkbox" value="localStorage" checked>
+            <input type="checkbox" value="indexedDB" checked>
+            <input type="checkbox" value="serviceWorkers" checked>
+        </div>
+        <button id="clearBtn"><span class="btn-text">Clear Data</span></button>
+        <div id="statusMessage" class="hidden"></div>
+    </div>
+
+    <script>
+        // MOCK CHROME API
+        window.chrome = {
+            tabs: {
+                query: (info, cb) => {
+                    console.log('Mock: chrome.tabs.query called');
+                    cb([{ url: 'https://auto-verify.com/path' }]);
+                }
+            },
+            browsingData: {
+                remove: (opts, types, cb) => {
+                    console.log('Mock: chrome.browsingData.remove called', opts, types);
+                    window.lastCall = { opts, types };
+                    cb();
+                }
+            },
+            runtime: {
+                lastError: null
+            }
+        };
+
+        // RUN TESTS AFTER LOAD
+        window.addEventListener('load', () => {
+            // popup.js is loaded at end of body, so it runs after this script but before 'load' event fully settles? 
+            // popup.js waits for 'DOMContentLoaded'.
+            // We need to wait a bit for popup.js logic to fill the domain.
+
+            setTimeout(async () => {
+                const results = [];
+                const input = document.getElementById('domainInput');
+                const clearBtn = document.getElementById('clearBtn');
+
+                // TEST 1: Check Auto-fill
+                if (input.value === 'auto-verify.com') {
+                    results.push('PASS: Domain auto-filled correctly');
+                } else {
+                    results.push(`FAIL: Domain auto-fill expected 'auto-verify.com', got '${input.value}'`);
+                }
+
+                // TEST 2: Check Clear Logic
+                clearBtn.click();
+
+                // Wait for async callback in popup.js
+                await new Promise(r => setTimeout(r, 100));
+
+                if (window.lastCall) {
+                    const origins = window.lastCall.opts.origins;
+                    if (origins && origins.includes('https://auto-verify.com') && origins.includes('http://auto-verify.com')) {
+                        results.push('PASS: chrome.browsingData.remove called with correct origins');
+                    } else {
+                        results.push(`FAIL: Bad origins in call: ${JSON.stringify(origins)}`);
+                    }
+
+                    if (window.lastCall.types.cacheStorage && window.lastCall.types.cookies) {
+                        results.push('PASS: Data types correctly passed');
+                    } else {
+                        results.push('FAIL: Missing data types in call');
+                    }
+
+                } else {
+                    results.push('FAIL: chrome.browsingData.remove was not called');
+                }
+
+                // Output results
+                const resultDiv = document.getElementById('test-results');
+                resultDiv.innerHTML = '<h3>Results:</h3><ul>' + results.map(r => `<li style="color:${r.startsWith('PASS') ? 'green' : 'red'}">${r}</li>`).join('') + '</ul>';
+
+            }, 500);
+        });
+    </script>
+    <script src="popup.js"></script>
+</body>
+
+</html>
