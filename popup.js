@@ -1,3 +1,7 @@
+/**
+ * AW Browser Cleaner - Popup Logic
+ * Handles user interactions and calls the chrome.browsingData API.
+ */
 
 document.addEventListener('DOMContentLoaded', () => {
     const domainInput = document.getElementById('domainInput');
@@ -7,7 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectAllBtn = document.getElementById('selectAll');
     const checkboxes = document.querySelectorAll('.checkbox-grid input[type="checkbox"]');
 
-    // Helper to show status
+    /**
+     * Displays a status message to the user.
+     * @param {string} msg - The message to display.
+     * @param {string} type - 'success' or 'error'.
+     */
     function showStatus(msg, type) {
         statusMessage.textContent = msg;
         statusMessage.className = `status-message ${type}`; // 'success' or 'error'
@@ -16,7 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     }
 
-    // Get current tab domain
+    /**
+     * Gets the active tab's domain and populates the input field.
+     */
     function getCurrentTabDomain() {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs && tabs[0] && tabs[0].url) {
@@ -56,10 +66,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const selectedTypes = {};
         let hasSelection = false;
+
         // Supported types for origin-scoped removal:
         // cookies, fileSystems, indexedDB, localStorage, serviceWorkers, webSQL, cacheStorage
         // 'cache' in UI maps to 'cacheStorage'
-
         const typeMapping = {
             'cache': 'cacheStorage',
             'cookies': 'cookies',
@@ -115,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearBtn.disabled = true;
         clearBtn.querySelector('.btn-text').textContent = "Clearing...";
 
+        // Execute removal
         chrome.browsingData.remove(removalOptions, selectedTypes, () => {
             if (chrome.runtime.lastError) {
                 showStatus(`Error: ${chrome.runtime.lastError.message}`, "error");
