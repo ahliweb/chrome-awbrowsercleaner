@@ -51,14 +51,16 @@ As a result, clearing cookies for a selected website may sign you out of related
 
 ## Permissions
 
-AW Browser Cleaner requests only permissions required for its core purpose. The exact permissions are defined in the extension's current `manifest.json` and Chrome Web Store listing.
+AW Browser Cleaner strictly adheres to the principle of least privilege. The extension requests only two standard Chrome permissions:
 
-Typical permissions may include:
+- `browsingData` — used to remove browser site data (Cache Storage, Cookies, Local Storage, IndexedDB, Service Workers) that you explicitly select.
+- `activeTab` — used ephemerally to identify the current tab URL when you invoke the extension by clicking its toolbar icon.
 
-- `browsingData` — used to remove browser site data that you explicitly select.
-- `activeTab` — used to identify the current tab when you invoke the extension.
-
-Additional permissions will be disclosed only if they are actually included in the current release and required for its functionality.
+The extension does not request:
+- `tabs` (no persistent browsing or all-tab monitoring),
+- `storage` (no Chrome sync or local extension storage needed),
+- `sessionStorage` (not targeted),
+- `host_permissions` / `<all_urls>` (no content script injection, background monitoring, or network interception).
 
 ## Data collection and sharing
 

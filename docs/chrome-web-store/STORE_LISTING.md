@@ -45,25 +45,22 @@ https://github.com/ahliweb/chrome-awbrowsercleaner
 
 AW Browser Cleaner's single purpose is to let a user selectively remove browser site data associated with a user-selected/current website using Chrome's native browsing-data functionality.
 
-## Permission justification draft
+## Permission justifications for Developer Dashboard
 
-Final wording must be synchronized with the release manifest after #3 is completed.
+AW Browser Cleaner requests only the minimal set of permissions required for its single purpose:
 
 ### browsingData
 
-Required to remove the site-data categories explicitly selected by the user.
+Required to invoke `chrome.browsingData.remove` to delete the specific site-data categories explicitly selected by the user for the designated origin.
 
 ### activeTab
 
-Used to identify the user-invoked current tab so the extension can prefill the cleanup target.
+Required to read the URL of the current active tab when the user explicitly clicks the extension icon, allowing the extension popup to prefill the cleanup target origin.
 
-### tabs
+### Unused permissions eliminated (Least Privilege)
 
-Include this justification only if real Chromium testing in #3 proves the permission remains required. Otherwise remove both the permission and this disclosure.
-
-### Host permissions
-
-Include a host-permission justification only if #3 proves persistent host permission is required. Do not retain `<all_urls>` merely for convenience.
+- **tabs**: Not requested. The broad `tabs` permission is unnecessary because ephemeral `activeTab` provides all required active tab URL information upon user invocation.
+- **host_permissions (<all_urls>)**: Not requested. The `chrome.browsingData.remove` API operates with `{ origins: [targetOrigin] }` natively under the `browsingData` permission and does not require host permissions.
 
 ## Data-use declaration draft
 
