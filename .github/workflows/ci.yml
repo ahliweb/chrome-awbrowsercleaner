@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Lint, Test & Package Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Validate version consistency
+        run: bun run check:version
+
+      - name: Run ESLint
+        run: bun run lint
+
+      - name: Run unit tests
+        run: bun run test:unit
+
+      - name: Run E2E tests
+        run: bun run test:e2e
+
+      - name: Build extension package
+        run: bun run build:package
+
+      - name: Validate extension package
+        run: bun run validate:package
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-package
+          path: |
+            dist/*.zip
+            dist/*.sha256
+          if-no-files-found: error

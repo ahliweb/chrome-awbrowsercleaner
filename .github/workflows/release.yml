@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Publish Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Verify tag matches version sources
+        run: bun scripts/check-version.js ${{ github.ref_name }}
+
+      - name: Run ESLint
+        run: bun run lint
+
+      - name: Run tests
+        run: bun test
+
+      - name: Build extension package
+        run: bun run build:package
+
+      - name: Validate extension package
+        run: bun run validate:package
+
+      - name: Extract release notes from CHANGELOG
+        id: release_notes
+        run: |
+          TAG="${{ github.ref_name }}"
+          # Extract changelog section between this tag and next tag heading
+          awk -v tag="$TAG" '
+            $0 ~ "^## \\[" tag "\\]" { found=1; next }
+            found && /^## \\[/ { found=0 }
+            found { print }
+          ' CHANGELOG.md > RELEASE_NOTES.md
+          if [ ! -s RELEASE_NOTES.md ]; then
+            echo "Release for $TAG" > RELEASE_NOTES.md
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: RELEASE_NOTES.md
+          files: |
+            dist/*.zip
+            dist/*.sha256
+          draft: false
+          prerelease: false
