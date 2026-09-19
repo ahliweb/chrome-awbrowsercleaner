@@ -8,7 +8,9 @@
     "test:unit": "bun test tests/unit",
     "test:e2e": "bun test tests/e2e",
     "lint": "eslint *.js --ignore-pattern 'node_modules/**'",
-    "check:version": "bun scripts/check-version.js"
+    "check:version": "bun scripts/check-version.js",
+    "build:package": "bun scripts/build-package.js",
+    "validate:package": "bun scripts/validate-package.js"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
