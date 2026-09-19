@@ -27,6 +27,8 @@ const RUNTIME_FILES = [
     'icons/icon16.png',
     'icons/icon48.png',
     'icons/icon128.png',
+    '_locales/en/messages.json',
+    '_locales/id/messages.json',
     'LICENSE'
 ];
 

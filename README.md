@@ -47,6 +47,16 @@ AW Browser Cleaner strictly adheres to the principle of least privilege. See [do
 
 *No background tab tracking (`tabs`) or persistent host permissions (`<all_urls>`) are requested.*
 
+## Localization
+
+The extension supports English (`en`) and Indonesian (`id`) out of the box.
+
+To add a new language:
+1. Create a new directory under `_locales/<language_code>/` (e.g., `_locales/es/messages.json`).
+2. Copy `_locales/en/messages.json` into the new folder and translate each `"message"` property.
+3. Keep message keys unchanged so popup elements map automatically.
+4. Run `bun test` to verify parity across all locales.
+
 ## License
 
 See the [LICENSE](LICENSE) file for details.
