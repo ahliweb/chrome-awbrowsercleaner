@@ -8,6 +8,8 @@
  * - A single exact origin is passed to chrome.browsingData.remove.
  * - Unsupported schemes (chrome:, file:, about:, etc.) are rejected.
  * - All validation is delegated to origin-utils.js for testability.
+ * - Cookie-inclusive cleanup requires explicit confirmation due to
+ *   registrable-domain scope behavior documented by Chrome.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,6 +19,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusMessage = document.getElementById('statusMessage');
     const selectAllBtn = document.getElementById('selectAll');
     const checkboxes = document.querySelectorAll('.checkbox-grid input[type="checkbox"]');
+    const cookieWarning = document.getElementById('cookieWarning');
+    const confirmArea = document.getElementById('confirmArea');
+    const confirmTarget = document.getElementById('confirmTarget');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const cookiesCheckbox = document.querySelector('.checkbox-grid input[value="cookies"]');
+
+    /** Pending cleanup state waiting for confirmation. */
+    let pendingCleanup = null;
 
     /**
      * Displays a status message to the user.
@@ -63,20 +74,111 @@ document.addEventListener('DOMContentLoaded', () => {
         'serviceWorkers': 'serviceWorkers'
     };
 
+    /**
+     * Determines whether the current data-type selection requires confirmation.
+     * Confirmation is required when Cookies is selected, because cookie cleanup
+     * can affect the entire registrable domain and related subdomains.
+     * @returns {boolean} True if confirmation is required.
+     */
+    function requiresConfirmation() {
+        return cookiesCheckbox && cookiesCheckbox.checked;
+    }
+
+    /**
+     * Shows or hides the cookie warning based on checkbox state.
+     */
+    function updateCookieWarning() {
+        if (cookiesCheckbox && cookiesCheckbox.checked) {
+            cookieWarning.classList.remove('hidden');
+        } else {
+            cookieWarning.classList.add('hidden');
+        }
+    }
+
+    /**
+     * Shows the confirmation area with cleanup details.
+     * @param {string} targetOrigin - The exact origin being targeted.
+     * @param {Object} selectedTypes - The selected data types.
+     */
+    function showConfirmation(targetOrigin, selectedTypes) {
+        const typeNames = [];
+        if (selectedTypes.cacheStorage) typeNames.push('Cache Storage');
+        if (selectedTypes.cookies) typeNames.push('Cookies');
+        if (selectedTypes.localStorage) typeNames.push('Local Storage');
+        if (selectedTypes.indexedDB) typeNames.push('IndexedDB');
+        if (selectedTypes.serviceWorkers) typeNames.push('Service Workers');
+
+        confirmTarget.innerHTML =
+            `<strong>Target:</strong> <code>${targetOrigin}</code><br>` +
+            `<strong>Data:</strong> ${typeNames.join(', ')}<br>` +
+            `<em>Cookie cleanup may affect the entire registrable domain.</em>`;
+
+        confirmArea.classList.remove('hidden');
+        confirmBtn.focus();
+
+        pendingCleanup = { targetOrigin, selectedTypes };
+    }
+
+    /**
+     * Hides the confirmation area and clears pending state.
+     */
+    function hideConfirmation() {
+        confirmArea.classList.add('hidden');
+        pendingCleanup = null;
+    }
+
+    /**
+     * Executes the actual data cleanup via chrome.browsingData.remove.
+     * @param {string} targetOrigin - The exact origin to clean.
+     * @param {Object} selectedTypes - The data types to remove.
+     */
+    function executeCleanup(targetOrigin, selectedTypes) {
+        const removalOptions = {
+            origins: [targetOrigin]
+        };
+
+        // Disable buttons while processing
+        clearBtn.disabled = true;
+        clearBtn.querySelector('.btn-text').textContent = 'Clearing...';
+        confirmBtn.disabled = true;
+
+        chrome.browsingData.remove(removalOptions, selectedTypes, () => {
+            if (chrome.runtime.lastError) {
+                showStatus(`Error: ${chrome.runtime.lastError.message}`, 'error');
+            } else {
+                showStatus(`Cleaned data for ${targetOrigin}`, 'success');
+            }
+            // Reset buttons
+            clearBtn.disabled = false;
+            clearBtn.querySelector('.btn-text').textContent = 'Clear Data';
+            confirmBtn.disabled = false;
+            hideConfirmation();
+        });
+    }
+
     // Initial load — auto-fill with current tab's origin
     getCurrentTabOrigin();
 
     // Fill Current button
     fillCurrentBtn.addEventListener('click', getCurrentTabOrigin);
 
-    // Select All Toggle
+    // Cookie checkbox change — show/hide warning
+    if (cookiesCheckbox) {
+        cookiesCheckbox.addEventListener('change', updateCookieWarning);
+    }
+
+    // Also update warning when Select All toggles
     selectAllBtn.addEventListener('click', () => {
         const allChecked = Array.from(checkboxes).every(cb => cb.checked);
         checkboxes.forEach(cb => cb.checked = !allChecked);
         selectAllBtn.textContent = allChecked ? 'Select All' : 'Deselect All';
+        updateCookieWarning();
     });
 
-    // Clear Data Logic
+    // Update cookie warning on initial load (cookies is checked by default)
+    updateCookieWarning();
+
+    // Clear Data — initiate cleanup or show confirmation
     clearBtn.addEventListener('click', () => {
         const rawInput = originInput.value.trim();
 
@@ -110,25 +212,25 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Construct removal options with a single exact origin
-        const removalOptions = {
-            origins: [targetOrigin]
-        };
+        // If cookies are selected, require confirmation before proceeding
+        if (requiresConfirmation()) {
+            showConfirmation(targetOrigin, selectedTypes);
+        } else {
+            // Low-impact operation — execute directly
+            executeCleanup(targetOrigin, selectedTypes);
+        }
+    });
 
-        // Disable button while processing
-        clearBtn.disabled = true;
-        clearBtn.querySelector('.btn-text').textContent = 'Clearing...';
+    // Confirm button — execute the pending cleanup
+    confirmBtn.addEventListener('click', () => {
+        if (pendingCleanup) {
+            executeCleanup(pendingCleanup.targetOrigin, pendingCleanup.selectedTypes);
+        }
+    });
 
-        // Execute removal
-        chrome.browsingData.remove(removalOptions, selectedTypes, () => {
-            if (chrome.runtime.lastError) {
-                showStatus(`Error: ${chrome.runtime.lastError.message}`, 'error');
-            } else {
-                showStatus(`Cleaned data for ${targetOrigin}`, 'success');
-            }
-            // Reset button
-            clearBtn.disabled = false;
-            clearBtn.querySelector('.btn-text').textContent = 'Clear Data';
-        });
+    // Cancel button — dismiss confirmation
+    cancelBtn.addEventListener('click', () => {
+        hideConfirmation();
+        showStatus('Cleanup cancelled.', 'error');
     });
 });

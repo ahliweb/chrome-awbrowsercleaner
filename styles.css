@@ -220,3 +220,115 @@ footer {
   from { opacity: 0; transform: translateY(-5px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Cookie Warning Banner */
+.cookie-warning {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  background-color: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius);
+  font-size: 12px;
+  line-height: 1.5;
+  color: #fbbf24;
+  animation: fadeIn 0.3s ease;
+}
+
+.cookie-warning-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #f59e0b;
+}
+
+.cookie-warning-text {
+  flex: 1;
+}
+
+.cookie-warning-text strong {
+  color: #f59e0b;
+}
+
+.cookie-warning-text code {
+  background-color: rgba(245, 158, 11, 0.15);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+/* Confirmation Area */
+.confirm-area {
+  padding: 12px;
+  background-color: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius);
+  animation: fadeIn 0.3s ease;
+}
+
+.confirm-target {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.confirm-target strong {
+  color: var(--text-primary);
+}
+
+.confirm-target code {
+  background-color: rgba(59, 130, 246, 0.15);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 11px;
+  color: var(--primary-color);
+}
+
+.confirm-target em {
+  color: #f59e0b;
+  font-style: normal;
+  font-size: 11px;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.confirm-btn {
+  flex: 1;
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.confirm-btn:hover {
+  background-color: #b91c1c;
+}
+
+.confirm-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.cancel-btn {
+  background-color: var(--surface-color);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-btn:hover {
+  background-color: var(--border-color);
+  color: var(--text-primary);
+}
