@@ -4,13 +4,12 @@
   "private": true,
   "description": "Chrome extension to selectively clear site data for a specific origin",
   "scripts": {
-    "test": "npm run test:unit",
-    "test:unit": "jest --config jest.config.js",
-    "test:e2e": "jest --config jest.e2e.config.js --runInBand",
+    "test": "bun test",
+    "test:unit": "bun test tests/unit",
+    "test:e2e": "bun test tests/e2e",
     "lint": "eslint *.js --ignore-pattern 'node_modules/**'"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
     "eslint": "^8.57.0",
     "puppeteer": "^23.0.0"
   },

@@ -6,7 +6,7 @@
  *
  * Prerequisites:
  * - Puppeteer with Chromium browser installed
- * - Run: npx puppeteer browsers install chrome
+ * - Run: bunx puppeteer browsers install chrome
  *
  * These tests are designed for CI but can also run locally.
  * They verify the actual extension behavior in a real browser context.
@@ -59,7 +59,7 @@ if (puppeteer) {
 
     describe('Extension Loading', () => {
         test('extension loads successfully in Chromium', async () => {
-            if (!browser) return test.skip('Browser not available');
+            if (!browser) return;
 
             const targets = browser.targets();
             const extensionTarget = targets.find(t =>

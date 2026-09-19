@@ -4,7 +4,7 @@
  * Minimal HTTP server that serves test pages for verifying
  * extension cleanup operations against controlled storage values.
  *
- * Usage: node tests/e2e/test-server.js [port]
+ * Usage: bun tests/e2e/test-server.js [port]
  * Default port: 8932
  */
 
