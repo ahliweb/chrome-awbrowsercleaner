@@ -1,10 +1,22 @@
 /**
  * AW Browser Cleaner - Popup Logic
  * Handles user interactions and calls the chrome.browsingData API.
+ *
+ * Design principles:
+ * - Uses exact origin (scheme + hostname + port) for precise targeting.
+ * - Only HTTP(S) origins are supported.
+ * - A single exact origin is passed to chrome.browsingData.remove.
+ * - Unsupported schemes (chrome:, file:, about:, etc.) are rejected.
  */
 
+/**
+ * Supported URL schemes for cleanup operations.
+ * @type {Set<string>}
+ */
+const SUPPORTED_SCHEMES = new Set(['http:', 'https:']);
+
 document.addEventListener('DOMContentLoaded', () => {
-    const domainInput = document.getElementById('domainInput');
+    const originInput = document.getElementById('originInput');
     const fillCurrentBtn = document.getElementById('fillCurrent');
     const clearBtn = document.getElementById('clearBtn');
     const statusMessage = document.getElementById('statusMessage');
@@ -25,60 +37,101 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Gets the active tab's domain and populates the input field.
+     * Checks whether a URL scheme is supported for cleanup operations.
+     * @param {string} scheme - The URL scheme (e.g., 'https:').
+     * @returns {boolean} True if the scheme is supported.
      */
-    function getCurrentTabDomain() {
+    function isSupportedScheme(scheme) {
+        return SUPPORTED_SCHEMES.has(scheme);
+    }
+
+    /**
+     * Gets the active tab's exact origin and populates the input field.
+     * Uses URL.origin to preserve scheme, hostname, and explicit port.
+     */
+    function getCurrentTabOrigin() {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs && tabs[0] && tabs[0].url) {
                 try {
                     const url = new URL(tabs[0].url);
-                    // We prefer the hostname (e.g., "example.com" or "sub.example.com")
-                    if (url.protocol.startsWith('http')) {
-                        domainInput.value = url.hostname;
+                    if (isSupportedScheme(url.protocol)) {
+                        // URL.origin preserves scheme + hostname + port
+                        originInput.value = url.origin;
+                    } else {
+                        originInput.value = '';
+                        showStatus('This page uses an unsupported scheme. Navigate to an HTTP(S) page.', 'error');
                     }
                 } catch (e) {
-                    console.error("Invalid URL:", e);
+                    console.error('Invalid URL:', e);
+                    originInput.value = '';
                 }
             }
         });
     }
 
-    // Initial load
-    getCurrentTabDomain();
+    // Initial load — auto-fill with current tab's origin
+    getCurrentTabOrigin();
 
     // Fill Current button
-    fillCurrentBtn.addEventListener('click', getCurrentTabDomain);
+    fillCurrentBtn.addEventListener('click', getCurrentTabOrigin);
 
     // Select All Toggle
     selectAllBtn.addEventListener('click', () => {
         const allChecked = Array.from(checkboxes).every(cb => cb.checked);
         checkboxes.forEach(cb => cb.checked = !allChecked);
-        selectAllBtn.textContent = allChecked ? "Select All" : "Deselect All";
+        selectAllBtn.textContent = allChecked ? 'Select All' : 'Deselect All';
     });
 
     // Clear Data Logic
     clearBtn.addEventListener('click', () => {
-        const domain = domainInput.value.trim();
-        if (!domain) {
-            showStatus("Please enter a domain.", "error");
+        const rawInput = originInput.value.trim();
+        if (!rawInput) {
+            showStatus('Please enter a target origin.', 'error');
             return;
         }
+
+        // Validate and normalize the target to an exact origin
+        let targetOrigin;
+        try {
+            let urlString = rawInput;
+            // If the user typed a bare hostname without a scheme, default to https
+            if (!rawInput.includes('://')) {
+                urlString = `https://${rawInput}`;
+            }
+
+            const url = new URL(urlString);
+
+            if (!isSupportedScheme(url.protocol)) {
+                showStatus(`Unsupported scheme "${url.protocol}". Only HTTP and HTTPS are supported.`, 'error');
+                return;
+            }
+
+            // Use URL.origin for the exact origin (strips path, query, hash)
+            targetOrigin = url.origin;
+
+            // Guard against opaque origins (e.g., blob:, data:)
+            if (targetOrigin === 'null') {
+                showStatus('Could not determine a valid origin from the input.', 'error');
+                return;
+            }
+        } catch (e) {
+            showStatus('Invalid URL or origin. Example: https://example.com', 'error');
+            return;
+        }
+
+        // Update the input field to show the normalized origin
+        originInput.value = targetOrigin;
 
         const selectedTypes = {};
         let hasSelection = false;
 
-        // Supported types for origin-scoped removal:
-        // cookies, fileSystems, indexedDB, localStorage, serviceWorkers, webSQL, cacheStorage
-        // 'cache' in UI maps to 'cacheStorage'
+        // Mapping from UI checkbox values to chrome.browsingData API type keys
         const typeMapping = {
             'cache': 'cacheStorage',
             'cookies': 'cookies',
             'localStorage': 'localStorage',
             'indexedDB': 'indexedDB',
-            'serviceWorkers': 'serviceWorkers',
-            // these were removed from UI but keeping mapping just in case
-            'fileSystems': 'fileSystems',
-            'webSQL': 'webSQL'
+            'serviceWorkers': 'serviceWorkers'
         };
 
         checkboxes.forEach(cb => {
@@ -92,49 +145,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (!hasSelection) {
-            showStatus("Please select at least one data type.", "error");
+            showStatus('Please select at least one data type.', 'error');
             return;
         }
 
-        // Construct removal options
-        // We need to support origins. chrome.browsingData.remove takes an object for options.
-        // For specific domains, we usually use the "origins" property with protocol.
-        // However, users might just type "example.com". We should convert that to http/https origins.
-
-        const origins = [];
-        if (domain.includes('://')) {
-            // User entered full URL or origin
-            try {
-                const url = new URL(domain);
-                origins.push(url.origin);
-            } catch (e) {
-                // Fallback if URL parsing fails but it has protocol-like syntax
-                origins.push(domain);
-            }
-        } else {
-            // Assume both http and https for the domain
-            origins.push(`http://${domain}`);
-            origins.push(`https://${domain}`);
-        }
-
+        // Construct removal options with a single exact origin
         const removalOptions = {
-            origins: origins
+            origins: [targetOrigin]
         };
 
         // Disable button while processing
         clearBtn.disabled = true;
-        clearBtn.querySelector('.btn-text').textContent = "Clearing...";
+        clearBtn.querySelector('.btn-text').textContent = 'Clearing...';
 
         // Execute removal
         chrome.browsingData.remove(removalOptions, selectedTypes, () => {
             if (chrome.runtime.lastError) {
-                showStatus(`Error: ${chrome.runtime.lastError.message}`, "error");
+                showStatus(`Error: ${chrome.runtime.lastError.message}`, 'error');
             } else {
-                showStatus(`Cleaned data for ${domain}`, "success");
+                showStatus(`Cleaned data for ${targetOrigin}`, 'success');
             }
             // Reset button
             clearBtn.disabled = false;
-            clearBtn.querySelector('.btn-text').textContent = "Clear Data";
+            clearBtn.querySelector('.btn-text').textContent = 'Clear Data';
         });
     });
 });
