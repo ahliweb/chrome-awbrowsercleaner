@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             // Reset buttons
             clearBtn.disabled = false;
-            clearBtn.querySelector('.btn-text').textContent = 'Clear Data';
+            clearBtn.querySelector('.btn-text').textContent = 'Clear Site Data';
             confirmBtn.disabled = false;
             hideConfirmation();
         });
