@@ -12,7 +12,76 @@
  *   registrable-domain scope behavior documented by Chrome.
  */
 
+/**
+ * Retrieves a localized string from Chrome i18n API with fallback support.
+ * @param {string} messageName - Key in messages.json.
+ * @param {string|Array<string>} [substitutions] - Optional substitutions.
+ * @returns {string} Localized message string.
+ */
+function getMessage(messageName, substitutions) {
+    if (typeof chrome !== 'undefined' && chrome.i18n && typeof chrome.i18n.getMessage === 'function') {
+        const msg = chrome.i18n.getMessage(messageName, substitutions);
+        if (msg) return msg;
+    }
+    const fallbacks = {
+        extensionName: 'AW Browser Cleaner',
+        extensionDescription: 'Selectively clear site data for a specific origin',
+        targetOriginLabel: 'Target Origin',
+        targetOriginPlaceholder: 'https://example.com',
+        useCurrentTabTitle: 'Use Current Tab',
+        dataToClearLabel: 'Data to Clear',
+        selectAll: 'Select All',
+        deselectAll: 'Deselect All',
+        dataTypeCache: 'Cache Storage',
+        dataTypeCookies: 'Cookies',
+        dataTypeLocalStorage: 'Local Storage',
+        dataTypeIndexedDB: 'IndexedDB',
+        dataTypeServiceWorkers: 'Service Workers',
+        cookieWarningTitle: 'Cookie Warning:',
+        cookieWarningBody: 'Clearing cookies may sign you out of related subdomains. Cookies can be shared across a registrable domain (e.g., clearing www.example.com may also affect .example.com cookies).',
+        confirmTargetLabel: 'Target:',
+        confirmDataLabel: 'Data:',
+        confirmCookieNotice: 'Cookie cleanup may affect the entire registrable domain.',
+        confirmCleanupBtn: 'Confirm Cleanup',
+        cancelBtn: 'Cancel',
+        clearSiteDataBtn: 'Clear Site Data',
+        clearingStatus: 'Clearing...',
+        cleanedSuccess: `Cleaned data for ${substitutions || ''}`,
+        errorUnsupportedScheme: 'This page uses an unsupported scheme. Navigate to an HTTP(S) page.',
+        errorSelectDataType: 'Please select at least one data type.',
+        cleanupCancelled: 'Cleanup cancelled.',
+        errorPrefix: `Error: ${substitutions || ''}`
+    };
+    return fallbacks[messageName] || messageName;
+}
+
+/**
+ * Localizes all DOM elements containing data-i18n attributes.
+ */
+function localizeDocument() {
+    if (typeof document === 'undefined') return;
+    document.querySelectorAll('[data-i18n]').forEach(elem => {
+        const key = elem.getAttribute('data-i18n');
+        elem.textContent = getMessage(key);
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(elem => {
+        const key = elem.getAttribute('data-i18n-placeholder');
+        elem.setAttribute('placeholder', getMessage(key));
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(elem => {
+        const key = elem.getAttribute('data-i18n-title');
+        elem.setAttribute('title', getMessage(key));
+    });
+    document.querySelectorAll('[data-i18n-aria]').forEach(elem => {
+        const key = elem.getAttribute('data-i18n-aria');
+        elem.setAttribute('aria-label', getMessage(key));
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Localize static UI elements on load
+    localizeDocument();
+
     const originInput = document.getElementById('originInput');
     const fillCurrentBtn = document.getElementById('fillCurrent');
     const clearBtn = document.getElementById('clearBtn');
@@ -56,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     originInput.value = result.origin;
                 } else {
                     originInput.value = '';
-                    showStatus('This page uses an unsupported scheme. Navigate to an HTTP(S) page.', 'error');
+                    showStatus(getMessage('errorUnsupportedScheme'), 'error');
                 }
             }
         });
@@ -102,16 +171,16 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function showConfirmation(targetOrigin, selectedTypes) {
         const typeNames = [];
-        if (selectedTypes.cacheStorage) typeNames.push('Cache Storage');
-        if (selectedTypes.cookies) typeNames.push('Cookies');
-        if (selectedTypes.localStorage) typeNames.push('Local Storage');
-        if (selectedTypes.indexedDB) typeNames.push('IndexedDB');
-        if (selectedTypes.serviceWorkers) typeNames.push('Service Workers');
+        if (selectedTypes.cacheStorage) typeNames.push(getMessage('dataTypeCache'));
+        if (selectedTypes.cookies) typeNames.push(getMessage('dataTypeCookies'));
+        if (selectedTypes.localStorage) typeNames.push(getMessage('dataTypeLocalStorage'));
+        if (selectedTypes.indexedDB) typeNames.push(getMessage('dataTypeIndexedDB'));
+        if (selectedTypes.serviceWorkers) typeNames.push(getMessage('dataTypeServiceWorkers'));
 
         confirmTarget.innerHTML =
-            `<strong>Target:</strong> <code>${targetOrigin}</code><br>` +
-            `<strong>Data:</strong> ${typeNames.join(', ')}<br>` +
-            `<em>Cookie cleanup may affect the entire registrable domain.</em>`;
+            `<strong>${getMessage('confirmTargetLabel')}</strong> <code>${targetOrigin}</code><br>` +
+            `<strong>${getMessage('confirmDataLabel')}</strong> ${typeNames.join(', ')}<br>` +
+            `<em>${getMessage('confirmCookieNotice')}</em>`;
 
         confirmArea.classList.remove('hidden');
         confirmBtn.focus();
@@ -139,18 +208,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Disable buttons while processing
         clearBtn.disabled = true;
-        clearBtn.querySelector('.btn-text').textContent = 'Clearing...';
+        clearBtn.querySelector('.btn-text').textContent = getMessage('clearingStatus');
         confirmBtn.disabled = true;
 
         chrome.browsingData.remove(removalOptions, selectedTypes, () => {
             if (chrome.runtime.lastError) {
-                showStatus(`Error: ${chrome.runtime.lastError.message}`, 'error');
+                showStatus(getMessage('errorPrefix', chrome.runtime.lastError.message), 'error');
             } else {
-                showStatus(`Cleaned data for ${targetOrigin}`, 'success');
+                showStatus(getMessage('cleanedSuccess', targetOrigin), 'success');
             }
             // Reset buttons
             clearBtn.disabled = false;
-            clearBtn.querySelector('.btn-text').textContent = 'Clear Site Data';
+            clearBtn.querySelector('.btn-text').textContent = getMessage('clearSiteDataBtn');
             confirmBtn.disabled = false;
             hideConfirmation();
         });
@@ -171,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selectAllBtn.addEventListener('click', () => {
         const allChecked = Array.from(checkboxes).every(cb => cb.checked);
         checkboxes.forEach(cb => cb.checked = !allChecked);
-        selectAllBtn.textContent = allChecked ? 'Select All' : 'Deselect All';
+        selectAllBtn.textContent = allChecked ? getMessage('selectAll') : getMessage('deselectAll');
         updateCookieWarning();
     });
 
@@ -208,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (!hasSelection) {
-            showStatus('Please select at least one data type.', 'error');
+            showStatus(getMessage('errorSelectDataType'), 'error');
             return;
         }
 
@@ -231,6 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cancel button — dismiss confirmation
     cancelBtn.addEventListener('click', () => {
         hideConfirmation();
-        showStatus('Cleanup cancelled.', 'error');
+        showStatus(getMessage('cleanupCancelled'), 'error');
     });
 });

@@ -1,0 +1,122 @@
+{
+  "extensionName": {
+    "message": "AW Browser Cleaner",
+    "description": "The name of the extension."
+  },
+  "extensionDescription": {
+    "message": "Selectively clear site data for a specific origin",
+    "description": "Description of the extension."
+  },
+  "targetOriginLabel": {
+    "message": "Target Origin",
+    "description": "Label for target origin input."
+  },
+  "targetOriginPlaceholder": {
+    "message": "https://example.com",
+    "description": "Placeholder for origin input."
+  },
+  "useCurrentTabTitle": {
+    "message": "Use Current Tab",
+    "description": "Tooltip and aria-label for fill current tab button."
+  },
+  "dataToClearLabel": {
+    "message": "Data to Clear",
+    "description": "Header label for data types to clear."
+  },
+  "selectAll": {
+    "message": "Select All",
+    "description": "Button text to select all checkboxes."
+  },
+  "deselectAll": {
+    "message": "Deselect All",
+    "description": "Button text to deselect all checkboxes."
+  },
+  "dataTypeCache": {
+    "message": "Cache Storage",
+    "description": "Label for cache storage checkbox."
+  },
+  "dataTypeCookies": {
+    "message": "Cookies",
+    "description": "Label for cookies checkbox."
+  },
+  "dataTypeLocalStorage": {
+    "message": "Local Storage",
+    "description": "Label for local storage checkbox."
+  },
+  "dataTypeIndexedDB": {
+    "message": "IndexedDB",
+    "description": "Label for IndexedDB checkbox."
+  },
+  "dataTypeServiceWorkers": {
+    "message": "Service Workers",
+    "description": "Label for service workers checkbox."
+  },
+  "cookieWarningTitle": {
+    "message": "Cookie Warning:",
+    "description": "Title prefix for cookie warning banner."
+  },
+  "cookieWarningBody": {
+    "message": "Clearing cookies may sign you out of related subdomains. Cookies can be shared across a registrable domain (e.g., clearing www.example.com may also affect .example.com cookies).",
+    "description": "Explanation text for cookie domain scope."
+  },
+  "confirmTargetLabel": {
+    "message": "Target:",
+    "description": "Label for confirmation target origin."
+  },
+  "confirmDataLabel": {
+    "message": "Data:",
+    "description": "Label for confirmation data categories."
+  },
+  "confirmCookieNotice": {
+    "message": "Cookie cleanup may affect the entire registrable domain.",
+    "description": "Warning notice in confirmation dialog."
+  },
+  "confirmCleanupBtn": {
+    "message": "Confirm Cleanup",
+    "description": "Button text to confirm cleanup."
+  },
+  "cancelBtn": {
+    "message": "Cancel",
+    "description": "Button text to cancel confirmation."
+  },
+  "clearSiteDataBtn": {
+    "message": "Clear Site Data",
+    "description": "Main action button text."
+  },
+  "clearingStatus": {
+    "message": "Clearing...",
+    "description": "Button text while clearing in progress."
+  },
+  "cleanedSuccess": {
+    "message": "Cleaned data for $ORIGIN$",
+    "description": "Status message on successful cleanup.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "errorUnsupportedScheme": {
+    "message": "This page uses an unsupported scheme. Navigate to an HTTP(S) page.",
+    "description": "Error when active tab is not http or https."
+  },
+  "errorSelectDataType": {
+    "message": "Please select at least one data type.",
+    "description": "Error when no checkbox is selected."
+  },
+  "cleanupCancelled": {
+    "message": "Cleanup cancelled.",
+    "description": "Status message when user cancels confirmation."
+  },
+  "errorPrefix": {
+    "message": "Error: $ERROR$",
+    "description": "Error status prefix.",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "Permission denied"
+      }
+    }
+  }
+}

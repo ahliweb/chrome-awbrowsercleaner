@@ -19,10 +19,10 @@
 
     <main>
       <div class="input-group">
-        <label for="originInput">Target Origin</label>
+        <label for="originInput" data-i18n="targetOriginLabel">Target Origin</label>
         <div class="input-wrapper">
-          <input type="text" id="originInput" placeholder="https://example.com" spellcheck="false">
-          <button id="fillCurrent" title="Use Current Tab" aria-label="Use Current Tab">
+          <input type="text" id="originInput" placeholder="https://example.com" data-i18n-placeholder="targetOriginPlaceholder" spellcheck="false">
+          <button id="fillCurrent" title="Use Current Tab" aria-label="Use Current Tab" data-i18n-title="useCurrentTabTitle" data-i18n-aria="useCurrentTabTitle">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -35,35 +35,35 @@
 
       <div class="options-group">
         <div class="options-header">
-          <label>Data to Clear</label>
-          <button id="selectAll" class="text-btn">Select All</button>
+          <label data-i18n="dataToClearLabel">Data to Clear</label>
+          <button id="selectAll" class="text-btn" data-i18n="selectAll">Select All</button>
         </div>
 
         <div class="checkbox-grid">
           <label class="checkbox-item">
             <input type="checkbox" value="cache" checked>
             <span class="custom-check"></span>
-            Cache Storage
+            <span data-i18n="dataTypeCache">Cache Storage</span>
           </label>
           <label class="checkbox-item">
             <input type="checkbox" value="cookies" checked>
             <span class="custom-check"></span>
-            Cookies
+            <span data-i18n="dataTypeCookies">Cookies</span>
           </label>
           <label class="checkbox-item">
             <input type="checkbox" value="localStorage" checked>
             <span class="custom-check"></span>
-            Local Storage
+            <span data-i18n="dataTypeLocalStorage">Local Storage</span>
           </label>
           <label class="checkbox-item">
             <input type="checkbox" value="indexedDB" checked>
             <span class="custom-check"></span>
-            IndexedDB
+            <span data-i18n="dataTypeIndexedDB">IndexedDB</span>
           </label>
           <label class="checkbox-item">
             <input type="checkbox" value="serviceWorkers" checked>
             <span class="custom-check"></span>
-            Service Workers
+            <span data-i18n="dataTypeServiceWorkers">Service Workers</span>
           </label>
         </div>
       </div>
@@ -78,7 +78,7 @@
           </svg>
         </div>
         <div class="cookie-warning-text">
-          <strong>Cookie Warning:</strong> Clearing cookies may sign you out of related subdomains. Cookies can be shared across a registrable domain (e.g., clearing <code>www.example.com</code> may also affect <code>.example.com</code> cookies).
+          <strong data-i18n="cookieWarningTitle">Cookie Warning:</strong> <span data-i18n="cookieWarningBody">Clearing cookies may sign you out of related subdomains. Cookies can be shared across a registrable domain (e.g., clearing <code>www.example.com</code> may also affect <code>.example.com</code> cookies).</span>
         </div>
       </div>
 
@@ -86,15 +86,15 @@
         <div class="confirm-target" id="confirmTarget"></div>
         <div class="confirm-actions">
           <button id="confirmBtn" class="confirm-btn">
-            <span class="btn-text">Confirm Cleanup</span>
+            <span class="btn-text" data-i18n="confirmCleanupBtn">Confirm Cleanup</span>
           </button>
-          <button id="cancelBtn" class="cancel-btn">Cancel</button>
+          <button id="cancelBtn" class="cancel-btn" data-i18n="cancelBtn">Cancel</button>
         </div>
       </div>
 
       <div class="action-area">
         <button id="clearBtn" class="primary-btn">
-          <span class="btn-text">Clear Site Data</span>
+          <span class="btn-text" data-i18n="clearSiteDataBtn">Clear Site Data</span>
           <span class="btn-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round">
