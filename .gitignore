@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build/release artifacts
+dist/
+*.zip
+*.sha256
+
+# Coverage reports
+coverage/
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Debug logs
+npm-debug.log*

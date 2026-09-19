@@ -60,15 +60,21 @@ function normalizeTarget(input) {
     }
 
     // Also reject scheme-only patterns without // (e.g., "javascript:", "chrome:")
-    const bareSchemeMatch = trimmed.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):(?!\/\/)/);
+    // But not hostname:port patterns where the colon is followed by digits only
+    const bareSchemeMatch = trimmed.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):(?!\/\/)(.*)$/);
     if (bareSchemeMatch) {
-        const schemeWithColon = bareSchemeMatch[1].toLowerCase() + ':';
-        if (!VALID_SCHEMES.has(schemeWithColon)) {
-            return {
-                valid: false,
-                origin: '',
-                error: `Unsupported scheme "${schemeWithColon}". Only HTTP and HTTPS are supported.`
-            };
+        const afterColon = bareSchemeMatch[2];
+        // If what follows the colon is purely digits (or digits/path), it's a port, not a scheme
+        const isPort = /^\d+(\/.*)?$/.test(afterColon) || afterColon === '';
+        if (!isPort) {
+            const schemeWithColon = bareSchemeMatch[1].toLowerCase() + ':';
+            if (!VALID_SCHEMES.has(schemeWithColon)) {
+                return {
+                    valid: false,
+                    origin: '',
+                    error: `Unsupported scheme "${schemeWithColon}". Only HTTP and HTTPS are supported.`
+                };
+            }
         }
     }
 
