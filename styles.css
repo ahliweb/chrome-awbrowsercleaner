@@ -332,3 +332,33 @@ footer {
   background-color: var(--border-color);
   color: var(--text-primary);
 }
+
+/* Accessibility: Visible keyboard focus outlines */
+button:focus-visible,
+input[type="text"]:focus-visible,
+input[type="checkbox"]:focus-visible,
+.text-btn:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.checkbox-item:has(input:focus-visible) {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 1px;
+}
+
+/* Ensure focus ring is visible on the primary/confirm buttons */
+.primary-btn:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+.confirm-btn:focus-visible {
+  outline: 2px solid #fca5a5;
+  outline-offset: 2px;
+}
+
+.cancel-btn:focus-visible {
+  outline: 2px solid var(--text-secondary);
+  outline-offset: 2px;
+}
