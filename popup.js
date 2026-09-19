@@ -7,13 +7,8 @@
  * - Only HTTP(S) origins are supported.
  * - A single exact origin is passed to chrome.browsingData.remove.
  * - Unsupported schemes (chrome:, file:, about:, etc.) are rejected.
+ * - All validation is delegated to origin-utils.js for testability.
  */
-
-/**
- * Supported URL schemes for cleanup operations.
- * @type {Set<string>}
- */
-const SUPPORTED_SCHEMES = new Set(['http:', 'https:']);
 
 document.addEventListener('DOMContentLoaded', () => {
     const originInput = document.getElementById('originInput');
@@ -25,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Displays a status message to the user.
+     * The status region uses aria-live for assistive technology.
      * @param {string} msg - The message to display.
      * @param {string} type - 'success' or 'error'.
      */
@@ -32,17 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
         statusMessage.textContent = msg;
         statusMessage.className = `status-message ${type}`; // 'success' or 'error'
         setTimeout(() => {
+            statusMessage.textContent = '';
             statusMessage.className = 'status-message hidden';
         }, 3000);
-    }
-
-    /**
-     * Checks whether a URL scheme is supported for cleanup operations.
-     * @param {string} scheme - The URL scheme (e.g., 'https:').
-     * @returns {boolean} True if the scheme is supported.
-     */
-    function isSupportedScheme(scheme) {
-        return SUPPORTED_SCHEMES.has(scheme);
     }
 
     /**
@@ -52,22 +40,28 @@ document.addEventListener('DOMContentLoaded', () => {
     function getCurrentTabOrigin() {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs && tabs[0] && tabs[0].url) {
-                try {
-                    const url = new URL(tabs[0].url);
-                    if (isSupportedScheme(url.protocol)) {
-                        // URL.origin preserves scheme + hostname + port
-                        originInput.value = url.origin;
-                    } else {
-                        originInput.value = '';
-                        showStatus('This page uses an unsupported scheme. Navigate to an HTTP(S) page.', 'error');
-                    }
-                } catch (e) {
-                    console.error('Invalid URL:', e);
+                const result = normalizeTarget(tabs[0].url);
+                if (result.valid) {
+                    originInput.value = result.origin;
+                } else {
                     originInput.value = '';
+                    showStatus('This page uses an unsupported scheme. Navigate to an HTTP(S) page.', 'error');
                 }
             }
         });
     }
+
+    /**
+     * Mapping from UI checkbox values to chrome.browsingData API type keys.
+     * @type {Object<string, string>}
+     */
+    const typeMapping = {
+        'cache': 'cacheStorage',
+        'cookies': 'cookies',
+        'localStorage': 'localStorage',
+        'indexedDB': 'indexedDB',
+        'serviceWorkers': 'serviceWorkers'
+    };
 
     // Initial load — auto-fill with current tab's origin
     getCurrentTabOrigin();
@@ -85,54 +79,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Clear Data Logic
     clearBtn.addEventListener('click', () => {
         const rawInput = originInput.value.trim();
-        if (!rawInput) {
-            showStatus('Please enter a target origin.', 'error');
+
+        // Validate and normalize the target using origin-utils
+        const result = normalizeTarget(rawInput);
+        if (!result.valid) {
+            showStatus(result.error, 'error');
             return;
         }
 
-        // Validate and normalize the target to an exact origin
-        let targetOrigin;
-        try {
-            let urlString = rawInput;
-            // If the user typed a bare hostname without a scheme, default to https
-            if (!rawInput.includes('://')) {
-                urlString = `https://${rawInput}`;
-            }
-
-            const url = new URL(urlString);
-
-            if (!isSupportedScheme(url.protocol)) {
-                showStatus(`Unsupported scheme "${url.protocol}". Only HTTP and HTTPS are supported.`, 'error');
-                return;
-            }
-
-            // Use URL.origin for the exact origin (strips path, query, hash)
-            targetOrigin = url.origin;
-
-            // Guard against opaque origins (e.g., blob:, data:)
-            if (targetOrigin === 'null') {
-                showStatus('Could not determine a valid origin from the input.', 'error');
-                return;
-            }
-        } catch (e) {
-            showStatus('Invalid URL or origin. Example: https://example.com', 'error');
-            return;
-        }
+        const targetOrigin = result.origin;
 
         // Update the input field to show the normalized origin
         originInput.value = targetOrigin;
 
         const selectedTypes = {};
         let hasSelection = false;
-
-        // Mapping from UI checkbox values to chrome.browsingData API type keys
-        const typeMapping = {
-            'cache': 'cacheStorage',
-            'cookies': 'cookies',
-            'localStorage': 'localStorage',
-            'indexedDB': 'indexedDB',
-            'serviceWorkers': 'serviceWorkers'
-        };
 
         checkboxes.forEach(cb => {
             if (cb.checked) {
