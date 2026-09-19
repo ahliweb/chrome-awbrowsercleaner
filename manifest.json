@@ -5,11 +5,7 @@
   "description": "Powered by AhliWeb.com",
   "permissions": [
     "browsingData",
-    "activeTab",
-    "tabs"
-  ],
-  "host_permissions": [
-    "<all_urls>"
+    "activeTab"
   ],
   "action": {
     "default_popup": "popup.html",

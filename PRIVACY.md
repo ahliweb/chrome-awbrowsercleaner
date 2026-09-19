@@ -45,15 +45,15 @@ Cookies have different scope semantics from origin-scoped storage. A cookie may 
 The product must disclose this behavior before cookie-inclusive cleanup.
 
 ## Permissions
-
-The exact permission list is defined by the final release `manifest.json`.
-
-Each permission must:
-1. be required for core functionality,
-2. be documented in the README and Chrome Web Store disclosures,
-3. be removed if real-browser validation shows it is unnecessary.
-
-The extension must not claim to use a permission that is absent from the shipped manifest.
+ 
+The exact permission list is defined by the final release `manifest.json`. See [docs/PERMISSION_MATRIX.md](docs/PERMISSION_MATRIX.md) for the detailed feature-to-permission mapping and least privilege justification.
+ 
+- `browsingData`: Required to selectively remove site data via `chrome.browsingData.remove`.
+- `activeTab`: Ephemeral access to the active tab's URL when the user opens the popup.
+ 
+No background tab tracking (`tabs`) or persistent host permissions (`<all_urls>`) are requested.
+ 
+The extension does not use or claim any permission that is absent from the shipped manifest.
 
 ## Remote code and third parties
 
