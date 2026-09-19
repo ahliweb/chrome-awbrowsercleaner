@@ -68,6 +68,30 @@
         </div>
       </div>
 
+      <div id="cookieWarning" class="cookie-warning hidden" role="alert">
+        <div class="cookie-warning-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        </div>
+        <div class="cookie-warning-text">
+          <strong>Cookie Warning:</strong> Clearing cookies may sign you out of related subdomains. Cookies can be shared across a registrable domain (e.g., clearing <code>www.example.com</code> may also affect <code>.example.com</code> cookies).
+        </div>
+      </div>
+
+      <div id="confirmArea" class="confirm-area hidden">
+        <div class="confirm-target" id="confirmTarget"></div>
+        <div class="confirm-actions">
+          <button id="confirmBtn" class="confirm-btn">
+            <span class="btn-text">Confirm Cleanup</span>
+          </button>
+          <button id="cancelBtn" class="cancel-btn">Cancel</button>
+        </div>
+      </div>
+
       <div class="action-area">
         <button id="clearBtn" class="primary-btn">
           <span class="btn-text">Clear Data</span>
@@ -81,7 +105,7 @@
         </button>
       </div>
 
-      <div id="statusMessage" class="status-message hidden"></div>
+      <div id="statusMessage" class="status-message hidden" role="status" aria-live="polite"></div>
     </main>
 
     <footer>
