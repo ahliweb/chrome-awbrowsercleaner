@@ -115,3 +115,20 @@ describe('Origin construction from tab info', () => {
         expect(result.valid).toBe(false);
     });
 });
+
+describe('Manifest Permission Minimization', () => {
+    const manifest = require('../../manifest.json');
+
+    test('requests only browsingData and activeTab permissions', () => {
+        expect(manifest.permissions).toEqual(['browsingData', 'activeTab']);
+    });
+
+    test('does not request broad tabs permission', () => {
+        expect(manifest.permissions).not.toContain('tabs');
+    });
+
+    test('does not request persistent host_permissions', () => {
+        expect(manifest.host_permissions).toBeUndefined();
+    });
+});
+
