@@ -11,7 +11,8 @@
     "check:version": "bun scripts/check-version.js",
     "build:package": "bun scripts/build-package.js",
     "validate:package": "bun scripts/validate-package.js",
-    "upload:cws": "bun scripts/upload-cws.js"
+    "upload:cws": "bun scripts/upload-cws.js",
+    "setup:cws": "bun scripts/setup-cws-credentials.js"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
