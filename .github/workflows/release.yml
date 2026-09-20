@@ -65,3 +65,12 @@ jobs:
             dist/*.sha256
           draft: false
           prerelease: false
+
+      - name: Upload to Chrome Web Store
+        run: bun run upload:cws
+        env:
+          CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID || 'njflkejajbifofomeebakgebgcincepf' }}
+          CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+          CWS_AUTO_PUBLISH: ${{ vars.CWS_AUTO_PUBLISH || 'true' }}
