@@ -110,10 +110,12 @@ function validateCredentials(env = process.env) {
     const autoPublish = env.CWS_AUTO_PUBLISH === 'true';
     const isStrict = env.STRICT_UPLOAD === 'true';
 
+    const isUnset = (v) => !v || v.trim() === '' || v.trim().toLowerCase() === 'placeholder';
+
     const missing = [];
-    if (!clientId) missing.push('CWS_CLIENT_ID');
-    if (!clientSecret) missing.push('CWS_CLIENT_SECRET');
-    if (!refreshToken) missing.push('CWS_REFRESH_TOKEN');
+    if (isUnset(clientId)) missing.push('CWS_CLIENT_ID');
+    if (isUnset(clientSecret)) missing.push('CWS_CLIENT_SECRET');
+    if (isUnset(refreshToken)) missing.push('CWS_REFRESH_TOKEN');
 
     return {
         isConfigured: missing.length === 0,
