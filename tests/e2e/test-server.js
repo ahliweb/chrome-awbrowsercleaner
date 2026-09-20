@@ -9,9 +9,6 @@
  */
 
 const http = require('http');
-const path = require('path');
-
-const PORT = process.argv[2] || 8932;
 
 /**
  * Test page HTML that sets various storage types for verification.
@@ -63,13 +60,25 @@ document.getElementById('status').textContent = 'Storage initialized';
 </body>
 </html>`;
 
-const server = http.createServer((req, res) => {
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    res.end(TEST_PAGE_HTML);
-});
+function createTestServer(port = 8932) {
+    const server = http.createServer((req, res) => {
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(TEST_PAGE_HTML);
+    });
 
-server.listen(PORT, () => {
-    console.log(`Test server running on http://localhost:${PORT}`);
-});
+    return new Promise((resolve, reject) => {
+        server.listen(port, () => {
+            console.log(`Test server running on http://localhost:${port}`);
+            resolve(server);
+        });
+        server.on('error', reject);
+    });
+}
 
-module.exports = { server, PORT };
+if (require.main === module) {
+    const portArg = parseInt(process.argv[2], 10);
+    const port = Number.isInteger(portArg) ? portArg : 8932;
+    createTestServer(port);
+}
+
+module.exports = { createTestServer, TEST_PAGE_HTML };

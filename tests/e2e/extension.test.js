@@ -13,6 +13,7 @@
  */
 
 const path = require('path');
+const fs = require('fs');
 
 // Skip E2E tests if Puppeteer browser is not available
 let puppeteer;
@@ -31,30 +32,47 @@ if (puppeteer) {
     let testServer;
 
     beforeAll(async () => {
-        // Start test server
-        const http = require('http');
-        const { server } = require('./test-server');
-        testServer = server;
+        // Start test server on the configured port
+        const { createTestServer } = require('./test-server');
+        try {
+            testServer = await createTestServer(TEST_SERVER_PORT);
+        } catch (e) {
+            console.warn('Could not start test server:', e.message);
+        }
+
+        // Locate Chrome executable if puppeteer default cache is empty
+        const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH ||
+            ['/usr/bin/google-chrome', '/usr/bin/chromium-browser', '/usr/bin/chromium'].find(p => fs.existsSync(p));
+
+        const launchOptions = {
+            headless: 'new',
+            args: [
+                `--disable-extensions-except=${EXTENSION_PATH}`,
+                `--load-extension=${EXTENSION_PATH}`,
+                '--no-sandbox',
+                '--disable-setuid-sandbox'
+            ]
+        };
+
+        if (executablePath) {
+            launchOptions.executablePath = executablePath;
+        }
 
         // Launch browser with extension
         try {
-            browser = await puppeteer.launch({
-                headless: 'new',
-                args: [
-                    `--disable-extensions-except=${EXTENSION_PATH}`,
-                    `--load-extension=${EXTENSION_PATH}`,
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox'
-                ]
-            });
+            browser = await puppeteer.launch(launchOptions);
         } catch (e) {
             console.warn('Could not launch Chromium with extension:', e.message);
         }
     });
 
     afterAll(async () => {
-        if (browser) await browser.close();
-        if (testServer) testServer.close();
+        if (browser) {
+            await browser.close();
+        }
+        if (testServer) {
+            await new Promise(resolve => testServer.close(resolve));
+        }
     });
 
     describe('Extension Loading', () => {
@@ -71,8 +89,8 @@ if (puppeteer) {
     });
 
     describe('Active Tab Origin Detection', () => {
-        test('detects HTTPS origin from active tab', async () => {
-            if (!browser) return;
+        test('detects origin from active tab', async () => {
+            if (!browser || !testServer) return;
 
             const page = await browser.newPage();
             await page.goto(`http://localhost:${TEST_SERVER_PORT}`, {
@@ -92,7 +110,7 @@ if (puppeteer) {
 
     describe('Storage Verification', () => {
         test('test page sets localStorage correctly', async () => {
-            if (!browser) return;
+            if (!browser || !testServer) return;
 
             const page = await browser.newPage();
             await page.goto(`http://localhost:${TEST_SERVER_PORT}`, {
@@ -108,7 +126,7 @@ if (puppeteer) {
         });
 
         test('test page sets cookie correctly', async () => {
-            if (!browser) return;
+            if (!browser || !testServer) return;
 
             const page = await browser.newPage();
             await page.goto(`http://localhost:${TEST_SERVER_PORT}`, {
