@@ -12,10 +12,12 @@ Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/) dan pr
 - **Exact-Origin Targeting**: Surgical cleanup strictly targeting `scheme://host:port` instead of hostname (#2).
 - **Manual Input Normalization**: Strict origin normalization and validation rejecting unsupported schemes and malformed URLs (#6).
 - **Cookie Scope Disclosure & Confirmation**: Explicit warning banner and two-step confirmation flow detailing registrable domain cookie deletion risk (#4).
-- **Testing Infrastructure (Bun)**: Comprehensive test suite (75 unit and E2E tests) running natively on Bun runtime (#7).
+- **Testing Infrastructure (Bun)**: Comprehensive test suite (85 unit and E2E tests) running natively on Bun runtime (#7).
 - **Permission Matrix**: Detailed documentation of feature-to-permission mapping and least privilege rationale (`docs/PERMISSION_MATRIX.md`).
 - **Deterministic Packaging & CI/CD**: Automated packaging and release verification workflows (`scripts/build-package.js`, `scripts/validate-package.js`, `.github/workflows/ci.yml`, `.github/workflows/release.yml`) (#8).
 - **Bilingual Localization**: Native English (`en`) and Indonesian (`id`) locale support via Chrome `_locales` with 100% key parity (#11).
+- **Chrome Web Store Automated Upload**: `scripts/upload-cws.js` for OAuth2-based automated upload to Chrome Web Store Developer Dashboard, integrated into release CI workflow.
+- **CWS Setup Wizard**: Interactive `scripts/setup-cws-credentials.js` for automated OAuth2 credential retrieval and GitHub Secrets provisioning.
 
 ### Changed
 - **Permission Minimization**: Removed broad `tabs` and `<all_urls>` host permissions; operating strictly on `browsingData` and `activeTab` (#3).
