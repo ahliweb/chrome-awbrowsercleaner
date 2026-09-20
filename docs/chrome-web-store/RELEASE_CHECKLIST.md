@@ -29,7 +29,7 @@ Current published version: `1.2.0`
 ## 3. Privacy and disclosure
 
 - [ ] Repository `PRIVACY.md` matches shipped behavior.
-- [ ] Public privacy policy at https://ahliweb.com/privacy-browser-ext/ matches shipped behavior.
+- [ ] Public privacy policy at <https://ahliweb.com/privacy-browser-ext/> matches shipped behavior.
 - [ ] Store Privacy tab matches final permissions and data handling.
 - [ ] Cookie behavior is disclosed accurately: cookie removal may affect a registrable domain and related subdomains.
 - [ ] No analytics/tracking claim is made unless verified against all packaged code.
@@ -50,6 +50,7 @@ Current published version: `1.2.0`
 The Web Store ZIP must contain runtime assets only.
 
 Expected runtime files (11 total):
+
 - `manifest.json`
 - `popup.html`
 - `popup.js`
@@ -73,6 +74,7 @@ Exclude: `.git/`, `.github/`, `docs/`, `tests/`, `scripts/`, `node_modules/`, `d
 ## 6. Regression tests
 
 Verify at minimum:
+
 - [ ] Active HTTPS origin
 - [ ] HTTP origin
 - [ ] Explicit port / localhost
@@ -112,14 +114,15 @@ Only after all checks above pass:
 
 ## Official references
 
-- Chrome Web Store API/update flow: https://developer.chrome.com/docs/webstore/using-api
-- browsingData API: https://developer.chrome.com/docs/extensions/reference/api/browsingData
-- Permissions: https://developer.chrome.com/docs/extensions/reference/permissions-list
-- Manifest V3: https://developer.chrome.com/docs/extensions/develop/migrate
+- Chrome Web Store API/update flow: <https://developer.chrome.com/docs/webstore/using-api>
+- browsingData API: <https://developer.chrome.com/docs/extensions/reference/api/browsingData>
+- Permissions: <https://developer.chrome.com/docs/extensions/reference/permissions-list>
+- Manifest V3: <https://developer.chrome.com/docs/extensions/develop/migrate>
 
 ## Release History
 
-| Version | Date | Tag | Notes |
-|---------|------|-----|-------|
-| 1.1 | 2026-08-22 | — | Initial Chrome Web Store release |
-| 1.2.0 | 2026-09-20 | `v1.2.0` | Production hardening, permission minimization, localization |
+| Version | Date       | Tag      | Notes                                                       |
+| ------- | ---------- | -------- | ----------------------------------------------------------- |
+| 1.1     | 2026-08-22 | —        | Initial Chrome Web Store release                            |
+| 1.2.0   | 2026-09-20 | `v1.2.0` | Production hardening, permission minimization, localization |
+

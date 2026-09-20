@@ -60,7 +60,7 @@ bun install
 ### Available Scripts
 
 | Script | Description |
-|--------|-------------|
+| ------ | ----------- |
 | `bun test` | Run all 85 unit and E2E tests |
 | `bun run test:unit` | Run unit tests only |
 | `bun run test:e2e` | Run E2E tests only |
@@ -81,6 +81,7 @@ bun install
 See [docs/chrome-web-store/API_UPLOAD_SETUP.md](docs/chrome-web-store/API_UPLOAD_SETUP.md) for step-by-step setup of automated Chrome Web Store publishing via OAuth2 API.
 
 Quick start:
+
 ```bash
 bun run setup:cws
 ```
@@ -99,6 +100,7 @@ AW Browser Cleaner strictly adheres to the principle of least privilege. See [do
 The extension supports English (`en`) and Indonesian (`id`) out of the box.
 
 To add a new language:
+
 1. Create a new directory under `_locales/<language_code>/` (e.g., `_locales/es/messages.json`).
 2. Copy `_locales/en/messages.json` into the new folder and translate each `"message"` property.
 3. Keep message keys unchanged so popup elements map automatically.
@@ -107,7 +109,7 @@ To add a new language:
 ## Documentation
 
 | Document | Description |
-|----------|-------------|
+| -------- | ----------- |
 | [CHANGELOG.md](CHANGELOG.md) | Release history and version changes |
 | [PRIVACY.md](PRIVACY.md) | Repository privacy policy |
 | [SECURITY.md](SECURITY.md) | Security policy and vulnerability reporting |
