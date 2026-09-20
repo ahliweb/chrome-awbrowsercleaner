@@ -10,7 +10,8 @@
     "lint": "eslint *.js --ignore-pattern 'node_modules/**'",
     "check:version": "bun scripts/check-version.js",
     "build:package": "bun scripts/build-package.js",
-    "validate:package": "bun scripts/validate-package.js"
+    "validate:package": "bun scripts/validate-package.js",
+    "upload:cws": "bun scripts/upload-cws.js"
   },
   "devDependencies": {
     "eslint": "^8.57.0",

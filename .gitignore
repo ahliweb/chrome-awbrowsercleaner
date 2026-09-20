@@ -22,3 +22,9 @@ Thumbs.db
 
 # Debug logs
 npm-debug.log*
+
+# Environment & credentials
+.env
+.env.*
+*.pem
+*.key
