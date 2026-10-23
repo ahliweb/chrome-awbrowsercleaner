@@ -5,10 +5,10 @@
   },
   "extensionDescription": {
     "message": "Hapus data situs secara selektif untuk origin tertentu",
-    "description": "Description of the extension in Indonesian."
+    "description": "Description of the extension."
   },
   "targetOriginLabel": {
-    "message": "Origin Target",
+    "message": "Origin target",
     "description": "Label for target origin input."
   },
   "targetOriginPlaceholder": {
@@ -16,80 +16,130 @@
     "description": "Placeholder for origin input."
   },
   "useCurrentTabTitle": {
-    "message": "Gunakan Tab Saat Ini",
-    "description": "Tooltip and aria-label for fill current tab button."
+    "message": "Pakai origin tab yang aktif",
+    "description": "Tooltip for the use-current-tab button."
+  },
+  "useCurrentTabShort": {
+    "message": "Tab ini",
+    "description": "Short label of the use-current-tab button."
+  },
+  "scopeExact": {
+    "message": "Hanya origin ini. Origin lain tidak disentuh.",
+    "description": "Scope note when cleanup is limited to the exact origin."
+  },
+  "scopeWide": {
+    "message": "Cookie berlaku untuk seluruh domain terdaftar, jadi subdomain terkait bisa ikut logout.",
+    "description": "Scope note when cookies are selected."
   },
   "dataToClearLabel": {
-    "message": "Data yang Dihapus",
-    "description": "Header label for data types to clear."
+    "message": "Data yang dibersihkan",
+    "description": "Heading of the data type selection."
   },
   "selectAll": {
-    "message": "Pilih Semua",
-    "description": "Button text to select all checkboxes."
+    "message": "Pilih semua",
+    "description": "Select all data types."
   },
   "deselectAll": {
-    "message": "Batal Pilih Semua",
-    "description": "Button text to deselect all checkboxes."
+    "message": "Batalkan semua",
+    "description": "Deselect all data types."
+  },
+  "selectedCount": {
+    "message": "$COUNT$ dari $TOTAL$ dipilih",
+    "description": "Number of selected data types.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      },
+      "total": {
+        "content": "$2",
+        "example": "5"
+      }
+    }
+  },
+  "groupSession": {
+    "message": "Sesi",
+    "description": "Data group heading."
+  },
+  "groupStorage": {
+    "message": "Storage",
+    "description": "Data group heading."
+  },
+  "groupCache": {
+    "message": "Cache & offline",
+    "description": "Data group heading."
   },
   "dataTypeCache": {
     "message": "Cache Storage",
-    "description": "Label for cache storage checkbox."
+    "description": "Data type label."
   },
   "dataTypeCookies": {
     "message": "Cookies",
-    "description": "Label for cookies checkbox."
+    "description": "Data type label."
   },
   "dataTypeLocalStorage": {
     "message": "Local Storage",
-    "description": "Label for local storage checkbox."
+    "description": "Data type label."
   },
   "dataTypeIndexedDB": {
     "message": "IndexedDB",
-    "description": "Label for IndexedDB checkbox."
+    "description": "Data type label."
   },
   "dataTypeServiceWorkers": {
     "message": "Service Workers",
-    "description": "Label for service workers checkbox."
+    "description": "Data type label."
   },
-  "cookieWarningTitle": {
-    "message": "Peringatan Cookie:",
-    "description": "Title prefix for cookie warning banner."
+  "cookieScopeTag": {
+    "message": "satu domain",
+    "description": "Tag next to Cookies indicating registrable-domain scope."
   },
-  "cookieWarningBody": {
-    "message": "Menghapus cookie dapat mengeluarkan Anda dari subdomain terkait. Cookie dapat dibagikan di seluruh domain terdaftar (mis. menghapus www.example.com juga dapat memengaruhi cookie .example.com).",
-    "description": "Explanation text for cookie domain scope in Indonesian."
+  "confirmTitle": {
+    "message": "Konfirmasi pembersihan",
+    "description": "Confirmation panel title."
   },
   "confirmTargetLabel": {
-    "message": "Target:",
-    "description": "Label for confirmation target origin."
+    "message": "Target",
+    "description": "Confirmation label for the origin."
   },
   "confirmDataLabel": {
-    "message": "Data:",
-    "description": "Label for confirmation data categories."
+    "message": "Akan dihapus",
+    "description": "Confirmation label for selected data types."
+  },
+  "confirmUntouchedLabel": {
+    "message": "Tidak disentuh",
+    "description": "Confirmation label for data that stays."
+  },
+  "confirmUntouchedOrigins": {
+    "message": "Storage situs untuk semua origin lain",
+    "description": "Item in the not-touched list."
+  },
+  "confirmUntouchedBrowser": {
+    "message": "Riwayat, unduhan, isian formulir, dan password",
+    "description": "Item in the not-touched list."
   },
   "confirmCookieNotice": {
-    "message": "Pembersihan cookie dapat memengaruhi seluruh domain terdaftar terkait.",
-    "description": "Warning notice in confirmation dialog."
+    "message": "Cookie dihapus untuk seluruh domain terdaftar, termasuk subdomain terkait.",
+    "description": "Cookie scope notice in the confirmation panel."
   },
   "confirmCleanupBtn": {
-    "message": "Konfirmasi Pembersihan",
-    "description": "Button text to confirm cleanup."
+    "message": "Bersihkan termasuk cookie domain",
+    "description": "Destructive confirmation button."
   },
   "cancelBtn": {
     "message": "Batal",
-    "description": "Button text to cancel confirmation."
+    "description": "Cancel button."
   },
   "clearSiteDataBtn": {
-    "message": "Hapus Data Situs",
-    "description": "Main action button text."
+    "message": "Bersihkan data situs",
+    "description": "Primary action button."
   },
   "clearingStatus": {
-    "message": "Membersihkan...",
-    "description": "Button text while clearing in progress."
+    "message": "Membersihkan…",
+    "description": "Primary button label while working."
   },
   "cleanedSuccess": {
-    "message": "Data berhasil dibersihkan untuk $ORIGIN$",
-    "description": "Status message on successful cleanup.",
+    "message": "Data dibersihkan untuk $ORIGIN$",
+    "description": "Success message.",
     "placeholders": {
       "origin": {
         "content": "$1",
@@ -98,25 +148,29 @@
     }
   },
   "errorUnsupportedScheme": {
-    "message": "Halaman ini menggunakan skema yang tidak didukung. Buka halaman HTTP(S).",
-    "description": "Error when active tab is not http or https."
+    "message": "Halaman ini memakai skema yang tidak didukung. Buka halaman HTTP(S).",
+    "description": "Error for non-HTTP(S) tabs."
   },
   "errorSelectDataType": {
     "message": "Pilih setidaknya satu jenis data.",
-    "description": "Error when no checkbox is selected."
+    "description": "Error when nothing is selected."
   },
   "cleanupCancelled": {
     "message": "Pembersihan dibatalkan.",
-    "description": "Status message when user cancels confirmation."
+    "description": "Info message after cancelling."
   },
   "errorPrefix": {
     "message": "Terjadi kesalahan: $ERROR$",
-    "description": "Error status prefix.",
+    "description": "Error message prefix.",
     "placeholders": {
       "error": {
         "content": "$1",
-        "example": "Izin ditolak"
+        "example": "Permission denied"
       }
     }
+  },
+  "poweredBy": {
+    "message": "Didukung oleh AhliWeb.com",
+    "description": "Footer credit."
   }
 }

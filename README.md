@@ -10,6 +10,12 @@ Unlike the standard Chrome "Clear Browsing Data" dialog which often clears data 
 
 [**AW Browser Cleaner** on Chrome Web Store](https://chromewebstore.google.com/detail/aw-browser-cleaner/njflkejajbifofomeebakgebgcincepf)
 
+## Screenshots
+
+| Light (EN) | Konfirmasi (ID) | Dark (EN) |
+| --- | --- | --- |
+| ![Popup, light theme](docs/screenshots/popup-light-en.png) | ![Confirmation panel in Indonesian](docs/screenshots/popup-confirm-id.png) | ![Popup, dark theme](docs/screenshots/popup-dark-en.png) |
+
 ## Features
 
 - **Origin-Specific Cleaning:** Automatically detects the current tab's exact origin.
@@ -61,7 +67,7 @@ bun install
 
 | Script | Description |
 | ------ | ----------- |
-| `bun test` | Run all 85 unit and E2E tests |
+| `bun test` | Run all unit and E2E tests |
 | `bun run test:unit` | Run unit tests only |
 | `bun run test:e2e` | Run E2E tests only |
 | `bun run lint` | Run ESLint |

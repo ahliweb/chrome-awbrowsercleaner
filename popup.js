@@ -10,7 +10,13 @@
  * - All validation is delegated to origin-utils.js for testability.
  * - Cookie-inclusive cleanup requires explicit confirmation due to
  *   registrable-domain scope behavior documented by Chrome.
+ * - The UI always states the effective scope: exact origin, or
+ *   registrable domain when cookies are selected.
+ * - Dynamic text is rendered with textContent only (no innerHTML).
  */
+
+/** How long error/info messages stay visible. Success stays until the next action. */
+const STATUS_TIMEOUT_MS = 5000;
 
 /**
  * Retrieves a localized string from Chrome i18n API with fallback support.
@@ -23,34 +29,46 @@ function getMessage(messageName, substitutions) {
         const msg = chrome.i18n.getMessage(messageName, substitutions);
         if (msg) return msg;
     }
+    const subs = Array.isArray(substitutions) ? substitutions : [substitutions];
     const fallbacks = {
         extensionName: 'AW Browser Cleaner',
         extensionDescription: 'Selectively clear site data for a specific origin',
-        targetOriginLabel: 'Target Origin',
+        targetOriginLabel: 'Target origin',
         targetOriginPlaceholder: 'https://example.com',
-        useCurrentTabTitle: 'Use Current Tab',
-        dataToClearLabel: 'Data to Clear',
-        selectAll: 'Select All',
-        deselectAll: 'Deselect All',
+        useCurrentTabTitle: 'Use current tab',
+        useCurrentTabShort: 'This tab',
+        scopeExact: 'Only this origin. Other origins are not touched.',
+        scopeWide: 'Cookies apply to the whole registrable domain, so related subdomains may be signed out.',
+        dataToClearLabel: 'Data to clear',
+        selectAll: 'Select all',
+        deselectAll: 'Deselect all',
+        selectedCount: `${subs[0] || 0} of ${subs[1] || 0} selected`,
+        groupSession: 'Session',
+        groupStorage: 'Storage',
+        groupCache: 'Cache & offline',
         dataTypeCache: 'Cache Storage',
         dataTypeCookies: 'Cookies',
         dataTypeLocalStorage: 'Local Storage',
         dataTypeIndexedDB: 'IndexedDB',
         dataTypeServiceWorkers: 'Service Workers',
-        cookieWarningTitle: 'Cookie Warning:',
-        cookieWarningBody: 'Clearing cookies may sign you out of related subdomains. Cookies can be shared across a registrable domain (e.g., clearing www.example.com may also affect .example.com cookies).',
-        confirmTargetLabel: 'Target:',
-        confirmDataLabel: 'Data:',
-        confirmCookieNotice: 'Cookie cleanup may affect the entire registrable domain.',
-        confirmCleanupBtn: 'Confirm Cleanup',
+        cookieScopeTag: 'domain-wide',
+        confirmTitle: 'Confirm cleanup',
+        confirmTargetLabel: 'Target',
+        confirmDataLabel: 'Will be removed',
+        confirmUntouchedLabel: 'Not touched',
+        confirmUntouchedOrigins: 'Site storage of every other origin',
+        confirmUntouchedBrowser: 'History, downloads, form data and passwords',
+        confirmCookieNotice: 'Cookies are removed for the whole registrable domain, including related subdomains.',
+        confirmCleanupBtn: 'Clear including domain cookies',
         cancelBtn: 'Cancel',
-        clearSiteDataBtn: 'Clear Site Data',
-        clearingStatus: 'Clearing...',
-        cleanedSuccess: `Cleaned data for ${substitutions || ''}`,
+        clearSiteDataBtn: 'Clear site data',
+        clearingStatus: 'Clearing…',
+        cleanedSuccess: `Cleaned data for ${subs[0] || ''}`,
         errorUnsupportedScheme: 'This page uses an unsupported scheme. Navigate to an HTTP(S) page.',
         errorSelectDataType: 'Please select at least one data type.',
         cleanupCancelled: 'Cleanup cancelled.',
-        errorPrefix: `Error: ${substitutions || ''}`
+        errorPrefix: `Error: ${subs[0] || ''}`,
+        poweredBy: 'Powered by AhliWeb.com'
     };
     return fallbacks[messageName] || messageName;
 }
@@ -60,26 +78,24 @@ function getMessage(messageName, substitutions) {
  */
 function localizeDocument() {
     if (typeof document === 'undefined') return;
+    if (typeof chrome !== 'undefined' && chrome.i18n && typeof chrome.i18n.getUILanguage === 'function') {
+        document.documentElement.lang = chrome.i18n.getUILanguage();
+    }
     document.querySelectorAll('[data-i18n]').forEach(elem => {
-        const key = elem.getAttribute('data-i18n');
-        elem.textContent = getMessage(key);
+        elem.textContent = getMessage(elem.getAttribute('data-i18n'));
     });
     document.querySelectorAll('[data-i18n-placeholder]').forEach(elem => {
-        const key = elem.getAttribute('data-i18n-placeholder');
-        elem.setAttribute('placeholder', getMessage(key));
+        elem.setAttribute('placeholder', getMessage(elem.getAttribute('data-i18n-placeholder')));
     });
     document.querySelectorAll('[data-i18n-title]').forEach(elem => {
-        const key = elem.getAttribute('data-i18n-title');
-        elem.setAttribute('title', getMessage(key));
+        elem.setAttribute('title', getMessage(elem.getAttribute('data-i18n-title')));
     });
     document.querySelectorAll('[data-i18n-aria]').forEach(elem => {
-        const key = elem.getAttribute('data-i18n-aria');
-        elem.setAttribute('aria-label', getMessage(key));
+        elem.setAttribute('aria-label', getMessage(elem.getAttribute('data-i18n-aria')));
     });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Localize static UI elements on load
     localizeDocument();
 
     const originInput = document.getElementById('originInput');
@@ -87,30 +103,65 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearBtn = document.getElementById('clearBtn');
     const statusMessage = document.getElementById('statusMessage');
     const selectAllBtn = document.getElementById('selectAll');
-    const checkboxes = document.querySelectorAll('.checkbox-grid input[type="checkbox"]');
-    const cookieWarning = document.getElementById('cookieWarning');
+    const selectedCount = document.getElementById('selectedCount');
+    const checkboxes = Array.from(document.querySelectorAll('.checkbox-grid input[type="checkbox"]'));
+    const cookiesCheckbox = document.querySelector('.checkbox-grid input[value="cookies"]');
+    const scopeNote = document.getElementById('scopeNote');
+    const scopeNoteText = document.getElementById('scopeNoteText');
     const confirmArea = document.getElementById('confirmArea');
-    const confirmTarget = document.getElementById('confirmTarget');
+    const confirmOrigin = document.getElementById('confirmOrigin');
+    const confirmTypes = document.getElementById('confirmTypes');
     const confirmBtn = document.getElementById('confirmBtn');
     const cancelBtn = document.getElementById('cancelBtn');
-    const cookiesCheckbox = document.querySelector('.checkbox-grid input[value="cookies"]');
+    const versionTag = document.getElementById('versionTag');
 
     /** Pending cleanup state waiting for confirmation. */
     let pendingCleanup = null;
+    /** Active status timer, cleared before a new message is shown. */
+    let statusTimer = null;
+
+    if (versionTag && typeof chrome !== 'undefined' && chrome.runtime && typeof chrome.runtime.getManifest === 'function') {
+        versionTag.textContent = `v${chrome.runtime.getManifest().version}`;
+    }
 
     /**
-     * Displays a status message to the user.
-     * The status region uses aria-live for assistive technology.
+     * Mapping from UI checkbox values to chrome.browsingData API type keys
+     * and their i18n label keys.
+     */
+    const typeMapping = {
+        cache: { api: 'cacheStorage', label: 'dataTypeCache' },
+        cookies: { api: 'cookies', label: 'dataTypeCookies' },
+        localStorage: { api: 'localStorage', label: 'dataTypeLocalStorage' },
+        indexedDB: { api: 'indexedDB', label: 'dataTypeIndexedDB' },
+        serviceWorkers: { api: 'serviceWorkers', label: 'dataTypeServiceWorkers' }
+    };
+
+    /**
+     * Displays a status message. Success messages persist until the next
+     * action; errors and info messages disappear after STATUS_TIMEOUT_MS.
      * @param {string} msg - The message to display.
-     * @param {string} type - 'success' or 'error'.
+     * @param {'success'|'error'|'info'} type - Message type.
      */
     function showStatus(msg, type) {
+        if (statusTimer) {
+            clearTimeout(statusTimer);
+            statusTimer = null;
+        }
         statusMessage.textContent = msg;
-        statusMessage.className = `status-message ${type}`; // 'success' or 'error'
-        setTimeout(() => {
-            statusMessage.textContent = '';
-            statusMessage.className = 'status-message hidden';
-        }, 3000);
+        statusMessage.className = `status-message ${type}`;
+        if (type !== 'success') {
+            statusTimer = setTimeout(clearStatus, STATUS_TIMEOUT_MS);
+        }
+    }
+
+    /** Hides the status message. */
+    function clearStatus() {
+        if (statusTimer) {
+            clearTimeout(statusTimer);
+            statusTimer = null;
+        }
+        statusMessage.textContent = '';
+        statusMessage.className = 'status-message hidden';
     }
 
     /**
@@ -132,67 +183,56 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Mapping from UI checkbox values to chrome.browsingData API type keys.
-     * @type {Object<string, string>}
+     * Keeps the Select All label, selection count, and scope note in sync
+     * with the checkbox state.
      */
-    const typeMapping = {
-        'cache': 'cacheStorage',
-        'cookies': 'cookies',
-        'localStorage': 'localStorage',
-        'indexedDB': 'indexedDB',
-        'serviceWorkers': 'serviceWorkers'
-    };
+    function syncSelectionUi() {
+        const checkedCount = checkboxes.filter(cb => cb.checked).length;
+        const allChecked = checkedCount === checkboxes.length;
+        selectAllBtn.textContent = allChecked ? getMessage('deselectAll') : getMessage('selectAll');
+        selectedCount.textContent = getMessage('selectedCount', [String(checkedCount), String(checkboxes.length)]);
+
+        const wide = Boolean(cookiesCheckbox && cookiesCheckbox.checked);
+        scopeNote.dataset.scope = wide ? 'wide' : 'exact';
+        scopeNoteText.textContent = getMessage(wide ? 'scopeWide' : 'scopeExact');
+
+        if (pendingCleanup) hideConfirmation();
+    }
 
     /**
-     * Determines whether the current data-type selection requires confirmation.
-     * Confirmation is required when Cookies is selected, because cookie cleanup
-     * can affect the entire registrable domain and related subdomains.
+     * Confirmation is required when Cookies is selected, because cookie
+     * cleanup can affect the entire registrable domain.
      * @returns {boolean} True if confirmation is required.
      */
     function requiresConfirmation() {
-        return cookiesCheckbox && cookiesCheckbox.checked;
+        return Boolean(cookiesCheckbox && cookiesCheckbox.checked);
     }
 
     /**
-     * Shows or hides the cookie warning based on checkbox state.
-     */
-    function updateCookieWarning() {
-        if (cookiesCheckbox && cookiesCheckbox.checked) {
-            cookieWarning.classList.remove('hidden');
-        } else {
-            cookieWarning.classList.add('hidden');
-        }
-    }
-
-    /**
-     * Shows the confirmation area with cleanup details.
+     * Shows the confirmation panel. All dynamic values use textContent.
      * @param {string} targetOrigin - The exact origin being targeted.
      * @param {Object} selectedTypes - The selected data types.
+     * @param {Array<string>} labels - Localized names of the selected types.
      */
-    function showConfirmation(targetOrigin, selectedTypes) {
-        const typeNames = [];
-        if (selectedTypes.cacheStorage) typeNames.push(getMessage('dataTypeCache'));
-        if (selectedTypes.cookies) typeNames.push(getMessage('dataTypeCookies'));
-        if (selectedTypes.localStorage) typeNames.push(getMessage('dataTypeLocalStorage'));
-        if (selectedTypes.indexedDB) typeNames.push(getMessage('dataTypeIndexedDB'));
-        if (selectedTypes.serviceWorkers) typeNames.push(getMessage('dataTypeServiceWorkers'));
-
-        confirmTarget.innerHTML =
-            `<strong>${getMessage('confirmTargetLabel')}</strong> <code>${targetOrigin}</code><br>` +
-            `<strong>${getMessage('confirmDataLabel')}</strong> ${typeNames.join(', ')}<br>` +
-            `<em>${getMessage('confirmCookieNotice')}</em>`;
-
+    function showConfirmation(targetOrigin, selectedTypes, labels) {
+        confirmOrigin.textContent = targetOrigin;
+        confirmTypes.replaceChildren(...labels.map(label => {
+            const li = document.createElement('li');
+            li.textContent = label;
+            return li;
+        }));
         confirmArea.classList.remove('hidden');
+        document.body.classList.add('is-confirming');
+        clearBtn.disabled = true;
         confirmBtn.focus();
-
         pendingCleanup = { targetOrigin, selectedTypes };
     }
 
-    /**
-     * Hides the confirmation area and clears pending state.
-     */
+    /** Hides the confirmation panel and clears pending state. */
     function hideConfirmation() {
         confirmArea.classList.add('hidden');
+        document.body.classList.remove('is-confirming');
+        clearBtn.disabled = false;
         pendingCleanup = null;
     }
 
@@ -202,14 +242,12 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {Object} selectedTypes - The data types to remove.
      */
     function executeCleanup(targetOrigin, selectedTypes) {
-        const removalOptions = {
-            origins: [targetOrigin]
-        };
+        const removalOptions = { origins: [targetOrigin] };
+        const clearLabel = clearBtn.querySelector('.btn-text');
 
-        // Disable buttons while processing
         clearBtn.disabled = true;
-        clearBtn.querySelector('.btn-text').textContent = getMessage('clearingStatus');
         confirmBtn.disabled = true;
+        clearLabel.textContent = getMessage('clearingStatus');
 
         chrome.browsingData.remove(removalOptions, selectedTypes, () => {
             if (chrome.runtime.lastError) {
@@ -217,89 +255,80 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 showStatus(getMessage('cleanedSuccess', targetOrigin), 'success');
             }
-            // Reset buttons
-            clearBtn.disabled = false;
-            clearBtn.querySelector('.btn-text').textContent = getMessage('clearSiteDataBtn');
             confirmBtn.disabled = false;
             hideConfirmation();
+            clearLabel.textContent = getMessage('clearSiteDataBtn');
         });
     }
 
-    // Initial load — auto-fill with current tab's origin
+    // Initial state
     getCurrentTabOrigin();
+    syncSelectionUi();
 
-    // Fill Current button
     fillCurrentBtn.addEventListener('click', getCurrentTabOrigin);
 
-    // Cookie checkbox change — show/hide warning
-    if (cookiesCheckbox) {
-        cookiesCheckbox.addEventListener('change', updateCookieWarning);
-    }
+    checkboxes.forEach(cb => cb.addEventListener('change', syncSelectionUi));
 
-    // Also update warning when Select All toggles
     selectAllBtn.addEventListener('click', () => {
-        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-        checkboxes.forEach(cb => cb.checked = !allChecked);
-        selectAllBtn.textContent = allChecked ? getMessage('selectAll') : getMessage('deselectAll');
-        updateCookieWarning();
+        const allChecked = checkboxes.every(cb => cb.checked);
+        checkboxes.forEach(cb => { cb.checked = !allChecked; });
+        syncSelectionUi();
     });
 
-    // Update cookie warning on initial load (cookies is checked by default)
-    updateCookieWarning();
+    originInput.addEventListener('input', () => {
+        if (pendingCleanup) hideConfirmation();
+    });
 
-    // Clear Data — initiate cleanup or show confirmation
     clearBtn.addEventListener('click', () => {
-        const rawInput = originInput.value.trim();
+        clearStatus();
 
-        // Validate and normalize the target using origin-utils
-        const result = normalizeTarget(rawInput);
+        const result = normalizeTarget(originInput.value.trim());
         if (!result.valid) {
             showStatus(result.error, 'error');
             return;
         }
 
         const targetOrigin = result.origin;
-
-        // Update the input field to show the normalized origin
         originInput.value = targetOrigin;
 
         const selectedTypes = {};
-        let hasSelection = false;
-
+        const labels = [];
         checkboxes.forEach(cb => {
-            if (cb.checked) {
-                const apiType = typeMapping[cb.value];
-                if (apiType) {
-                    selectedTypes[apiType] = true;
-                    hasSelection = true;
-                }
+            const mapping = typeMapping[cb.value];
+            if (cb.checked && mapping) {
+                selectedTypes[mapping.api] = true;
+                labels.push(getMessage(mapping.label));
             }
         });
 
-        if (!hasSelection) {
+        if (labels.length === 0) {
             showStatus(getMessage('errorSelectDataType'), 'error');
             return;
         }
 
-        // If cookies are selected, require confirmation before proceeding
         if (requiresConfirmation()) {
-            showConfirmation(targetOrigin, selectedTypes);
+            showConfirmation(targetOrigin, selectedTypes, labels);
         } else {
-            // Low-impact operation — execute directly
             executeCleanup(targetOrigin, selectedTypes);
         }
     });
 
-    // Confirm button — execute the pending cleanup
     confirmBtn.addEventListener('click', () => {
         if (pendingCleanup) {
             executeCleanup(pendingCleanup.targetOrigin, pendingCleanup.selectedTypes);
         }
     });
 
-    // Cancel button — dismiss confirmation
     cancelBtn.addEventListener('click', () => {
         hideConfirmation();
-        showStatus(getMessage('cleanupCancelled'), 'error');
+        showStatus(getMessage('cleanupCancelled'), 'info');
+        clearBtn.focus();
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && pendingCleanup) {
+            event.preventDefault();
+            cancelBtn.click();
+        }
     });
 });
