@@ -349,9 +349,16 @@ export function prepareHostAccessCopy(patchManifest) {
     return dir;
 }
 
-/** Installs the unpacked extension and proves it is really loaded. Returns its id. */
-export async function loadExtension(browser, extensionPath = EXTENSION_PATH) {
-    const id = await withTimeout(browser.installExtension(extensionPath), 30000, 'browser.installExtension');
+/**
+ * Installs the unpacked extension and proves it is really loaded. Returns its id.
+ * `incognito: true` loads it with "Allow in Incognito" already on (CDP Extensions.loadUnpacked
+ * enableInIncognito); toggling the setting afterwards has no effect in recent Chrome for Testing.
+ */
+export async function loadExtension(browser, extensionPath = EXTENSION_PATH, { incognito = false } = {}) {
+    const install = incognito
+        ? browser.installExtension(extensionPath, { enabledInIncognito: true })
+        : browser.installExtension(extensionPath);
+    const id = await withTimeout(install, 30000, 'browser.installExtension');
     if (!/^[a-p]{32}$/.test(id)) throw new Error(`Extension id looks wrong: ${id}`);
     const manifest = JSON.parse(fs.readFileSync(path.join(EXTENSION_PATH, 'manifest.json'), 'utf8'));
     const page = await browser.newPage();
@@ -384,7 +391,7 @@ function banner(lines) {
  *
  * Call it with top-level await at the start of a test file.
  */
-export async function launchE2E({ hostAccess = false, patchManifest } = {}) {
+export async function launchE2E({ hostAccess = false, patchManifest, incognito = false } = {}) {
     let fixtures;
     let browser;
     let extensionCopy;
@@ -421,7 +428,7 @@ export async function launchE2E({ hostAccess = false, patchManifest } = {}) {
         fixtures = await startFixtures();
         browser = await withTimeout(launchBrowser({ puppeteer, chromePath: chrome.path, fixtures }), 90000, 'Chrome launch');
         extensionCopy = hostAccess ? prepareHostAccessCopy(patchManifest) : undefined;
-        const extensionId = await loadExtension(browser, extensionCopy);
+        const extensionId = await loadExtension(browser, extensionCopy, { incognito });
         const chromeVersion = await browser.version();
         console.log(`AW E2E: ${chromeVersion} (${chrome.source}: ${chrome.path}), extension ${extensionId}, ` +
             `origins ${Object.values(fixtures.origins).join(' ')}`);
@@ -548,7 +555,10 @@ export async function readState(browser, origin, { page: existing } = {}) {
         const inPage = await page.evaluate(readInPage);
         cdp = await page.createCDPSession();
         const { cookies } = await cdp.send('Network.getCookies', { urls: [`${origin}/`] });
-        const cookieInfo = cookies.map((c) => ({ name: c.name, httpOnly: c.httpOnly, domain: c.domain }));
+        // Chrome returns cookies in no fixed order: sort so states compare deterministically.
+        const cookieInfo = cookies
+            .map((c) => ({ name: c.name, httpOnly: c.httpOnly, domain: c.domain }))
+            .sort((a, b) => `${a.name}|${a.domain}`.localeCompare(`${b.name}|${b.domain}`));
         return { ...inPage, cookies: cookies.map((c) => c.name).sort(), cookieInfo };
     } finally {
         try { await cdp?.detach(); } catch { /* page gone */ }

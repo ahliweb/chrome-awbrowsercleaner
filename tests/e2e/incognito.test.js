@@ -3,8 +3,8 @@
  *
  * Acceptance: "E2E Incognito green; data in the regular window untouched".
  *
- * "Allow in Incognito" is switched on through chrome://extensions (see enableIncognitoAccess in
- * helpers.js), then a REAL incognito window is opened by the extension's service worker
+ * The extension is installed with "Allow in Incognito" already on (CDP Extensions.loadUnpacked
+ * enableInIncognito; enableIncognitoAccess in helpers.js remains the fallback), then a REAL incognito window is opened by the extension's service worker
  * (puppeteer's createBrowserContext() is not a real incognito window for extensions). The same origin
  * A is seeded in the regular profile and in the incognito window with different values, a cleanup is
  * run through runPresetOnTab (the keyboard shortcut path) for the tab in one profile, and both
@@ -27,7 +27,7 @@ import {
     openIncognitoPage, EXTENSION_PATH, isCI
 } from './helpers.js';
 
-const env = await launchE2E({ hostAccess: true });
+const env = await launchE2E({ hostAccess: true, incognito: true });
 afterAll(async () => { await env?.close(); });
 
 const manifest = JSON.parse(fs.readFileSync(path.join(EXTENSION_PATH, 'manifest.json'), 'utf8'));
