@@ -6,6 +6,34 @@ Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/) dan pr
 
 ## [Unreleased]
 
+### Changed
+
+- **Gaya visual profesional**: popup didesain ulang dengan tema terang netral yang mengikuti tema sistem (mode gelap otomatis via `prefers-color-scheme`), satu aksen biru dari logo, label sentence case, dan kontras teks WCAG AA.
+- **Lingkup selalu terlihat**: catatan lingkup hijau "hanya origin ini" berubah menjadi peringatan kuning saat Cookies dipilih (registrable domain); tag `domain-wide` pada Cookies menggantikan banner peringatan yang selalu tampil.
+- **Panel konfirmasi**: menggantikan form saat dibuka (popup tetap di bawah 600 px), menampilkan daftar "Akan dihapus" dan "Tidak disentuh"; tombol merah hanya untuk pembersihan yang menyertakan cookie domain; `Esc` membatalkan.
+- **Data dikelompokkan**: Sesi, Storage, Cache & offline, dengan jumlah tipe terpilih.
+- **Font lokal**: Inter dan JetBrains Mono (variable, subset Latin, SIL OFL 1.1) dipaketkan di `fonts/` tanpa CDN.
+
+### Fixed
+
+- Label **Select All** sinkron dengan status checkbox saat popup dibuka dan setiap perubahan (#28).
+- Timer pesan status dibatalkan sebelum pesan baru; pesan sukses tidak lagi hilang setelah 3 detik (#28).
+- Panel konfirmasi dibangun dengan `textContent`/`createElement`, tanpa `innerHTML` (#28).
+
+### Changed
+
+- **Gaya visual profesional**: popup didesain ulang dengan tema terang netral yang mengikuti tema sistem (mode gelap otomatis via `prefers-color-scheme`), satu aksen biru dari logo, label sentence case, dan kontras teks WCAG AA.
+- **Lingkup selalu terlihat**: catatan lingkup hijau "hanya origin ini" berubah menjadi peringatan kuning saat Cookies dipilih (registrable domain); tag `domain-wide` pada Cookies menggantikan banner peringatan yang selalu tampil.
+- **Panel konfirmasi**: menggantikan form saat dibuka (popup tetap < 600 px), menampilkan daftar "Akan dihapus" dan "Tidak disentuh"; tombol destruktif merah hanya untuk pembersihan yang menyertakan cookie domain; `Esc` membatalkan.
+- **Data dikelompokkan**: Sesi, Storage, Cache & offline, dengan jumlah tipe terpilih.
+- **Font lokal**: Inter dan JetBrains Mono (variable, subset Latin, SIL OFL 1.1) dipaketkan di `fonts/` tanpa CDN.
+
+### Fixed
+
+- Label **Select All** kini sinkron dengan status checkbox saat popup dibuka dan setiap perubahan (sebelumnya klik pertama justru menghapus semua centang).
+- Timer pesan status dibatalkan sebelum pesan baru; pesan sukses tidak lagi hilang setelah 3 detik.
+- Panel konfirmasi dibangun dengan `textContent`/`createElement`, tanpa `innerHTML`.
+
 ## [v1.2.0] - 2026-09-20
 
 ### Added

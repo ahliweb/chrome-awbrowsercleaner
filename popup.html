@@ -9,107 +9,122 @@
 </head>
 
 <body>
-  <div class="container">
-    <header>
-      <div class="logo">
-        <img src="icons/icon48.png" alt="AW Browser Cleaner logo" id="header-logo">
-      </div>
-      <h1>AW Browser Cleaner</h1>
+  <div class="app">
+    <header class="app-header">
+      <img src="icons/icon48.png" alt="" id="header-logo">
+      <h1 data-i18n="extensionName">AW Browser Cleaner</h1>
+      <span class="version-tag" id="versionTag"></span>
     </header>
 
-    <main>
-      <div class="input-group">
-        <label for="originInput" data-i18n="targetOriginLabel">Target Origin</label>
-        <div class="input-wrapper">
-          <input type="text" id="originInput" placeholder="https://example.com" data-i18n-placeholder="targetOriginPlaceholder" spellcheck="false">
-          <button id="fillCurrent" title="Use Current Tab" aria-label="Use Current Tab" data-i18n-title="useCurrentTabTitle" data-i18n-aria="useCurrentTabTitle">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-              <polyline points="15 3 21 3 21 9"></polyline>
-              <line x1="10" y1="14" x2="21" y2="3"></line>
-            </svg>
-          </button>
+    <main class="app-body">
+      <div class="field" data-hide-on-confirm>
+        <label class="field-label" for="originInput" data-i18n="targetOriginLabel">Target origin</label>
+        <div class="input-row">
+          <input type="text" id="originInput" class="text-input" placeholder="https://example.com"
+            data-i18n-placeholder="targetOriginPlaceholder" spellcheck="false" autocomplete="off">
+          <button type="button" id="fillCurrent" class="btn btn-secondary" title="Use current tab"
+            data-i18n="useCurrentTabShort" data-i18n-title="useCurrentTabTitle">This tab</button>
         </div>
-      </div>
-
-      <div class="options-group">
-        <div class="options-header">
-          <label data-i18n="dataToClearLabel">Data to Clear</label>
-          <button id="selectAll" class="text-btn" data-i18n="selectAll">Select All</button>
-        </div>
-
-        <div class="checkbox-grid">
-          <label class="checkbox-item">
-            <input type="checkbox" value="cache" checked>
-            <span class="custom-check"></span>
-            <span data-i18n="dataTypeCache">Cache Storage</span>
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" value="cookies" checked>
-            <span class="custom-check"></span>
-            <span data-i18n="dataTypeCookies">Cookies</span>
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" value="localStorage" checked>
-            <span class="custom-check"></span>
-            <span data-i18n="dataTypeLocalStorage">Local Storage</span>
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" value="indexedDB" checked>
-            <span class="custom-check"></span>
-            <span data-i18n="dataTypeIndexedDB">IndexedDB</span>
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" value="serviceWorkers" checked>
-            <span class="custom-check"></span>
-            <span data-i18n="dataTypeServiceWorkers">Service Workers</span>
-          </label>
-        </div>
-      </div>
-
-      <div id="cookieWarning" class="cookie-warning hidden" role="alert">
-        <div class="cookie-warning-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
+        <div id="scopeNote" class="scope-note" data-scope="exact" aria-live="polite">
+          <svg class="icon-exact" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <polyline points="9 12 11 14 15 10"></polyline>
+          </svg>
+          <svg class="icon-wide" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
             <line x1="12" y1="9" x2="12" y2="13"></line>
             <line x1="12" y1="17" x2="12.01" y2="17"></line>
           </svg>
-        </div>
-        <div class="cookie-warning-text">
-          <strong data-i18n="cookieWarningTitle">Cookie Warning:</strong> <span data-i18n="cookieWarningBody">Clearing cookies may sign you out of related subdomains. Cookies can be shared across a registrable domain (e.g., clearing <code>www.example.com</code> may also affect <code>.example.com</code> cookies).</span>
+          <span id="scopeNoteText" data-i18n="scopeExact">Only this origin. Other origins are not touched.</span>
         </div>
       </div>
 
-      <div id="confirmArea" class="confirm-area hidden">
-        <div class="confirm-target" id="confirmTarget"></div>
+      <section class="field" aria-labelledby="dataToClearLabel" data-hide-on-confirm>
+        <div class="section-header">
+          <h2 class="section-label" id="dataToClearLabel" data-i18n="dataToClearLabel">Data to clear</h2>
+          <div class="section-meta">
+            <span id="selectedCount"></span>
+            <button type="button" id="selectAll" class="text-btn">Deselect all</button>
+          </div>
+        </div>
+
+        <div class="data-panel checkbox-grid">
+          <div class="data-group" role="group" aria-labelledby="groupSession">
+            <div class="data-group-title" id="groupSession" data-i18n="groupSession">Session</div>
+            <div class="data-grid">
+              <label class="check-row">
+                <input type="checkbox" value="cookies" checked>
+                <span data-i18n="dataTypeCookies">Cookies</span>
+                <span class="scope-tag" data-i18n="cookieScopeTag">domain-wide</span>
+              </label>
+            </div>
+          </div>
+          <div class="data-group" role="group" aria-labelledby="groupStorage">
+            <div class="data-group-title" id="groupStorage" data-i18n="groupStorage">Storage</div>
+            <div class="data-grid">
+              <label class="check-row">
+                <input type="checkbox" value="localStorage" checked>
+                <span data-i18n="dataTypeLocalStorage">Local Storage</span>
+              </label>
+              <label class="check-row">
+                <input type="checkbox" value="indexedDB" checked>
+                <span data-i18n="dataTypeIndexedDB">IndexedDB</span>
+              </label>
+            </div>
+          </div>
+          <div class="data-group" role="group" aria-labelledby="groupCache">
+            <div class="data-group-title" id="groupCache" data-i18n="groupCache">Cache &amp; offline</div>
+            <div class="data-grid">
+              <label class="check-row">
+                <input type="checkbox" value="cache" checked>
+                <span data-i18n="dataTypeCache">Cache Storage</span>
+              </label>
+              <label class="check-row">
+                <input type="checkbox" value="serviceWorkers" checked>
+                <span data-i18n="dataTypeServiceWorkers">Service Workers</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="confirmArea" class="confirm-panel hidden" aria-labelledby="confirmTitle">
+        <h2 id="confirmTitle" data-i18n="confirmTitle">Confirm cleanup</h2>
+        <div class="confirm-block">
+          <span class="section-label" data-i18n="confirmTargetLabel">Target</span>
+          <span class="confirm-origin" id="confirmOrigin"></span>
+        </div>
+        <div class="confirm-block">
+          <span class="section-label" data-i18n="confirmDataLabel">Will be removed</span>
+          <ul class="confirm-list" id="confirmTypes"></ul>
+        </div>
+        <div class="confirm-block">
+          <span class="section-label" data-i18n="confirmUntouchedLabel">Not touched</span>
+          <ul class="confirm-list">
+            <li data-i18n="confirmUntouchedOrigins">Site storage of every other origin</li>
+            <li data-i18n="confirmUntouchedBrowser">History, downloads, form data and passwords</li>
+          </ul>
+        </div>
+        <p class="confirm-cookie-notice" data-i18n="confirmCookieNotice">Cookies are removed for the whole registrable
+          domain, including related subdomains.</p>
         <div class="confirm-actions">
-          <button id="confirmBtn" class="confirm-btn">
-            <span class="btn-text" data-i18n="confirmCleanupBtn">Confirm Cleanup</span>
+          <button type="button" id="cancelBtn" class="btn btn-secondary" data-i18n="cancelBtn">Cancel</button>
+          <button type="button" id="confirmBtn" class="btn btn-danger">
+            <span class="btn-text" data-i18n="confirmCleanupBtn">Clear including domain cookies</span>
           </button>
-          <button id="cancelBtn" class="cancel-btn" data-i18n="cancelBtn">Cancel</button>
         </div>
-      </div>
-
-      <div class="action-area">
-        <button id="clearBtn" class="primary-btn">
-          <span class="btn-text" data-i18n="clearSiteDataBtn">Clear Site Data</span>
-          <span class="btn-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            </svg>
-          </span>
-        </button>
-      </div>
+      </section>
 
       <div id="statusMessage" class="status-message hidden" role="status" aria-live="polite"></div>
     </main>
 
-    <footer>
-      <small>Powered by AhliWeb.com</small>
+    <footer class="app-footer">
+      <button type="button" id="clearBtn" class="btn btn-primary" data-hide-on-confirm>
+        <span class="btn-text" data-i18n="clearSiteDataBtn">Clear site data</span>
+      </button>
+      <small data-i18n="poweredBy">Powered by AhliWeb.com</small>
     </footer>
   </div>
   <script src="origin-utils.js"></script>
