@@ -2,7 +2,7 @@
  * AW Browser Cleaner - Origin Utilities
  * Pure, testable module for target normalization and validation.
  *
- * This module has no Chrome API dependencies so it can be unit-tested
+ * This ES module has no Chrome API dependencies so it can be unit-tested
  * without an extension runtime environment.
  */
 
@@ -10,7 +10,7 @@
  * Set of URL schemes supported for cleanup operations.
  * @type {Set<string>}
  */
-const VALID_SCHEMES = new Set(['http:', 'https:']);
+export const VALID_SCHEMES = new Set(['http:', 'https:']);
 
 /**
  * Result of a target normalization/validation operation.
@@ -35,7 +35,7 @@ const VALID_SCHEMES = new Set(['http:', 'https:']);
  * @param {string} input - The raw user input to normalize.
  * @returns {NormalizeResult} The normalization result.
  */
-function normalizeTarget(input) {
+export function normalizeTarget(input) {
     if (!input || typeof input !== 'string') {
         return { valid: false, origin: '', error: 'Please enter a target origin.' };
     }
@@ -116,6 +116,15 @@ function normalizeTarget(input) {
         };
     }
 
+    // Wildcards are never a target: the URL parser accepts "*" in hosts.
+    if (url.hostname.includes('*')) {
+        return {
+            valid: false,
+            origin: '',
+            error: 'Wildcards are not allowed. Enter one exact origin.'
+        };
+    }
+
     // Get the exact origin (scheme + hostname + port)
     const origin = url.origin;
 
@@ -137,7 +146,7 @@ function normalizeTarget(input) {
  * @param {string} origin - The origin string to validate.
  * @returns {NormalizeResult} The validation result.
  */
-function validateOrigin(origin) {
+export function validateOrigin(origin) {
     if (!origin || typeof origin !== 'string') {
         return { valid: false, origin: '', error: 'Origin is required.' };
     }
@@ -158,6 +167,14 @@ function validateOrigin(origin) {
                 valid: false,
                 origin: '',
                 error: 'Origin must include a hostname.'
+            };
+        }
+
+        if (url.hostname.includes('*')) {
+            return {
+                valid: false,
+                origin: '',
+                error: 'Wildcards are not allowed in an origin.'
             };
         }
 
@@ -188,7 +205,3 @@ function validateOrigin(origin) {
     }
 }
 
-// Export for testing (Node.js) or make available globally (browser)
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { normalizeTarget, validateOrigin, VALID_SCHEMES };
-}

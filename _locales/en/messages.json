@@ -69,8 +69,20 @@
     "message": "Cache & offline",
     "description": "Data group heading."
   },
-  "dataTypeCache": {
+  "dataTypeCacheStorage": {
     "message": "Cache Storage",
+    "description": "Data type label."
+  },
+  "dataTypeHttpCache": {
+    "message": "HTTP cache",
+    "description": "Data type label."
+  },
+  "dataTypeSessionStorage": {
+    "message": "Session Storage",
+    "description": "Data type label."
+  },
+  "dataTypeFileSystems": {
+    "message": "File systems",
     "description": "Data type label."
   },
   "dataTypeCookies": {
