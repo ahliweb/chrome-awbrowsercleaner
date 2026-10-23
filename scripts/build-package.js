@@ -3,10 +3,17 @@
  * AW Browser Cleaner - Deterministic Packaging Script
  *
  * Builds a clean ZIP package containing only runtime-required files
- * for Chrome Web Store upload, and generates SHA-256 checksums.
+ * for store upload, and generates SHA-256 checksums.
+ *
+ * Targets (--target=<name>, default "chrome"):
+ *   chrome -> dist/aw-browser-cleaner-v<version>.zip
+ *   edge   -> dist/aw-browser-cleaner-edge-v<version>.zip
+ *   Both targets pack the same RUNTIME_FILES and the same manifest; only the
+ *   artifact name differs.
  *
  * Usage:
  *   bun scripts/build-package.js
+ *   bun scripts/build-package.js --target=edge
  */
 
 const fs = require('fs');
@@ -17,17 +24,42 @@ const crypto = require('crypto');
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DIST_DIR = path.join(ROOT_DIR, 'dist');
 
-// Files required for runtime execution in Chrome Web Store package
-const { RUNTIME_FILES } = require('./package-files');
+// Files required for runtime execution in store package
+const { RUNTIME_FILES, TARGETS } = require('./package-files');
 
-function buildPackage() {
+const DEFAULT_TARGET = 'chrome';
+
+/**
+ * Parses the command line. Only --target=<name> is accepted.
+ * Exits with status 1 for an unknown argument or an unknown target.
+ * @param {string[]} argv - Arguments after the script path.
+ * @returns {string} Target name.
+ */
+function parseTarget(argv) {
+    let target = DEFAULT_TARGET;
+    for (const arg of argv) {
+        if (!arg.startsWith('--target=')) {
+            console.error(`❌ Unknown argument: ${arg}`);
+            console.error(`   Usage: bun scripts/build-package.js [--target=${Object.keys(TARGETS).join('|')}]`);
+            process.exit(1);
+        }
+        target = arg.slice('--target='.length);
+    }
+    if (!Object.prototype.hasOwnProperty.call(TARGETS, target)) {
+        console.error(`❌ Unknown target: "${target}". Supported targets: ${Object.keys(TARGETS).join(', ')}`);
+        process.exit(1);
+    }
+    return target;
+}
+
+function buildPackage(target) {
     console.log('📦 Starting extension build package...');
 
     // 1. Read manifest version
     const manifestPath = path.join(ROOT_DIR, 'manifest.json');
     const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
     const version = manifest.version;
-    const zipName = `aw-browser-cleaner-v${version}.zip`;
+    const zipName = `${TARGETS[target].artifactPrefix}-v${version}.zip`;
     const zipPath = path.join(DIST_DIR, zipName);
     const sha256Path = path.join(DIST_DIR, `${zipName}.sha256`);
 
@@ -77,4 +109,4 @@ function buildPackage() {
     console.log(`  Checksum: ${sha256Path}`);
 }
 
-buildPackage();
+buildPackage(parseTarget(process.argv.slice(2)));

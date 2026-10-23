@@ -25,6 +25,7 @@ Current published version: `1.2.0`
 - [ ] No unused host permission remains.
 - [ ] No remotely hosted executable code is used.
 - [ ] Icons referenced in the manifest exist and are correct.
+- [ ] Run `bun run check:permissions` (manifest vs permission matrix).
 
 ## 3. Privacy and disclosure
 
@@ -49,19 +50,7 @@ Current published version: `1.2.0`
 
 The Web Store ZIP must contain runtime assets only.
 
-Expected runtime files (11 total):
-
-- `manifest.json`
-- `popup.html`
-- `popup.js`
-- `origin-utils.js`
-- `styles.css`
-- `icons/icon16.png`
-- `icons/icon48.png`
-- `icons/icon128.png`
-- `_locales/en/messages.json`
-- `_locales/id/messages.json`
-- `LICENSE`
+Expected runtime files: exactly the list in [`scripts/package-files.js`](../../scripts/package-files.js) (`RUNTIME_FILES`). `bun run validate:package` fails on any missing or extra entry, and a unit test fails if a shipped page or module references a file that is not in the list.
 
 Exclude: `.git/`, `.github/`, `docs/`, `tests/`, `scripts/`, `node_modules/`, `dist/`, `bun.lock`, `package.json`, `.eslintrc.json`, `verification_test.html`, `.env*`, secrets/tokens, editor files, local build artifacts.
 
@@ -70,6 +59,7 @@ Exclude: `.git/`, `.github/`, `docs/`, `tests/`, `scripts/`, `node_modules/`, `d
 - [ ] Package validated (`bun run validate:package`).
 - [ ] Release ZIP manually inspected (`unzip -l dist/*.zip`).
 - [ ] Release ZIP loaded/tested in Chromium before submission.
+- [ ] Verify provenance: `gh attestation verify dist/aw-browser-cleaner-vX.Y.Z.zip --repo ahliweb/chrome-awbrowsercleaner`
 
 ## 6. Regression tests
 
@@ -111,6 +101,14 @@ Only after all checks above pass:
 - [ ] Publisher/contact details are current.
 - [ ] Developer Dashboard access is confirmed before release day.
 - [ ] CWS API credentials (`CWS_CLIENT_ID`, `CWS_CLIENT_SECRET`, `CWS_REFRESH_TOKEN`) are configured in GitHub Secrets.
+
+## 9. Edge Add-ons
+
+Edge ships the same Chromium MV3 package. Build, submission and test steps for Edge are in [docs/edge/EDGE_ADDONS.md](../edge/EDGE_ADDONS.md).
+
+- [ ] Edge package built and validated (`bun scripts/build-package.js --target=edge && bun scripts/validate-package.js --target=edge`).
+- [ ] Edge Partner Center listing, privacy policy URL and permission justifications match this release.
+- [ ] Edge test checklist in `docs/edge/EDGE_ADDONS.md` completed on the Edge package.
 
 ## Official references
 

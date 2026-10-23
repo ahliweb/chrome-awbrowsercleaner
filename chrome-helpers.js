@@ -9,10 +9,10 @@
 import { normalizeTarget } from './origin-utils.js';
 
 /** Hosts whose pages extensions can neither script nor read cookies for. */
-const WEB_STORE_HOSTS = Object.freeze(['chromewebstore.google.com']);
+const WEB_STORE_HOSTS = Object.freeze(['chromewebstore.google.com', 'microsoftedge.microsoft.com']);
 
 /**
- * Whether a URL is a Chrome Web Store page.
+ * Whether a URL is an extension store page (Chrome Web Store, Edge Add-ons).
  * @param {URL} url - Parsed URL.
  * @returns {boolean} True for the Web Store.
  */

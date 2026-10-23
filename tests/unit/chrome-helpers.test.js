@@ -121,3 +121,9 @@ describe('tabContext', () => {
         }
     });
 });
+
+describe('store pages', () => {
+    test('the Microsoft Edge Add-ons store is not scriptable', () => {
+        expect(isScriptableUrl('https://microsoftedge.microsoft.com/addons/detail/x')).toBe(false);
+    });
+});

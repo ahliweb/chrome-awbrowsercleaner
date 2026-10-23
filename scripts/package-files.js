@@ -39,4 +39,10 @@ const RUNTIME_FILES = Object.freeze([
     'LICENSE'
 ]);
 
-module.exports = { RUNTIME_FILES };
+/** Store targets: same files and manifest, different artifact names. */
+const TARGETS = Object.freeze({
+    chrome: Object.freeze({ artifactPrefix: 'aw-browser-cleaner' }),
+    edge: Object.freeze({ artifactPrefix: 'aw-browser-cleaner-edge' })
+});
+
+module.exports = { RUNTIME_FILES, TARGETS };
