@@ -8,8 +8,13 @@
  * - No tests, docs, secrets, git files, or build configs leaked into the archive
  * - SHA-256 checksum matches the generated .sha256 file
  *
+ * Targets (--target=<name>, default "chrome") select the artifact name:
+ *   chrome -> aw-browser-cleaner-v<version>.zip
+ *   edge   -> aw-browser-cleaner-edge-v<version>.zip
+ *
  * Usage:
  *   bun scripts/validate-package.js [version]
+ *   bun scripts/validate-package.js --target=edge [version]
  */
 
 const fs = require('fs');
@@ -20,13 +25,48 @@ const crypto = require('crypto');
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DIST_DIR = path.join(ROOT_DIR, 'dist');
 
-const { RUNTIME_FILES } = require('./package-files');
+const { RUNTIME_FILES, TARGETS } = require('./package-files');
 
 const ALLOWED_FILES = new Set(RUNTIME_FILES);
 
-function validatePackage(targetVersion) {
+const DEFAULT_TARGET = 'chrome';
+
+/**
+ * Parses the command line: an optional version (positional) and an optional
+ * --target=<name>, in either order. Exits with status 1 on bad input.
+ * @param {string[]} argv - Arguments after the script path.
+ * @returns {{target: string, version: string|undefined}} Parsed arguments.
+ */
+function parseArgs(argv) {
+    const usage = `Usage: bun scripts/validate-package.js [--target=${Object.keys(TARGETS).join('|')}] [version]`;
+    let target = DEFAULT_TARGET;
+    let version;
+    for (const arg of argv) {
+        if (arg.startsWith('--')) {
+            if (!arg.startsWith('--target=')) {
+                console.error(`❌ Unknown argument: ${arg}`);
+                console.error(`   ${usage}`);
+                process.exit(1);
+            }
+            target = arg.slice('--target='.length);
+        } else if (version === undefined) {
+            version = arg;
+        } else {
+            console.error(`❌ Unexpected extra argument: ${arg}`);
+            console.error(`   ${usage}`);
+            process.exit(1);
+        }
+    }
+    if (!Object.prototype.hasOwnProperty.call(TARGETS, target)) {
+        console.error(`❌ Unknown target: "${target}". Supported targets: ${Object.keys(TARGETS).join(', ')}`);
+        process.exit(1);
+    }
+    return { target, version };
+}
+
+function validatePackage(target, targetVersion) {
     const version = targetVersion || JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'manifest.json'), 'utf8')).version;
-    const zipName = `aw-browser-cleaner-v${version}.zip`;
+    const zipName = `${TARGETS[target].artifactPrefix}-v${version}.zip`;
     const zipPath = path.join(DIST_DIR, zipName);
     const sha256Path = path.join(DIST_DIR, `${zipName}.sha256`);
 
@@ -91,5 +131,5 @@ function validatePackage(targetVersion) {
     console.log(`\n✅ Package validation passed successfully!`);
 }
 
-const argVersion = process.argv[2];
-validatePackage(argVersion);
+const { target, version: argVersion } = parseArgs(process.argv.slice(2));
+validatePackage(target, argVersion);

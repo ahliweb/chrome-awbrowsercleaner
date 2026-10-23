@@ -50,7 +50,7 @@ suite('Popup rendering', () => {
     test('popup renders its core controls', guarded(env, 'popup-renders', async () => {
         const popup = await openPopupPage(env.browser, env.extensionId);
         try {
-            for (const selector of ['#originInput', '#clearBtn', '#selectAll', '#selectedCount', '#scopeNote[data-scope]', '#statusMessage', '#confirmArea']) {
+            for (const selector of ['#originInput', '#clearBtn', '#selectAll', '#selectedCount', '#scopeNote[data-scope]', '#statusMessage', '#presetBar', '#rangeSelect', '#afterSelect', '#cookieSummary', '#cookieManageBtn', '#extraOrigins', '#addOriginBtn', '#optionsBtn', '#testModeTag', '#screenConfirm', '#screenCookies', '#screenResult', '#screenUnsupported']) {
                 expect(await popup.$(selector)).not.toBeNull();
             }
             expect(await popup.title()).toContain('AW Browser Cleaner');
@@ -74,7 +74,6 @@ suite('Popup rendering', () => {
         const popup = await openPopupPage(env.browser, env.extensionId);
         await popup.close();
         const errors = getLogs(env.browser).slice(before).filter((l) => /pageerror|console\.error/.test(l));
-        // The popup shows an "unsupported scheme" message for its own tab; that is not an uncaught error.
         expect(errors).toEqual([]);
     }));
 

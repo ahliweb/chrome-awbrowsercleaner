@@ -220,5 +220,1399 @@
   "presetCustom": {
     "message": "Custom",
     "description": "Label shown when the current selection no longer matches any preset."
+  },
+  "commandCleanLast": {
+    "message": "Clean this origin with the last preset",
+    "description": "Description of the keyboard shortcut (manifest commands) that runs the last used preset on the active tab's origin. Shown on chrome://extensions/shortcuts."
+  },
+  "commandCleanLogout": {
+    "message": "Clean this origin with the Logout preset",
+    "description": "Description of the keyboard shortcut (manifest commands) that runs the built-in Log out preset on the active tab's origin. Shown on chrome://extensions/shortcuts."
+  },
+  "menuCleanWithPreset": {
+    "message": "Clean this origin with preset…",
+    "description": "Title of the parent context-menu item (toolbar icon and page right-click menu). Its sub-items are the preset names."
+  },
+  "unsupportedTitle": {
+    "message": "This page can't be cleaned",
+    "description": "Title of the screen shown when the active tab is not an http(s) page."
+  },
+  "unsupportedBody": {
+    "message": "$ARG1$ is not a web origin. The extension only works for $ARG2$ and $ARG3$ origins.",
+    "description": "Explains why the tab cannot be cleaned. $1 is the tab's scheme (e.g. chrome://settings), $2 and $3 are the supported schemes (http://, https://).",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "chrome://settings"
+      },
+      "arg2": {
+        "content": "$2",
+        "example": "http://"
+      },
+      "arg3": {
+        "content": "$3",
+        "example": "https://"
+      }
+    }
+  },
+  "unsupportedBodyProtected": {
+    "message": "$ARG1$ is protected by Chrome. The extension only works for $ARG2$ and $ARG3$ origins.",
+    "description": "Same as unsupportedBody for protected web pages such as the Chrome Web Store. $1 is the host.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "chromewebstore.google.com"
+      },
+      "arg2": {
+        "content": "$2",
+        "example": "http://"
+      },
+      "arg3": {
+        "content": "$3",
+        "example": "https://"
+      }
+    }
+  },
+  "unsupportedUnknownPage": {
+    "message": "This page",
+    "description": "Fallback name of the active tab when its address is unknown."
+  },
+  "unsupportedManualLabel": {
+    "message": "Or type a target URL",
+    "description": "Label of the manual target input on the unsupported-page screen."
+  },
+  "unsupportedPreviewLabel": {
+    "message": "Normalized to",
+    "description": "Label above the normalized origin preview."
+  },
+  "previewNotePathDropped": {
+    "message": "Path, query and hash are removed",
+    "description": "Part of the normalization notes line."
+  },
+  "previewNoteDefaultScheme": {
+    "message": "default scheme $ARG1$",
+    "description": "Part of the normalization notes line. $1 is the scheme, e.g. https.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "https"
+      }
+    }
+  },
+  "previewNoteDefaultPort": {
+    "message": "port $ARG1$",
+    "description": "Part of the normalization notes line. $1 is the default port, e.g. 443.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "443"
+      }
+    }
+  },
+  "unsupportedContinueBtn": {
+    "message": "Continue with this origin",
+    "description": "Button that continues with the manually entered origin."
+  },
+  "unsupportedRecentLabel": {
+    "message": "Recent origins",
+    "description": "Heading of the recent origins list."
+  },
+  "relTimeJustNow": {
+    "message": "just now",
+    "description": "Relative time: less than a minute ago."
+  },
+  "relTimeMinutes": {
+    "message": "$ARG1$ min ago",
+    "description": "Relative time in minutes. $1 is the number.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
+  },
+  "relTimeHours": {
+    "message": "$ARG1$ h ago",
+    "description": "Relative time in hours. $1 is the number.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "relTimeDays": {
+    "message": "$ARG1$ d ago",
+    "description": "Relative time in days. $1 is the number.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "resultTitle": {
+    "message": "Cleanup result",
+    "description": "Title of the result screen."
+  },
+  "resultDone": {
+    "message": "Done",
+    "description": "Button that closes the result screen."
+  },
+  "resultCleanedIn": {
+    "message": "Cleaned in $ARG1$ ms",
+    "description": "Result banner title. $1 is the duration in milliseconds.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "412"
+      }
+    }
+  },
+  "resultCleanedWithErrors": {
+    "message": "Cleaned with errors",
+    "description": "Result banner title when something failed."
+  },
+  "resultAfterNone": {
+    "message": "The tab was left as it was.",
+    "description": "Banner sentence when no after-action ran."
+  },
+  "resultAfterReload": {
+    "message": "Tab reloaded.",
+    "description": "Banner sentence after a normal reload."
+  },
+  "resultAfterHard": {
+    "message": "Tab reloaded without cache.",
+    "description": "Banner sentence after a hard reload."
+  },
+  "resultAfterStart": {
+    "message": "Opened the start page.",
+    "description": "Banner sentence after navigating to the start page."
+  },
+  "resultOriginsOne": {
+    "message": "Only 1 origin processed.",
+    "description": "Banner sentence for a single origin."
+  },
+  "resultOriginsMany": {
+    "message": "$ARG1$ origins processed.",
+    "description": "Banner sentence for several origins. $1 is the count.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "resultMoreErrors": {
+    "message": "+$ARG1$ more",
+    "description": "Shown when there are more errors than the one listed. $1 is the count.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "resultColType": {
+    "message": "Type",
+    "description": "Result table header: data type."
+  },
+  "resultColBefore": {
+    "message": "Before",
+    "description": "Result table header: count before cleaning."
+  },
+  "resultColAfter": {
+    "message": "After",
+    "description": "Result table header: count after cleaning."
+  },
+  "resultStorageUsage": {
+    "message": "Storage usage",
+    "description": "Result table row: bytes used by the origin."
+  },
+  "resultKeptCookiesOne": {
+    "message": "1 shared domain cookie kept on purpose ($ARG2$).",
+    "description": "Footnote for kept cookies, singular. $1 is the count, $2 the domain (e.g. .example.test).",
+    "placeholders": {
+      "arg2": {
+        "content": "$2",
+        "example": ".example.test"
+      }
+    }
+  },
+  "resultKeptCookiesMany": {
+    "message": "$ARG1$ shared domain cookies kept on purpose ($ARG2$).",
+    "description": "Footnote for kept cookies, plural. $1 is the count, $2 the domain.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "3"
+      },
+      "arg2": {
+        "content": "$2",
+        "example": ".example.test"
+      }
+    }
+  },
+  "resultKeptCookiesNoDomainOne": {
+    "message": "1 shared domain cookie kept on purpose.",
+    "description": "Footnote for kept cookies, singular, domain unknown."
+  },
+  "resultKeptCookiesNoDomainMany": {
+    "message": "$ARG1$ shared domain cookies kept on purpose.",
+    "description": "Footnote for kept cookies, plural, domain unknown. $1 is the count.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "resultCopySummary": {
+    "message": "Copy summary",
+    "description": "Button that copies a short text summary of the result."
+  },
+  "resultExportJson": {
+    "message": "Export JSON",
+    "description": "Button that saves the report as a JSON file."
+  },
+  "resultExportMd": {
+    "message": "Markdown",
+    "description": "Button that saves the report as a Markdown file."
+  },
+  "resultCopied": {
+    "message": "Copied",
+    "description": "Feedback after copying the summary."
+  },
+  "resultCopyFailed": {
+    "message": "Could not copy",
+    "description": "Feedback when the clipboard write failed."
+  },
+  "resultExported": {
+    "message": "Exported $ARG1$",
+    "description": "Screen-reader message after saving a report file. $1 is the file name.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "aw-cleaner-example.test-20261023-104218.json"
+      }
+    }
+  },
+  "resultExportFailed": {
+    "message": "Could not export the report",
+    "description": "Message when saving the report file failed."
+  },
+  "optionsPageTitle": {
+    "message": "Settings - AW Browser Cleaner",
+    "description": "Document title of the options page."
+  },
+  "optionsHeaderTitle": {
+    "message": "Settings",
+    "description": "Header label next to the extension name on the options page."
+  },
+  "optionsNavLabel": {
+    "message": "Settings sections",
+    "description": "Accessible name of the side navigation."
+  },
+  "optionsNavPresets": {
+    "message": "Presets",
+    "description": "Section title and navigation item."
+  },
+  "optionsNavPermissions": {
+    "message": "Per-origin permissions",
+    "description": "Section title and navigation item."
+  },
+  "optionsNavTestMode": {
+    "message": "Test Mode",
+    "description": "Section title and navigation item. Keep the product term."
+  },
+  "optionsNavHistory": {
+    "message": "History & evidence",
+    "description": "Section title and navigation item."
+  },
+  "optionsNavShortcuts": {
+    "message": "Shortcuts",
+    "description": "Section title and navigation item."
+  },
+  "optionsLoadFailed": {
+    "message": "Could not load this section: $ERROR$",
+    "description": "Error shown when a section fails to load.",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "Permission denied"
+      }
+    }
+  },
+  "optionsPresetsDesc": {
+    "message": "Combine data types and a follow-up action. A preset always runs on one target origin.",
+    "description": "Presets section description."
+  },
+  "optionsImportJson": {
+    "message": "Import JSON",
+    "description": "Button that imports presets from a JSON file."
+  },
+  "optionsExportJson": {
+    "message": "Export JSON",
+    "description": "Button that exports custom presets to a JSON file."
+  },
+  "optionsExportNone": {
+    "message": "There are no custom presets to export.",
+    "description": "Tooltip of the disabled export button."
+  },
+  "optionsNewPreset": {
+    "message": "New preset",
+    "description": "Button that opens the preset editor."
+  },
+  "optionsPresetTableLabel": {
+    "message": "Presets",
+    "description": "Accessible name of the preset table region."
+  },
+  "optionsColName": {
+    "message": "Name",
+    "description": "Preset table column header."
+  },
+  "optionsColDataTypes": {
+    "message": "Data types",
+    "description": "Preset table column header."
+  },
+  "optionsColCookie": {
+    "message": "Cookie",
+    "description": "Preset table column header."
+  },
+  "optionsColAfter": {
+    "message": "After",
+    "description": "Preset table column header: action after cleaning."
+  },
+  "optionsColBound": {
+    "message": "Bound origin",
+    "description": "Preset table column header."
+  },
+  "optionsColActions": {
+    "message": "Actions",
+    "description": "Preset table column header (visually hidden)."
+  },
+  "optionsBuiltinBadge": {
+    "message": "built-in",
+    "description": "Badge on built-in presets."
+  },
+  "optionsCookieExact": {
+    "message": "Exact",
+    "description": "Cookie mode: exact origin only."
+  },
+  "optionsCookieDomainWide": {
+    "message": "Domain-wide",
+    "description": "Cookie mode: whole registrable domain."
+  },
+  "optionsAfterNone": {
+    "message": "Nothing",
+    "description": "After-action: none."
+  },
+  "optionsAfterReload": {
+    "message": "Reload",
+    "description": "After-action: reload the tab."
+  },
+  "optionsAfterHard": {
+    "message": "Hard reload",
+    "description": "After-action: reload bypassing the cache."
+  },
+  "optionsAfterStart": {
+    "message": "Open start page",
+    "description": "After-action: open the start page."
+  },
+  "optionsAfterStartPath": {
+    "message": "Open $PATH$",
+    "description": "After-action summary with the start path.",
+    "placeholders": {
+      "path": {
+        "content": "$1",
+        "example": "/cart"
+      }
+    }
+  },
+  "optionsBoundAny": {
+    "message": "Any",
+    "description": "Bound origin when the preset is not tied to an origin."
+  },
+  "optionsAllTypes": {
+    "message": "All $COUNT$ types",
+    "description": "Summary when a preset selects every data type.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      }
+    }
+  },
+  "optionsTypesCount": {
+    "message": "$COUNT$ types",
+    "description": "Summary of a preset selecting many data types.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      }
+    }
+  },
+  "optionsDuplicate": {
+    "message": "Duplicate",
+    "description": "Action: copy a preset."
+  },
+  "optionsEdit": {
+    "message": "Edit",
+    "description": "Action: edit a preset."
+  },
+  "optionsDelete": {
+    "message": "Delete",
+    "description": "Action: delete a preset."
+  },
+  "optionsDuplicateAria": {
+    "message": "Duplicate preset $NAME$",
+    "description": "Accessible name of the duplicate button.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsEditAria": {
+    "message": "Edit preset $NAME$",
+    "description": "Accessible name of the edit button.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsDeleteAria": {
+    "message": "Delete preset $NAME$",
+    "description": "Accessible name of the delete button.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsDeleteConfirm": {
+    "message": "Delete the preset \"$NAME$\"?",
+    "description": "Confirmation before deleting a preset.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsPresetDeleted": {
+    "message": "Preset deleted.",
+    "description": "Status after deleting a preset."
+  },
+  "optionsPresetSaved": {
+    "message": "Preset saved.",
+    "description": "Status after saving a preset."
+  },
+  "optionsPresetsImported": {
+    "message": "$COUNT$ preset(s) imported.",
+    "description": "Status after a successful import.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      }
+    }
+  },
+  "optionsImportFailed": {
+    "message": "Import failed. Nothing was changed:",
+    "description": "Heading above import errors."
+  },
+  "optionsExported": {
+    "message": "Presets exported.",
+    "description": "Status after exporting presets."
+  },
+  "optionsEditorNewTitle": {
+    "message": "New preset",
+    "description": "Editor dialog title for a new preset."
+  },
+  "optionsEditorEditTitle": {
+    "message": "Edit preset",
+    "description": "Editor dialog title for an existing preset."
+  },
+  "optionsFieldName": {
+    "message": "Name",
+    "description": "Editor field label."
+  },
+  "optionsFieldId": {
+    "message": "ID",
+    "description": "Editor field label."
+  },
+  "optionsFieldIdHint": {
+    "message": "Lowercase letters, digits and hyphens. It cannot be changed after saving.",
+    "description": "Hint under the preset ID field."
+  },
+  "optionsFieldDataTypes": {
+    "message": "Data types",
+    "description": "Editor field label."
+  },
+  "optionsFieldCookieMode": {
+    "message": "Cookie mode",
+    "description": "Editor field label."
+  },
+  "optionsCookieModeExact": {
+    "message": "Exact: only this origin's cookies",
+    "description": "Cookie mode option."
+  },
+  "optionsCookieModeWide": {
+    "message": "Domain-wide: related subdomains too",
+    "description": "Cookie mode option."
+  },
+  "optionsFieldAfter": {
+    "message": "After cleaning",
+    "description": "Editor field label."
+  },
+  "optionsFieldStartPath": {
+    "message": "Start path",
+    "description": "Editor field label."
+  },
+  "optionsFieldStartPathHint": {
+    "message": "Opened on the target origin, for example /cart.",
+    "description": "Hint under the start path field."
+  },
+  "optionsFieldBound": {
+    "message": "Bound origin (optional)",
+    "description": "Editor field label."
+  },
+  "optionsFieldBoundHint": {
+    "message": "When set, the preset always runs on this origin.",
+    "description": "Hint under the bound origin field."
+  },
+  "optionsBoundPreview": {
+    "message": "Will be saved as $ORIGIN$",
+    "description": "Preview of the normalized origin.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "optionsFieldOrigins": {
+    "message": "Extra origins (optional)",
+    "description": "Editor field label."
+  },
+  "optionsFieldOriginsHint": {
+    "message": "One exact origin per line, for example https://example.com. At most 10 in total, bound origin included.",
+    "description": "Hint under the extra origins field."
+  },
+  "optionsFieldKeep": {
+    "message": "Cookies to keep (optional)",
+    "description": "Editor field label."
+  },
+  "optionsFieldKeepHint": {
+    "message": "Cookie names separated by commas. Values are never read.",
+    "description": "Hint under the keep-cookies field."
+  },
+  "optionsSave": {
+    "message": "Save",
+    "description": "Save button."
+  },
+  "optionsIdTaken": {
+    "message": "A preset with this ID already exists.",
+    "description": "Validation error."
+  },
+  "optionsSaveFailed": {
+    "message": "The preset could not be saved.",
+    "description": "Generic save error."
+  },
+  "optionsCopySuffix": {
+    "message": "$NAME$ (copy)",
+    "description": "Name given to a duplicated preset.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsPermissionsDesc": {
+    "message": "Exact cookie access is requested the first time it is needed on an origin and can be revoked at any time. The extension never asks for access to all sites.",
+    "description": "Per-origin permissions description."
+  },
+  "optionsPermissionsEmpty": {
+    "message": "No origin has been granted access yet.",
+    "description": "Empty state of the granted origins list."
+  },
+  "optionsGrantKindCookies": {
+    "message": "Exact cookies",
+    "description": "Kind of a granted permission."
+  },
+  "optionsGrantedOn": {
+    "message": "granted $DATE$",
+    "description": "Grant date suffix.",
+    "placeholders": {
+      "date": {
+        "content": "$1",
+        "example": "21 Oct 2026"
+      }
+    }
+  },
+  "optionsRevoke": {
+    "message": "Revoke",
+    "description": "Button that revokes access to an origin."
+  },
+  "optionsRevokeAria": {
+    "message": "Revoke access to $ORIGIN$",
+    "description": "Accessible name of the revoke button.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "optionsRevoked": {
+    "message": "Access revoked for $ORIGIN$.",
+    "description": "Status after revoking.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "optionsRevokeFailed": {
+    "message": "Access could not be revoked for $ORIGIN$.",
+    "description": "Error after a failed revoke.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "optionsInstallPermissions": {
+    "message": "Install-time permissions",
+    "description": "Heading of the install-time permission list."
+  },
+  "optionsPermBrowsingData": {
+    "message": "Clears site data for the origin you choose.",
+    "description": "Purpose of the browsingData permission."
+  },
+  "optionsPermActiveTab": {
+    "message": "Reads the address of the current tab, only when you open the extension.",
+    "description": "Purpose of the activeTab permission."
+  },
+  "optionsPermScripting": {
+    "message": "Clears session storage and counts items in the page you chose.",
+    "description": "Purpose of the scripting permission."
+  },
+  "optionsPermCookies": {
+    "message": "Lists and removes cookies of one exact origin, after you grant access to it.",
+    "description": "Purpose of the cookies permission."
+  },
+  "optionsPermStorage": {
+    "message": "Saves your presets, history and settings.",
+    "description": "Purpose of the storage permission."
+  },
+  "optionsPermContextMenus": {
+    "message": "Adds the right-click menu entries.",
+    "description": "Purpose of the contextMenus permission."
+  },
+  "optionsPermUnknown": {
+    "message": "Used by the extension.",
+    "description": "Fallback purpose for other permissions."
+  },
+  "optionsTestModeDesc": {
+    "message": "Let Playwright, Puppeteer or Selenium scripts trigger presets through a message. Pages can only clean their own origin.",
+    "description": "Test Mode description."
+  },
+  "optionsTestModeToggle": {
+    "message": "Enable Test Mode",
+    "description": "Accessible name of the Test Mode switch."
+  },
+  "optionsAllowedOrigins": {
+    "message": "Allowed origins",
+    "description": "Field label."
+  },
+  "optionsAllowedOriginsHint": {
+    "message": "Separate with commas or new lines. An origin without a port allows any port.",
+    "description": "Hint under the allowed origins field."
+  },
+  "optionsTestModeNote": {
+    "message": "Off by default. Domain-wide cookies are not available in Test Mode.",
+    "description": "Note under the Test Mode field."
+  },
+  "optionsSaveOrigins": {
+    "message": "Save origins",
+    "description": "Button saving the allowed origins."
+  },
+  "optionsTestModeSaved": {
+    "message": "Test Mode settings saved.",
+    "description": "Status after saving Test Mode."
+  },
+  "optionsTestModeInvalid": {
+    "message": "Test Mode settings were not saved:",
+    "description": "Heading above Test Mode validation errors."
+  },
+  "optionsProtocolLabel": {
+    "message": "Message protocol",
+    "description": "Label above the example message."
+  },
+  "optionsHistoryDesc": {
+    "message": "Keeps the last 20 cleanups on this device. No cookie values or storage contents are stored.",
+    "description": "History description."
+  },
+  "optionsHistoryToggle": {
+    "message": "Keep history",
+    "description": "Accessible name of the history switch."
+  },
+  "optionsHistoryEmpty": {
+    "message": "No cleanups recorded yet.",
+    "description": "Empty state of the history list."
+  },
+  "optionsHistoryOff": {
+    "message": "History is off. New cleanups are not recorded.",
+    "description": "Empty state when history is off."
+  },
+  "optionsHistoryListLabel": {
+    "message": "Recent cleanups",
+    "description": "Accessible name of the history list."
+  },
+  "optionsStatusOk": {
+    "message": "OK",
+    "description": "History entry result."
+  },
+  "optionsStatusFailed": {
+    "message": "Failed",
+    "description": "History entry result."
+  },
+  "optionsMoreOrigins": {
+    "message": "+$COUNT$ more",
+    "description": "Suffix when an entry covers more origins.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      }
+    }
+  },
+  "optionsExportHistory": {
+    "message": "Export all (JSON)",
+    "description": "Button exporting the history."
+  },
+  "optionsHistoryExported": {
+    "message": "History exported.",
+    "description": "Status after export."
+  },
+  "optionsClearHistory": {
+    "message": "Clear history",
+    "description": "Button clearing the history."
+  },
+  "optionsClearHistoryConfirm": {
+    "message": "Delete all history entries on this device?",
+    "description": "Confirmation before clearing history."
+  },
+  "optionsHistoryCleared": {
+    "message": "History cleared.",
+    "description": "Status after clearing."
+  },
+  "optionsRecentOrigins": {
+    "message": "Recent origins",
+    "description": "Heading of the recent origins list."
+  },
+  "optionsRecentEmpty": {
+    "message": "No recent origins.",
+    "description": "Empty state."
+  },
+  "optionsClearRecent": {
+    "message": "Clear recent origins",
+    "description": "Button clearing recent origins."
+  },
+  "optionsRecentCleared": {
+    "message": "Recent origins cleared.",
+    "description": "Status after clearing."
+  },
+  "optionsSessionTitle": {
+    "message": "Test session",
+    "description": "Heading of the test session block."
+  },
+  "optionsSessionDesc": {
+    "message": "Mark the start of a test run. The popup can then limit a cleanup to data created since then.",
+    "description": "Test session description."
+  },
+  "optionsSessionStart": {
+    "message": "Start test session",
+    "description": "Button starting a test session."
+  },
+  "optionsSessionEnd": {
+    "message": "End session",
+    "description": "Button ending a test session."
+  },
+  "optionsSessionNone": {
+    "message": "No session is running.",
+    "description": "Test session state."
+  },
+  "optionsSessionStartedAt": {
+    "message": "Session started at $TIME$",
+    "description": "Test session state.",
+    "placeholders": {
+      "time": {
+        "content": "$1",
+        "example": "10:42"
+      }
+    }
+  },
+  "optionsShortcutsDesc": {
+    "message": "Keyboard shortcuts of the extension.",
+    "description": "Shortcuts description."
+  },
+  "optionsShortcutNotSet": {
+    "message": "Not set",
+    "description": "Shown when a command has no shortcut."
+  },
+  "optionsShortcutExecuteAction": {
+    "message": "Open AW Browser Cleaner",
+    "description": "Fallback description of the toolbar action command."
+  },
+  "optionsShortcutsEmpty": {
+    "message": "The extension defines no shortcuts.",
+    "description": "Empty state."
+  },
+  "optionsShortcutsHint": {
+    "message": "Change key combinations on the browser's shortcuts page:",
+    "description": "Hint above the shortcuts page address."
+  },
+  "optionsOpenShortcuts": {
+    "message": "Change shortcuts",
+    "description": "Button opening the browser shortcuts page."
+  },
+  "testModeTag": {
+    "message": "Test Mode",
+    "description": "Popup UI text."
+  },
+  "testModeTagTitle": {
+    "message": "Test Mode is on: shortcuts only clean the allowed test origins.",
+    "description": "Popup UI text."
+  },
+  "addOriginBtn": {
+    "message": "+ Add origin",
+    "description": "Popup UI text."
+  },
+  "addOriginTitle": {
+    "message": "Also clear another exact origin in the same run",
+    "description": "Popup UI text."
+  },
+  "normalizedPreviewLabel": {
+    "message": "Will use",
+    "description": "Popup UI text."
+  },
+  "extraOriginPlaceholder": {
+    "message": "https://api.example.com",
+    "description": "Popup UI text."
+  },
+  "extraOriginLabel": {
+    "message": "Additional origin",
+    "description": "Popup UI text."
+  },
+  "extraOriginAdd": {
+    "message": "Add",
+    "description": "Popup UI text."
+  },
+  "extraOriginsLabel": {
+    "message": "Additional origins",
+    "description": "Popup UI text."
+  },
+  "extraOriginsLimit": {
+    "message": "At most $P1$ origins in one cleanup.",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "extraOriginDuplicate": {
+    "message": "That origin is already in the list.",
+    "description": "Popup UI text."
+  },
+  "extraOriginNeedsPrimary": {
+    "message": "Enter the target origin first.",
+    "description": "Popup UI text."
+  },
+  "removeOriginAria": {
+    "message": "Remove $P1$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "idpWarning": {
+    "message": "$P1$ is a sign-in provider. Clearing it may sign you out of other sites.",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "errorEnterOrigin": {
+    "message": "Please enter a target origin.",
+    "description": "Popup UI text."
+  },
+  "presetLabel": {
+    "message": "Preset",
+    "description": "Popup UI text."
+  },
+  "presetMoreLabel": {
+    "message": "More presets",
+    "description": "Popup UI text."
+  },
+  "presetMoreOption": {
+    "message": "More presets…",
+    "description": "Popup UI text."
+  },
+  "presetStatusCustom": {
+    "message": "Custom · $P1$ of $P2$ selected",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "presetDropped": {
+    "message": "Session Storage and the after-clean action were skipped: this origin is not the active tab.",
+    "description": "Popup UI text."
+  },
+  "typeTipCookies": {
+    "message": "Cookies of this origin. Exact mode removes host-only and partitioned cookies; domain-wide also removes cookies shared with subdomains.",
+    "description": "Popup UI text."
+  },
+  "typeTipSessionStorage": {
+    "message": "sessionStorage of the active tab only.",
+    "description": "Popup UI text."
+  },
+  "typeTipLocalStorage": {
+    "message": "localStorage keys of this origin.",
+    "description": "Popup UI text."
+  },
+  "typeTipIndexedDB": {
+    "message": "IndexedDB databases of this origin.",
+    "description": "Popup UI text."
+  },
+  "typeTipFileSystems": {
+    "message": "File System API and OPFS files of this origin.",
+    "description": "Popup UI text."
+  },
+  "typeTipCache": {
+    "message": "Files in the browser HTTP cache for this origin. Not countable.",
+    "description": "Popup UI text."
+  },
+  "typeTipCacheStorage": {
+    "message": "Cache Storage caches, used by service workers and web apps.",
+    "description": "Popup UI text."
+  },
+  "typeTipServiceWorkers": {
+    "message": "Service worker registrations of this origin.",
+    "description": "Popup UI text."
+  },
+  "cookieManage": {
+    "message": "Manage",
+    "description": "Popup UI text."
+  },
+  "cookieSummaryExact": {
+    "message": "Exact cookies: $P1$, $P2$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "cookieSummaryRemoved": {
+    "message": "$P1$ removed",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "cookieSummaryKept": {
+    "message": "$P1$ shared domain cookies kept",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "cookieSummaryUnknown": {
+    "message": "Exact cookies: host-only and partitioned cookies are removed, shared domain cookies are kept.",
+    "description": "Popup UI text."
+  },
+  "cookieSummaryWide": {
+    "message": "Domain-wide: cookies shared with other subdomains are removed too.",
+    "description": "Popup UI text."
+  },
+  "rangeLabel": {
+    "message": "Time range",
+    "description": "Popup UI text."
+  },
+  "rangeAll": {
+    "message": "All time",
+    "description": "Popup UI text."
+  },
+  "range15m": {
+    "message": "Last 15 minutes",
+    "description": "Popup UI text."
+  },
+  "rangeHour": {
+    "message": "Last hour",
+    "description": "Popup UI text."
+  },
+  "rangeSession": {
+    "message": "Since test session started",
+    "description": "Popup UI text."
+  },
+  "rangeSessionAt": {
+    "message": "Since test session started ($P1$)",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "rangeNote": {
+    "message": "Not every storage type honors the time range precisely; some are removed completely.",
+    "description": "Popup UI text."
+  },
+  "afterLabel": {
+    "message": "After cleaning",
+    "description": "Popup UI text."
+  },
+  "afterHard": {
+    "message": "Hard reload (bypass cache)",
+    "description": "Popup UI text."
+  },
+  "afterReload": {
+    "message": "Reload",
+    "description": "Popup UI text."
+  },
+  "afterStart": {
+    "message": "Open start page",
+    "description": "Popup UI text."
+  },
+  "afterNone": {
+    "message": "Don't reload",
+    "description": "Popup UI text."
+  },
+  "onlyActiveTabTitle": {
+    "message": "Only for the active tab",
+    "description": "Popup UI text."
+  },
+  "cookiesNoTimeRangeTitle": {
+    "message": "Exact cookies cannot be limited by time. Choose All time or use domain-wide cookies.",
+    "description": "Popup UI text."
+  },
+  "noActiveTabTitle": {
+    "message": "No supported active tab",
+    "description": "Popup UI text."
+  },
+  "clearOriginBtn": {
+    "message": "Clear this origin",
+    "description": "Popup UI text."
+  },
+  "clearOriginsBtn": {
+    "message": "Clear $P1$ origins",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "backBtnLabel": {
+    "message": "Back",
+    "description": "Popup UI text."
+  },
+  "cookieScreenTitle": {
+    "message": "Exact cookies",
+    "description": "Popup UI text."
+  },
+  "cookieModeLabel": {
+    "message": "Cookie scope",
+    "description": "Popup UI text."
+  },
+  "cookieModeExact": {
+    "message": "Exact origin (recommended)",
+    "description": "Popup UI text."
+  },
+  "cookieModeWide": {
+    "message": "Domain-wide",
+    "description": "Popup UI text."
+  },
+  "cookieGrantBtn": {
+    "message": "Grant access to read cookies",
+    "description": "Popup UI text."
+  },
+  "cookiePermissionExact": {
+    "message": "To list and remove exact cookies, the extension needs access to this site. It is requested only for the origins you clean.",
+    "description": "Popup UI text."
+  },
+  "cookiePermissionWide": {
+    "message": "Domain-wide removal needs no extra access. Grant access only to preview the cookie names.",
+    "description": "Popup UI text."
+  },
+  "cookieDenied": {
+    "message": "Access was not granted, so exact cookies cannot be listed or removed. You can switch to Domain-wide, which removes cookies for the whole domain.",
+    "description": "Popup UI text."
+  },
+  "cookieLoading": {
+    "message": "Reading cookies…",
+    "description": "Popup UI text."
+  },
+  "cookieNone": {
+    "message": "No cookies found for this origin.",
+    "description": "Popup UI text."
+  },
+  "cookieTopLevel": {
+    "message": "top-level: $P1$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "cookieGroupHostOnly": {
+    "message": "Host-only",
+    "description": "Popup UI text."
+  },
+  "cookieGroupPartitioned": {
+    "message": "Partitioned (CHIPS)",
+    "description": "Popup UI text."
+  },
+  "cookieGroupShared": {
+    "message": "Shared domain",
+    "description": "Popup UI text."
+  },
+  "cookieFooterExact": {
+    "message": "Shared domain cookies are kept unless you tick them. Cookie values are never shown.",
+    "description": "Popup UI text."
+  },
+  "cookieFooterWide": {
+    "message": "Domain-wide: shared domain cookies are also used by other subdomains and environments. They may be signed out too.",
+    "description": "Popup UI text."
+  },
+  "cookieSaveBtn": {
+    "message": "Save selection",
+    "description": "Popup UI text."
+  },
+  "cookieRemovedOf": {
+    "message": "$P1$ of $P2$ removed",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "confirmScopeExact": {
+    "message": "Exact origin",
+    "description": "Popup UI text."
+  },
+  "confirmScopeWide": {
+    "message": "Domain-wide",
+    "description": "Popup UI text."
+  },
+  "confirmTypesCount": {
+    "message": "$P1$ types",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "confirmPresetOnly": {
+    "message": "Preset $P1$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "confirmPresetThen": {
+    "message": "Preset $P1$ · then $P2$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "confirmThenReload": {
+    "message": "reload this tab",
+    "description": "Popup UI text."
+  },
+  "confirmThenHard": {
+    "message": "hard reload this tab",
+    "description": "Popup UI text."
+  },
+  "confirmThenStart": {
+    "message": "open its start page",
+    "description": "Popup UI text."
+  },
+  "confirmRange": {
+    "message": "Time range: $P1$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "confirmCookiesExact": {
+    "message": "Cookies (host-only + CHIPS)",
+    "description": "Popup UI text."
+  },
+  "confirmCookiesWide": {
+    "message": "Cookies (whole domain)",
+    "description": "Popup UI text."
+  },
+  "unitKeys": {
+    "message": "$P1$ key",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "unitDb": {
+    "message": "$P1$ db",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "unitCaches": {
+    "message": "$P1$ cache",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "confirmKeepShared": {
+    "message": "$P1$ shared domain cookies on $P2$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "confirmKeepOtherOrigins": {
+    "message": "Every other origin, including other ports and schemes",
+    "description": "Popup UI text."
+  },
+  "confirmKeepNotActiveTab": {
+    "message": "$P1$ of $P2$: not the active tab, so it is not touched",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "confirmNowBtn": {
+    "message": "Clear now",
+    "description": "Popup UI text."
+  },
+  "confirmHint": {
+    "message": "Enter to continue · Esc to cancel",
+    "description": "Popup UI text."
+  },
+  "cookieSummaryTimeLimited": {
+    "message": "Exact cookies cannot be limited by time. Switch to domain-wide to limit cookies by time.",
+    "description": "Popup UI text."
+  },
+  "popupSettingsLabel": {
+    "message": "Settings",
+    "description": "Popup UI text."
+  },
+  "cookieSummaryOff": {
+    "message": "Cookies are not selected. Open Manage to choose exact cookies or the domain-wide scope.",
+    "description": "Popup UI text."
+  },
+  "presetShortLogout": {
+    "message": "Log out",
+    "description": "Popup UI text."
+  },
+  "presetShortFresh": {
+    "message": "Fresh start",
+    "description": "Popup UI text."
+  },
+  "presetShortStale": {
+    "message": "Stale files",
+    "description": "Popup UI text."
+  },
+  "presetShortFull": {
+    "message": "Everything",
+    "description": "Popup UI text."
   }
 }

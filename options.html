@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="optionsPageTitle">Settings - AW Browser Cleaner</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+
+<body class="options-page">
+  <header class="opt-header">
+    <div class="opt-header-inner">
+      <img src="icons/icon48.png" alt="" class="opt-logo" width="28" height="28">
+      <h1 class="opt-name" data-i18n="extensionName">AW Browser Cleaner</h1>
+      <span class="opt-subtitle" data-i18n="optionsHeaderTitle">Settings</span>
+      <span class="opt-spacer"></span>
+      <span class="version-tag" id="versionTag" hidden></span>
+    </div>
+  </header>
+
+  <div class="opt-shell">
+    <nav class="opt-nav" id="sideNav" aria-label="Settings sections" data-i18n-aria="optionsNavLabel">
+      <ul>
+        <li><a href="#presets" data-section="presets" aria-current="page" data-i18n="optionsNavPresets">Presets</a></li>
+        <li><a href="#permissions" data-section="permissions" data-i18n="optionsNavPermissions">Per-origin permissions</a></li>
+        <li><a href="#testmode" data-section="testmode" data-i18n="optionsNavTestMode">Test Mode</a></li>
+        <li><a href="#history" data-section="history" data-i18n="optionsNavHistory">History &amp; evidence</a></li>
+        <li><a href="#shortcuts" data-section="shortcuts" data-i18n="optionsNavShortcuts">Shortcuts</a></li>
+      </ul>
+    </nav>
+
+    <main class="opt-main">
+
+      <!-- 1. Presets -->
+      <section id="presets" class="card" aria-labelledby="presetsTitle">
+        <div class="card-head">
+          <div class="card-heading">
+            <h2 class="card-title" id="presetsTitle" data-i18n="optionsNavPresets">Presets</h2>
+            <p class="card-desc" data-i18n="optionsPresetsDesc">Combine data types and a follow-up action. A preset
+              always runs on one target origin.</p>
+          </div>
+          <div class="card-actions">
+            <button type="button" id="exportPresetsBtn" class="btn btn-secondary" data-i18n="optionsExportJson">Export JSON</button>
+            <button type="button" id="importPresetsBtn" class="btn btn-secondary" data-i18n="optionsImportJson">Import JSON</button>
+            <button type="button" id="newPresetBtn" class="btn btn-primary" data-i18n="optionsNewPreset">New preset</button>
+            <input type="file" id="importFile" accept="application/json,.json" hidden tabindex="-1">
+          </div>
+        </div>
+        <div id="presetsStatus" class="status-message hidden" role="status" aria-live="polite"></div>
+        <div class="table-wrap" role="region" tabindex="0" aria-label="Presets" data-i18n-aria="optionsPresetTableLabel">
+          <table class="preset-table">
+            <thead>
+              <tr>
+                <th scope="col" data-i18n="optionsColName">Name</th>
+                <th scope="col" data-i18n="optionsColDataTypes">Data types</th>
+                <th scope="col" data-i18n="optionsColCookie">Cookie</th>
+                <th scope="col" data-i18n="optionsColAfter">After</th>
+                <th scope="col" data-i18n="optionsColBound">Bound origin</th>
+                <th scope="col" class="col-actions"><span class="sr-only" data-i18n="optionsColActions">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody id="presetRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 2. Per-origin permissions -->
+      <section id="permissions" class="card" aria-labelledby="permissionsTitle">
+        <div class="card-heading">
+          <h2 class="card-title" id="permissionsTitle" data-i18n="optionsNavPermissions">Per-origin permissions</h2>
+          <p class="card-desc" data-i18n="optionsPermissionsDesc">Exact cookie access is requested the first time it
+            is needed on an origin and can be revoked at any time. The extension never asks for access to all sites.</p>
+        </div>
+        <div id="permissionsStatus" class="status-message hidden" role="status" aria-live="polite"></div>
+        <ul class="list-box grant-list" id="grantList"></ul>
+        <p class="empty-note" id="grantEmpty" data-i18n="optionsPermissionsEmpty" hidden>No origin has been granted access yet.</p>
+        <div class="install-perms">
+          <h3 class="sub-title" data-i18n="optionsInstallPermissions">Install-time permissions</h3>
+          <ul class="perm-list" id="installPerms"></ul>
+        </div>
+      </section>
+
+      <div class="pair">
+        <!-- 3. Test Mode -->
+        <section id="testmode" class="card" aria-labelledby="testModeTitle">
+          <div class="card-head card-head-nowrap">
+            <div class="card-heading">
+              <h2 class="card-title" id="testModeTitle" data-i18n="optionsNavTestMode">Test Mode</h2>
+              <p class="card-desc" id="testModeDesc" data-i18n="optionsTestModeDesc">Let Playwright, Puppeteer or
+                Selenium scripts trigger presets through a message. Pages can only clean their own origin.</p>
+            </div>
+            <button type="button" id="testModeSwitch" class="switch" role="switch" aria-checked="false"
+              aria-label="Enable Test Mode" data-i18n-aria="optionsTestModeToggle" aria-describedby="testModeDesc"><span class="switch-knob"></span></button>
+          </div>
+          <div class="field">
+            <label class="field-label" for="testOrigins" data-i18n="optionsAllowedOrigins">Allowed origins</label>
+            <textarea id="testOrigins" class="text-input text-area" rows="2" spellcheck="false" autocomplete="off"
+              aria-describedby="testOriginsHint testModeError" disabled></textarea>
+            <p class="hint" id="testOriginsHint" data-i18n="optionsAllowedOriginsHint">Separate with commas or new
+              lines. An origin without a port allows any port.</p>
+            <p class="hint" data-i18n="optionsTestModeNote">Off by default. Domain-wide cookies are not available in
+              Test Mode.</p>
+          </div>
+          <div class="field">
+            <span class="field-label" data-i18n="optionsProtocolLabel">Message protocol</span>
+            <pre class="code-sample" tabindex="0"><code>chrome.runtime.sendMessage(EXTENSION_ID, { action: 'clean', preset: 'fresh' })</code></pre>
+          </div>
+          <div id="testModeError" class="status-message hidden" role="status" aria-live="polite"></div>
+          <div class="btn-row">
+            <button type="button" id="saveTestOriginsBtn" class="btn btn-secondary" data-i18n="optionsSaveOrigins" disabled>Save origins</button>
+          </div>
+        </section>
+
+        <!-- 4. History & evidence -->
+        <section id="history" class="card" aria-labelledby="historyTitle">
+          <div class="card-head card-head-nowrap">
+            <div class="card-heading">
+              <h2 class="card-title" id="historyTitle" data-i18n="optionsNavHistory">History &amp; evidence</h2>
+              <p class="card-desc" id="historyDesc" data-i18n="optionsHistoryDesc">Keeps the last 20 cleanups on this
+                device. No cookie values or storage contents are stored.</p>
+            </div>
+            <button type="button" id="historySwitch" class="switch" role="switch" aria-checked="true"
+              aria-label="Keep history" data-i18n-aria="optionsHistoryToggle" aria-describedby="historyDesc"><span class="switch-knob"></span></button>
+          </div>
+          <div id="historyStatus" class="status-message hidden" role="status" aria-live="polite"></div>
+          <ul class="list-box history-list" id="historyList" aria-label="Recent cleanups" data-i18n-aria="optionsHistoryListLabel"></ul>
+          <p class="empty-note" id="historyEmpty" data-i18n="optionsHistoryEmpty" hidden>No cleanups recorded yet.</p>
+          <div class="btn-row">
+            <button type="button" id="exportHistoryBtn" class="btn btn-secondary btn-sm" data-i18n="optionsExportHistory">Export all (JSON)</button>
+            <button type="button" id="clearHistoryBtn" class="btn btn-danger-outline btn-sm" data-i18n="optionsClearHistory">Clear history</button>
+          </div>
+
+          <div class="subsection">
+            <h3 class="sub-title" data-i18n="optionsRecentOrigins">Recent origins</h3>
+            <ul class="chip-list" id="recentList"></ul>
+            <p class="empty-note" id="recentEmpty" data-i18n="optionsRecentEmpty" hidden>No recent origins.</p>
+            <div class="btn-row">
+              <button type="button" id="clearRecentBtn" class="btn btn-secondary btn-sm" data-i18n="optionsClearRecent">Clear recent origins</button>
+            </div>
+          </div>
+
+          <div class="subsection">
+            <h3 class="sub-title" data-i18n="optionsSessionTitle">Test session</h3>
+            <p class="hint" data-i18n="optionsSessionDesc">Mark the start of a test run. The popup can then limit a
+              cleanup to data created since then.</p>
+            <p class="session-state" id="sessionState" role="status" aria-live="polite"></p>
+            <div class="btn-row">
+              <button type="button" id="sessionStartBtn" class="btn btn-secondary btn-sm" data-i18n="optionsSessionStart">Start test session</button>
+              <button type="button" id="sessionEndBtn" class="btn btn-secondary btn-sm" data-i18n="optionsSessionEnd" hidden>End session</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- 5. Shortcuts -->
+      <section id="shortcuts" class="card" aria-labelledby="shortcutsTitle" hidden>
+        <div class="card-heading">
+          <h2 class="card-title" id="shortcutsTitle" data-i18n="optionsNavShortcuts">Shortcuts</h2>
+          <p class="card-desc" data-i18n="optionsShortcutsDesc">Keyboard shortcuts of the extension.</p>
+        </div>
+        <ul class="shortcut-list" id="shortcutList"></ul>
+        <p class="empty-note" id="shortcutsEmpty" data-i18n="optionsShortcutsEmpty" hidden>The extension defines no shortcuts.</p>
+        <div class="shortcut-foot">
+          <p class="hint"><span data-i18n="optionsShortcutsHint">Change key combinations on the browser's shortcuts page:</span>
+            <span class="mono">chrome://extensions/shortcuts</span></p>
+          <button type="button" id="openShortcutsBtn" class="btn btn-secondary btn-sm" data-i18n="optionsOpenShortcuts">Change shortcuts</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Preset editor -->
+  <dialog id="presetDialog" class="editor" aria-labelledby="editorTitle">
+    <form id="presetForm" novalidate>
+      <h2 class="card-title" id="editorTitle" data-i18n="optionsEditorNewTitle">New preset</h2>
+
+      <div class="field">
+        <label class="field-label" for="fName" data-i18n="optionsFieldName">Name</label>
+        <input type="text" id="fName" class="text-input text-plain" maxlength="60" autocomplete="off" required
+          aria-describedby="fNameError">
+        <p class="field-error" id="fNameError" hidden></p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="fId" data-i18n="optionsFieldId">ID</label>
+        <input type="text" id="fId" class="text-input" maxlength="40" autocomplete="off" spellcheck="false"
+          aria-describedby="fIdHint fIdError">
+        <p class="hint" id="fIdHint" data-i18n="optionsFieldIdHint">Lowercase letters, digits and hyphens. It cannot
+          be changed after saving.</p>
+        <p class="field-error" id="fIdError" hidden></p>
+      </div>
+
+      <fieldset class="field" aria-describedby="fTypesError">
+        <legend class="field-label" data-i18n="optionsFieldDataTypes">Data types</legend>
+        <div class="type-grid" id="fTypes"></div>
+        <p class="field-error" id="fTypesError" hidden></p>
+      </fieldset>
+
+      <fieldset class="field" id="fCookieModeGroup" aria-describedby="fCookieModeError">
+        <legend class="field-label" data-i18n="optionsFieldCookieMode">Cookie mode</legend>
+        <label class="check-row"><input type="radio" name="cookieMode" value="exact" checked>
+          <span data-i18n="optionsCookieModeExact">Exact: only this origin's cookies</span></label>
+        <label class="check-row"><input type="radio" name="cookieMode" value="domainWide">
+          <span data-i18n="optionsCookieModeWide">Domain-wide: related subdomains too</span></label>
+        <p class="field-error" id="fCookieModeError" hidden></p>
+      </fieldset>
+
+      <div class="field">
+        <label class="field-label" for="fAfter" data-i18n="optionsFieldAfter">After cleaning</label>
+        <select id="fAfter" class="text-input text-plain" aria-describedby="fAfterError">
+          <option value="none" data-i18n="optionsAfterNone">Nothing</option>
+          <option value="reload" data-i18n="optionsAfterReload">Reload</option>
+          <option value="hard" data-i18n="optionsAfterHard">Hard reload</option>
+          <option value="start" data-i18n="optionsAfterStart">Open start page</option>
+        </select>
+        <p class="field-error" id="fAfterError" hidden></p>
+      </div>
+
+      <div class="field" id="fStartPathField" hidden>
+        <label class="field-label" for="fStartPath" data-i18n="optionsFieldStartPath">Start path</label>
+        <input type="text" id="fStartPath" class="text-input" value="/" maxlength="200" autocomplete="off"
+          spellcheck="false" aria-describedby="fStartPathHint fStartPathError">
+        <p class="hint" id="fStartPathHint" data-i18n="optionsFieldStartPathHint">Opened on the target origin, for
+          example /cart.</p>
+        <p class="field-error" id="fStartPathError" hidden></p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="fBound" data-i18n="optionsFieldBound">Bound origin (optional)</label>
+        <input type="text" id="fBound" class="text-input" placeholder="http://localhost:5173"
+          autocomplete="off" spellcheck="false" aria-describedby="fBoundHint fBoundPreview fBoundError">
+        <p class="hint" id="fBoundHint" data-i18n="optionsFieldBoundHint">When set, the preset always runs on this
+          origin.</p>
+        <p class="hint mono-hint" id="fBoundPreview" aria-live="polite" hidden></p>
+        <p class="field-error" id="fBoundError" hidden></p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="fOrigins" data-i18n="optionsFieldOrigins">Extra origins (optional)</label>
+        <textarea id="fOrigins" class="text-input text-area" rows="3" autocomplete="off" spellcheck="false"
+          placeholder="https://example.com" aria-describedby="fOriginsHint fOriginsError"></textarea>
+        <p class="hint" id="fOriginsHint" data-i18n="optionsFieldOriginsHint">One exact origin per line, for example
+          https://example.com. At most 10 in total, bound origin included.</p>
+        <p class="field-error" id="fOriginsError" hidden></p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="fKeep" data-i18n="optionsFieldKeep">Cookies to keep (optional)</label>
+        <input type="text" id="fKeep" class="text-input" autocomplete="off" spellcheck="false"
+          aria-describedby="fKeepHint fKeepError">
+        <p class="hint" id="fKeepHint" data-i18n="optionsFieldKeepHint">Cookie names separated by commas. Values are
+          never read.</p>
+        <p class="field-error" id="fKeepError" hidden></p>
+      </div>
+
+      <p class="field-error" id="fGeneralError" role="alert" hidden></p>
+
+      <div class="editor-actions">
+        <button type="button" id="editorCancelBtn" class="btn btn-secondary" data-i18n="cancelBtn">Cancel</button>
+        <button type="submit" id="editorSaveBtn" class="btn btn-primary" data-i18n="optionsSave">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="options.js"></script>
+</body>
+
+</html>

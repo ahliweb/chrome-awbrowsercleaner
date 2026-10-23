@@ -8,7 +8,7 @@
  *   - the selected type is gone from A, every other type of A is still there,
  *   - the canary C (127.0.0.1) is completely intact,
  *   - B and A2 keep all non-cookie data.
- *   - Cookies: the popup clears cookies domain-wide (Chrome removes cookies per registrable
+ *   - Cookies: this matrix selects the domain-wide scope (Chrome removes cookies per registrable
  *     domain, and cookies ignore ports). So a Cookies cleanup on A is EXPECTED to remove the
  *     cookies of B and A2 as well, including the shared Domain=localtest.me cookie. That is the
  *     documented registrable-domain behaviour, not a bug; the canary stays untouched.
@@ -120,7 +120,7 @@ suite('Deletion matrix (popup -> real Chrome)', () => {
         const effects = TYPE_EFFECTS[type];
         if (effects === null) {
             skippedTypes.push(type);
-            test.skip(`only "${type}" cleans ${type} on A (not testable from a popup opened in a tab)`, () => {});
+            test.skip(`only "${type}" cleans ${type} on A (needs the active tab: see popup-active-tab.test.js)`, () => {});
             continue;
         }
         test(`only "${type}": clears ${effects.join('+')} on A, nothing else, canary intact`, guarded(env, `matrix-${type}`, async () => {
@@ -162,7 +162,7 @@ function renderMatrix() {
     }
     if (skippedTypes.length) {
         lines.push('');
-        lines.push(`Skipped (cannot be cleaned from a popup opened in a tab): ${skippedTypes.map((t) => `\`${t}\``).join(', ')}.`);
+        lines.push(`Skipped here (needs the active tab; covered by popup-active-tab.test.js): ${skippedTypes.map((t) => `\`${t}\``).join(', ')}.`);
     }
     lines.push('');
     return lines.join('\n');

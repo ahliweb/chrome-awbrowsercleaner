@@ -579,3 +579,724 @@ input {
     opacity: 1;
   }
 }
+
+/* =========================================================================
+ * Popup (v1.3 screens). Everything below is scoped to body.popup so the
+ * options page, which shares the tokens above, is not affected.
+ * ========================================================================= */
+
+.popup [hidden] {
+  display: none !important;
+}
+
+/* Cookies and confirm screens bring their own head, so they use the full 600px. */
+.popup[data-screen='cookies'],
+.popup[data-screen='confirm'] {
+  --screen-height: 600px;
+}
+
+.popup[data-screen='cookies'] .app-header,
+.popup[data-screen='confirm'] .app-header {
+  display: none;
+}
+
+.popup .app-header {
+  height: 45px;
+  padding: 10px 14px;
+}
+
+.popup .app-header .icon-btn {
+  margin: -3px -4px -3px 0;
+}
+
+.popup .icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.popup .icon-btn:hover {
+  background-color: var(--surface-muted);
+  color: var(--text);
+}
+
+.popup .icon-btn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
+}
+
+.popup .test-mode-tag {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 16px;
+  padding: 0 6px;
+  border-radius: 999px;
+  white-space: nowrap;
+  color: var(--scope-wide-text);
+  background-color: var(--scope-wide-bg);
+  border: 1px solid var(--scope-wide-border);
+}
+
+.popup .head-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.popup .head-left .icon-btn {
+  margin-left: -6px;
+}
+
+.popup .screen-head {
+  min-height: 48px;
+  padding: 8px 14px;
+}
+
+.popup .screen-title {
+  font-size: 15px;
+}
+
+/* ---------- Main screen ---------- */
+
+.popup .screen-main .screen-body {
+  gap: 8px;
+  padding: 8px 14px;
+}
+
+.popup .screen-main .field {
+  gap: 6px;
+}
+
+.popup .field-label-row,
+.popup .section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 18px;
+}
+
+.popup .field-label-row .text-btn {
+  font-weight: 500;
+}
+
+.popup .text-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.popup .field-error {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--danger);
+}
+
+.popup .text-input[aria-invalid='true'] {
+  border-color: var(--danger);
+}
+
+.popup .preview-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.popup .preview-line .mono {
+  color: var(--text);
+  font-size: 12px;
+  word-break: break-all;
+}
+
+.popup .chip-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.popup .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  height: 22px;
+  padding: 0 2px 0 8px;
+  font-size: 11px;
+  color: var(--text);
+  background-color: var(--surface-muted);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+}
+
+.popup .chip .mono {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.popup .chip-remove {
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.popup .chip-remove:hover {
+  background-color: var(--border);
+  color: var(--text);
+}
+
+.popup .chip-remove:focus-visible {
+  outline: 2px solid var(--focus-ring);
+}
+
+.popup .warn-note {
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 5px 8px;
+  color: var(--scope-wide-text);
+  background-color: var(--scope-wide-bg);
+  border: 1px solid var(--scope-wide-border);
+  border-radius: var(--radius);
+}
+
+.popup .scope-note {
+  padding: 0;
+  border: 0;
+  background: none;
+  align-items: center;
+}
+
+.popup .scope-note[data-scope='exact'] {
+  background: none;
+  border: 0;
+}
+
+.popup .scope-note[data-scope='wide'] {
+  padding: 5px 8px;
+  border: 1px solid var(--scope-wide-border);
+}
+
+/* Preset segmented control (also used for the cookie scope) */
+.popup .segmented {
+  display: grid;
+  gap: 2px;
+  padding: 2px;
+  background-color: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.popup .segmented-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.popup .segmented-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.popup .seg-btn {
+  height: 26px;
+  min-width: 0;
+  padding: 0 4px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.popup .seg-btn:hover:not([aria-pressed='true']) {
+  color: var(--text);
+}
+
+.popup .seg-btn[aria-pressed='true'] {
+  background-color: var(--bg);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+.popup .seg-btn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
+}
+
+.popup .select {
+  height: 28px;
+  min-width: 0;
+  padding: 0 6px;
+  font-size: 12px;
+  color: var(--text);
+  background-color: var(--bg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+}
+
+.popup .select:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
+}
+
+.popup .select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Data rows */
+.popup .data-grid {
+  padding: 0 4px 3px;
+}
+
+.popup .check-row {
+  min-height: 26px;
+  gap: 7px;
+  min-width: 0;
+}
+
+.popup .check-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.popup .check-row .scope-tag {
+  flex-shrink: 0;
+}
+
+.popup .count {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.popup .check-row.is-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.popup .check-row.is-disabled input {
+  cursor: not-allowed;
+}
+
+.popup .hint {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.popup .hint-center {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.popup .cookie-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--accent-hover);
+  background-color: var(--accent-subtle);
+  border: 1px solid var(--accent-subtle-border);
+  border-radius: var(--radius);
+}
+
+.popup .cookie-summary strong {
+  font-weight: 700;
+}
+
+.popup .cookie-summary .text-btn {
+  flex-shrink: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .popup .cookie-summary {
+    color: #bfdbfe;
+  }
+}
+
+/* Footer */
+.popup .screen-main .screen-footer {
+  gap: 6px;
+  padding: 8px 14px 10px;
+}
+
+.popup .footer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.popup .footer-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.popup .footer-cell .select {
+  width: 100%;
+  font-weight: 400;
+}
+
+.popup .btn-primary .btn-text,
+.popup .btn-danger .btn-text {
+  font-weight: 600;
+}
+
+.popup .shortcut-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 16px;
+  padding: 0 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid currentColor;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+.popup .status-message {
+  padding: 6px 10px;
+}
+
+/* ---------- Cookies screen ---------- */
+
+.popup .origin-box {
+  padding: 7px 10px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  word-break: break-all;
+}
+
+.popup .screen-cookies .segmented .seg-btn {
+  height: 30px;
+}
+
+.popup .notice {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  background-color: var(--accent-subtle);
+  border: 1px solid var(--accent-subtle-border);
+  border-radius: var(--radius);
+}
+
+.popup .notice-warn {
+  color: var(--scope-wide-text);
+  background-color: var(--scope-wide-bg);
+  border-color: var(--scope-wide-border);
+}
+
+.popup .cookie-group {
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.popup .cookie-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 24px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-label);
+  background-color: var(--surface);
+}
+
+.popup .cookie-group-sub {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-secondary);
+}
+
+.popup .cookie-group-shared {
+  border-color: var(--scope-wide-border);
+}
+
+.popup .cookie-group-shared .cookie-group-head {
+  color: var(--scope-wide-text);
+  background-color: var(--scope-wide-bg);
+}
+
+.popup .cookie-group-shared .cookie-group-sub {
+  color: var(--scope-wide-text);
+}
+
+.popup .cookie-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 10px;
+  border-top: 1px solid var(--divider);
+  cursor: pointer;
+}
+
+.popup .cookie-row:hover {
+  background-color: var(--surface);
+}
+
+.popup .cookie-row:has(input:focus-visible) {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+
+.popup .cookie-row input {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+}
+
+.popup .cookie-group-shared .cookie-row input {
+  accent-color: var(--scope-wide);
+}
+
+.popup .cookie-row input:disabled {
+  cursor: not-allowed;
+}
+
+.popup .cookie-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.popup .cookie-attrs {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.popup .footer-note {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.popup .footer-note[data-scope='wide'] {
+  color: var(--scope-wide-text);
+}
+
+/* ---------- Confirm screen ---------- */
+
+.popup .confirm-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.popup .confirm-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.popup .scope-badge {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  padding: 0 10px;
+  border-radius: 999px;
+  color: var(--scope-exact);
+  background-color: var(--scope-exact-bg);
+  border: 1px solid var(--scope-exact-border);
+}
+
+.popup .scope-badge[data-scope='wide'] {
+  color: var(--scope-wide-text);
+  background-color: var(--scope-wide-bg);
+  border-color: var(--scope-wide-border);
+}
+
+.popup .confirm-origin {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.popup .origin-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.popup .origin-count {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.popup .confirm-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.popup .confirm-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.popup .confirm-table {
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.popup .confirm-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 27px;
+  padding: 0 10px;
+  font-size: 13px;
+}
+
+.popup .confirm-row + .confirm-row {
+  border-top: 1px solid var(--divider);
+}
+
+.popup .confirm-count {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.popup .confirm-list li {
+  line-height: 1.5;
+}
+
+.popup .confirm-list li::before {
+  content: none;
+}
+
+.popup .confirm-list {
+  gap: 4px;
+  font-size: 13px;
+}
+
+.popup .confirm-cookie-notice {
+  margin: 0;
+}
+
+.popup .screen-confirm .confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 8px;
+}
+
+.popup .screen-confirm .btn-primary,
+.popup .screen-confirm .btn-danger {
+  height: 36px;
+}
+
+.popup .screen-confirm .btn-secondary {
+  height: 36px;
+  font-size: 13px;
+}
+
+/* Compact vertical rhythm so the default main screen fits 600px without scrolling. */
+.popup .data-group-title {
+  padding: 4px 10px 1px;
+}
+
+.popup .screen-main .screen-footer {
+  padding: 6px 14px 8px;
+}
+
+.popup .screen-cookies .screen-body {
+  gap: 8px;
+  padding: 10px 14px;
+}
+
+.popup .screen-cookies .origin-box {
+  padding: 5px 10px;
+}
+
+.popup .screen-cookies .segmented .seg-btn {
+  height: 28px;
+}
+
+.popup .cookie-group-head {
+  height: 22px;
+}
+
+.popup .screen-cookies .screen-footer {
+  gap: 8px;
+  padding: 8px 14px 10px;
+}
+
+.popup .cookie-row {
+  height: 29px;
+}
+
+.popup .seg-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

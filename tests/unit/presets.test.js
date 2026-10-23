@@ -4,9 +4,9 @@
 
 import {
     BUILTIN_PRESETS, validatePreset, getPreset, listPresets, duplicatePreset,
-    exportPresets, importPresets, presetMatchesSelection, MAX_CUSTOM_PRESETS
+    exportPresets, importPresets, presetMatchesSelection, presetToPlanInput, MAX_CUSTOM_PRESETS
 } from '../../presets.js';
-import { DATA_TYPE_KEYS, MAX_ORIGINS } from '../../cleanup-core.js';
+import { DATA_TYPE_KEYS, MAX_ORIGINS, createPlan } from '../../cleanup-core.js';
 
 const base = () => ({ id: 'my-preset', name: 'My preset', dataTypes: ['localStorage'] });
 
@@ -307,5 +307,101 @@ describe('presetMatchesSelection', () => {
     test('handles missing input', () => {
         expect(presetMatchesSelection(null, { dataTypes: [] })).toBe(false);
         expect(presetMatchesSelection(logout, null)).toBe(false);
+    });
+});
+
+describe('presetToPlanInput', () => {
+    const ORIGIN = 'https://app.example.test';
+    const tab = { id: 7, origin: ORIGIN, storeId: '0' };
+    const logout = () => BUILTIN_PRESETS.find(p => p.id === 'logout');
+
+    test('maps a built-in preset to createPlan input', () => {
+        const { input, dropped } = presetToPlanInput(logout(), { origin: ORIGIN, tab, source: 'shortcut' });
+        expect(dropped).toEqual([]);
+        expect(input).toEqual({
+            origins: [ORIGIN],
+            dataTypes: ['cookies', 'sessionStorage'],
+            cookieMode: 'exact',
+            cookieSelection: { includeShared: [], keepNames: [] },
+            since: 0,
+            after: 'reload',
+            startPath: '/',
+            presetId: 'logout',
+            tab,
+            source: 'shortcut'
+        });
+    });
+
+    test('the result is accepted by createPlan', () => {
+        const { input } = presetToPlanInput(logout(), { origin: ORIGIN, tab, source: 'contextMenu' });
+        const res = createPlan(input);
+        expect(res.ok).toBe(true);
+        expect(res.plan.origins).toEqual([ORIGIN]);
+        expect(res.plan.source).toBe('contextMenu');
+    });
+
+    test('puts the given origin first and de-duplicates extra origins', () => {
+        const preset = {
+            id: 'multi', name: 'Multi', dataTypes: ['localStorage'], cookieMode: 'exact', after: 'none', startPath: '/',
+            origins: ['https://api.example.test', ORIGIN, 'https://api.example.test']
+        };
+        const { input } = presetToPlanInput(preset, { origin: ORIGIN, tab: null, source: 'popup' });
+        expect(input.origins).toEqual([ORIGIN, 'https://api.example.test']);
+    });
+
+    test('caps origins at MAX_ORIGINS and keeps the primary origin', () => {
+        const extra = Array.from({ length: 15 }, (_, i) => `https://s${i}.example.test`);
+        const preset = { id: 'many', dataTypes: ['cache'], origins: extra };
+        const { input } = presetToPlanInput(preset, { origin: ORIGIN, tab: null, source: 'popup' });
+        expect(input.origins).toHaveLength(MAX_ORIGINS);
+        expect(input.origins[0]).toBe(ORIGIN);
+    });
+
+    test('a different boundOrigin never replaces the given origin', () => {
+        const preset = {
+            id: 'bound', name: 'Bound', dataTypes: ['localStorage'], cookieMode: 'exact', after: 'none',
+            startPath: '/', boundOrigin: 'https://other.example.test'
+        };
+        const { input } = presetToPlanInput(preset, { origin: ORIGIN, tab: null, source: 'popup' });
+        expect(input.origins).toEqual([ORIGIN]);
+    });
+
+    test('passes keepCookieNames, cookieMode, startPath and since through', () => {
+        const preset = {
+            id: 'keep', dataTypes: ['cookies', 'localStorage'], cookieMode: 'domainWide', after: 'start',
+            startPath: '/home', keepCookieNames: ['theme', 'lang']
+        };
+        const { input } = presetToPlanInput(preset, { origin: ORIGIN, tab, source: 'popup', since: 1234 });
+        expect(input.cookieMode).toBe('domainWide');
+        expect(input.startPath).toBe('/home');
+        expect(input.since).toBe(1234);
+        expect(input.cookieSelection).toEqual({ includeShared: [], keepNames: ['theme', 'lang'] });
+        expect(input.after).toBe('start');
+    });
+
+    test('without a tab, drops sessionStorage and the after-action and reports both', () => {
+        const { input, dropped } = presetToPlanInput(logout(), { origin: ORIGIN, tab: null, source: 'testMode' });
+        expect(input.dataTypes).toEqual(['cookies']);
+        expect(input.after).toBe('none');
+        expect(input.tab).toBeNull();
+        expect(dropped).toEqual([
+            { type: 'sessionStorage', reason: 'noTab' },
+            { after: 'reload', reason: 'noTab' }
+        ]);
+        expect(createPlan(input).ok).toBe(true);
+    });
+
+    test('without a tab, nothing is dropped when nothing needs a tab', () => {
+        const stale = BUILTIN_PRESETS.find(p => p.id === 'stale');
+        const { input, dropped } = presetToPlanInput({ ...stale, after: 'none' }, { origin: ORIGIN, tab: null, source: 'popup' });
+        expect(dropped).toEqual([]);
+        expect(input.dataTypes).toEqual(['cache', 'cacheStorage', 'serviceWorkers']);
+    });
+
+    test('does not mutate the preset', () => {
+        const preset = logout();
+        presetToPlanInput(preset, { origin: ORIGIN, tab: null, source: 'popup' });
+        expect(preset.dataTypes).toEqual(['cookies', 'sessionStorage']);
+        expect(preset.after).toBe('reload');
     });
 });

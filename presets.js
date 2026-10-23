@@ -436,3 +436,65 @@ export function presetMatchesSelection(preset, selection) {
     if (a.has('cookies') && (preset.cookieMode || 'exact') !== (selection.cookieMode || 'exact')) return false;
     return (preset.after || 'none') === (selection.after || 'none');
 }
+
+/**
+ * Builds the `createPlan` input for running a preset on one origin.
+ *
+ * The given `origin` is always the primary origin, even when the preset has a
+ * `boundOrigin` that differs: `boundOrigin` only tells the popup which origin a
+ * preset was designed for, it never redirects a cleanup. Extra origins from the
+ * preset follow the primary one, de-duplicated and capped at MAX_ORIGINS.
+ *
+ * Without an active tab (`tab` is null), steps that need a tab cannot run:
+ * `sessionStorage` is removed from the data types and the after-action becomes
+ * 'none'. Both are reported in `dropped` so callers can tell the user.
+ *
+ * @param {Preset} preset - Built-in or custom preset.
+ * @param {Object} context
+ * @param {string} context.origin - Exact primary origin.
+ * @param {{id: number, origin: string, storeId?: string}|null} [context.tab] - Active tab, or null.
+ * @param {string} context.source - Plan source ('popup', 'shortcut', 'contextMenu', 'testMode').
+ * @param {number} [context.since] - Start of the time range (0 = all time).
+ * @returns {{input: Object, dropped: Array<{type?: string, after?: string, reason: string}>}}
+ *   `input` for `createPlan` and the list of dropped steps.
+ */
+export function presetToPlanInput(preset, { origin, tab = null, source, since = 0 } = {}) {
+    const dropped = [];
+    let dataTypes = Array.isArray(preset.dataTypes) ? [...preset.dataTypes] : [];
+    let after = preset.after || 'none';
+
+    if (!tab) {
+        if (dataTypes.includes('sessionStorage')) {
+            dataTypes = dataTypes.filter(t => t !== 'sessionStorage');
+            dropped.push({ type: 'sessionStorage', reason: 'noTab' });
+        }
+        if (after !== 'none') {
+            dropped.push({ after, reason: 'noTab' });
+            after = 'none';
+        }
+    }
+
+    const origins = [];
+    for (const candidate of [origin, ...(Array.isArray(preset.origins) ? preset.origins : [])]) {
+        if (!origins.includes(candidate)) origins.push(candidate);
+    }
+
+    return {
+        input: {
+            origins: origins.slice(0, MAX_ORIGINS),
+            dataTypes,
+            cookieMode: preset.cookieMode || 'exact',
+            cookieSelection: {
+                includeShared: [],
+                keepNames: Array.isArray(preset.keepCookieNames) ? [...preset.keepCookieNames] : []
+            },
+            since,
+            after,
+            startPath: preset.startPath || '/',
+            presetId: preset.id,
+            tab,
+            source
+        },
+        dropped
+    };
+}

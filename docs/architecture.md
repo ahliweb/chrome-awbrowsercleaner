@@ -19,7 +19,10 @@ Pure modules have no `chrome.*` or DOM dependency and are unit-tested directly b
 | `page-probes.js` | injected | Self-contained functions passed to `chrome.scripting.executeScript` (snapshot, sessionStorage clear). |
 | `settings.js` | storage adapter | `chrome.storage` wrapper (sync/local/session injected) for presets, last preset, recent origins, history, Test Mode, test session start, permission grant log. |
 | `i18n.js` | DOM helper | `getMessage`, `localizeDocument` shared by popup and options. |
-| `popup.html/js` | UI | Thin controller: screens 1–5 (main, cookies, confirm, result, unsupported). |
+| `chrome-helpers.js` | Chrome adapter | `getActiveTab`, `getCookieStoreId`, `tabContext` (exact origin + cookie store of a scriptable tab), `isScriptableUrl` (rejects `chrome://`, `file://`, extension stores). |
+| `popup.html/js` | UI | Controller for screens 1–3 (main, exact cookies, confirm); mounts screens 4–5. |
+| `popup-result.js` | UI module | Screen 4: before/after evidence table, copy summary, JSON/Markdown export via Blob download. |
+| `popup-unsupported.js` | UI module | Screen 5: unsupported page, manual target with normalization preview, recent origins. |
 | `options.html/js` | UI | Options page: presets, per-origin permissions, Test Mode, history & evidence, shortcuts. |
 | `background.js` | service worker | Keyboard commands, context menus, badge feedback, Test Mode (`runtime.onMessageExternal`). |
 
@@ -76,7 +79,9 @@ Runs inside `executePlan` **before any Chrome API call**; returns `{ ok, errors:
   (`chrome.cookies` has no creation time).
 - `cookieMode: 'domainWide'` is rejected when `source === 'testMode'`.
 - `after !== 'none'` and `sessionStorage` require `tab` whose `origin` is in `origins`.
-- `startPath` must start with `/` and must not start with `//`.
+- `startPath` must start with `/` and must not start with `//` or contain a backslash.
+- Origins containing `%` are rejected: Chrome's URL parser turns a `*` host into `%2A`, so a
+  percent-encoded host is treated as a wildcard attempt (`origin-utils.js` rejects it too).
 
 Every `chrome.browsingData.remove` call is built by `buildRemovalOptions({ origins: [origin], since })`,
 which always sets `originTypes: { unprotectedWeb: true }` and never sets `excludeOrigins`.
@@ -104,7 +109,7 @@ which always sets `originTypes: { unprotectedWeb: true }` and never sets `exclud
 ```
 `keep` always contains `otherOrigins` and `browserData`.
 
-### `executePlan(plan, { api = globalThis.chrome, now = Date.now })`
+### `executePlan(plan, { api = globalThis.chrome, now = Date.now, deferAfter = false })`
 
 Order per origin: **sessionStorage → cookies (exact engine) → `browsingData.remove` → after-action** (after-action
 only once, for the active tab). Throws `ScopeGuardError` (with `errors`) before touching any API when the plan is invalid.
@@ -121,6 +126,10 @@ only once, for the active tab). Throws `ScopeGuardError` (with `errors`) before 
   after: { action, ok, error? }
 }
 ```
+With `deferAfter: true` the after-action is reported as `{ action, ok: true, deferred: true }` and not run;
+the popup takes the "after" evidence snapshot first and then calls `runAfterAction(plan)`, which re-validates
+the plan before reloading or navigating the tab.
+
 Exact cookie removal requires the optional host permission for that origin
 (`api.permissions.contains({ origins: [origin + '/*'] })`); if missing, the cookie step fails with code
 `COOKIE_PERMISSION_MISSING` — there is no silent fallback to domain-wide mode.
@@ -148,6 +157,19 @@ Screens are `<section>` elements toggled with the `hidden` attribute; `body[data
 | Confirm (`#screenConfirm`, `body.is-confirming`) | `#confirmOrigin`, `#confirmTypes`, `#confirmKeep`, `#confirmBtn` (`.btn-danger` for `danger`, `.btn-primary` for `review`), `#cancelBtn`; `Esc` cancels |
 | Result (`#screenResult`) | `#resultBanner`, `#resultTable tr[data-type]` (`.before`, `.after`), `#copySummaryBtn`, `#exportJsonBtn`, `#exportMdBtn`, `#resultDoneBtn` |
 | Unsupported (`#screenUnsupported`) | `#unsupportedScheme`, `#manualTargetInput`, `#manualPreview`, `#manualError`, `#continueBtn`, `#recentOrigins` |
+
+## Entry points
+
+| Entry point | Source | Confirmation |
+| --- | --- | --- |
+| Popup | `popup` | Screen 3 for `review` and `danger` plans. |
+| Keyboard command / context menu | `shortcut` / `contextMenu` | `danger` plans are never executed by the worker: it stores a single-use pending confirmation (`aw.pendingConfirmation`, 60 s) and opens the popup, which shows screen 3. |
+| Test Mode (`runtime.onMessageExternal`) | `testMode` | Domain-wide cookies rejected; the target is always `sender.origin`. |
+
+## Storage
+
+All keys are listed with their shape and retention in `docs/data-dictionary.md`. No key ever holds a cookie
+value or storage contents.
 
 ## Permissions
 

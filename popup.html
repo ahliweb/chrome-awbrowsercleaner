@@ -6,126 +6,314 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AW Browser Cleaner</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="screens.css">
 </head>
 
-<body>
+<body class="popup" data-screen="main">
   <div class="app">
-    <header class="app-header">
+    <header class="app-header" id="appHeader">
       <img src="icons/icon48.png" alt="" id="header-logo">
       <h1 data-i18n="extensionName">AW Browser Cleaner</h1>
+      <span class="test-mode-tag" id="testModeTag" hidden data-i18n="testModeTag"
+        data-i18n-title="testModeTagTitle">Test Mode</span>
       <span class="version-tag" id="versionTag"></span>
+      <button type="button" id="optionsBtn" class="icon-btn" data-i18n-aria="popupSettingsLabel"
+        data-i18n-title="popupSettingsLabel" aria-label="Settings" title="Settings">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="4" y1="21" x2="4" y2="14"></line>
+          <line x1="4" y1="10" x2="4" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12" y2="3"></line>
+          <line x1="20" y1="21" x2="20" y2="16"></line>
+          <line x1="20" y1="12" x2="20" y2="3"></line>
+          <line x1="1" y1="14" x2="7" y2="14"></line>
+          <line x1="9" y1="8" x2="15" y2="8"></line>
+          <line x1="17" y1="16" x2="23" y2="16"></line>
+        </svg>
+      </button>
     </header>
 
-    <main class="app-body">
-      <div class="field" data-hide-on-confirm>
-        <label class="field-label" for="originInput" data-i18n="targetOriginLabel">Target origin</label>
-        <div class="input-row">
-          <input type="text" id="originInput" class="text-input" placeholder="https://example.com"
-            data-i18n-placeholder="targetOriginPlaceholder" spellcheck="false" autocomplete="off">
-          <button type="button" id="fillCurrent" class="btn btn-secondary" title="Use current tab"
-            data-i18n="useCurrentTabShort" data-i18n-title="useCurrentTabTitle">This tab</button>
+    <!-- Screen 1: main -->
+    <section id="screenMain" class="screen screen-main" aria-label="AW Browser Cleaner">
+      <div class="screen-body">
+        <div class="field">
+          <div class="field-label-row">
+            <label class="field-label" for="originInput" data-i18n="targetOriginLabel">Target origin</label>
+            <button type="button" id="addOriginBtn" class="text-btn" aria-expanded="false"
+              aria-controls="addOriginRow" data-i18n="addOriginBtn" data-i18n-title="addOriginTitle">+ Add origin</button>
+          </div>
+          <div class="input-row">
+            <input type="text" id="originInput" class="text-input" placeholder="https://example.com"
+              data-i18n-placeholder="targetOriginPlaceholder" spellcheck="false" autocomplete="off"
+              aria-describedby="scopeNote">
+            <button type="button" id="fillCurrent" class="btn btn-secondary" title="Use current tab"
+              data-i18n="useCurrentTabShort" data-i18n-title="useCurrentTabTitle">This tab</button>
+          </div>
+          <div id="originError" class="field-error" role="alert" hidden></div>
+          <div id="normalizedPreview" class="preview-line" hidden>
+            <span class="preview-arrow" aria-hidden="true">&rarr;</span>
+            <span data-i18n="normalizedPreviewLabel">Will use</span>
+            <span class="mono" id="normalizedOrigin"></span>
+          </div>
+          <div id="addOriginRow" class="input-row" hidden>
+            <input type="text" id="extraOriginInput" class="text-input" placeholder="https://api.example.com"
+              data-i18n-placeholder="extraOriginPlaceholder" data-i18n-aria="extraOriginLabel" aria-label="Additional origin"
+              spellcheck="false" autocomplete="off">
+            <button type="button" id="extraOriginAddBtn" class="btn btn-secondary"
+              data-i18n="extraOriginAdd">Add</button>
+          </div>
+          <ul id="extraOrigins" class="chip-list" data-i18n-aria="extraOriginsLabel" aria-label="Additional origins"
+            hidden></ul>
+          <div id="idpWarning" class="warn-note" role="note" hidden></div>
+          <div id="scopeNote" class="scope-note" data-scope="exact" aria-live="polite">
+            <svg class="icon-exact" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <polyline points="9 12 11 14 15 10"></polyline>
+            </svg>
+            <svg class="icon-wide" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span id="scopeNoteText" data-i18n="scopeExact">Only this origin. Other origins are not touched.</span>
+          </div>
         </div>
-        <div id="scopeNote" class="scope-note" data-scope="exact" aria-live="polite">
-          <svg class="icon-exact" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            <polyline points="9 12 11 14 15 10"></polyline>
-          </svg>
-          <svg class="icon-wide" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-            <line x1="12" y1="9" x2="12" y2="13"></line>
-            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-          </svg>
-          <span id="scopeNoteText" data-i18n="scopeExact">Only this origin. Other origins are not touched.</span>
+
+        <div class="field">
+          <div class="field-label-row">
+            <span class="field-label" id="presetLabel" data-i18n="presetLabel">Preset</span>
+            <span id="presetStatus" class="section-meta" aria-live="polite" hidden></span>
+          </div>
+          <div id="presetBar" class="segmented segmented-4" role="group" aria-labelledby="presetLabel">
+            <button type="button" class="seg-btn" data-preset="logout" data-i18n="presetShortLogout" aria-pressed="false"
+              tabindex="0">Log out</button>
+            <button type="button" class="seg-btn" data-preset="fresh" data-i18n="presetShortFresh" aria-pressed="false"
+              tabindex="-1">Fresh start</button>
+            <button type="button" class="seg-btn" data-preset="stale" data-i18n="presetShortStale" aria-pressed="false"
+              tabindex="-1">Fix stale files</button>
+            <button type="button" class="seg-btn" data-preset="full" data-i18n="presetShortFull" aria-pressed="false"
+              tabindex="-1">Everything</button>
+          </div>
+          <select id="presetMore" class="select" hidden data-i18n-aria="presetMoreLabel" aria-label="More presets">
+          </select>
+        </div>
+
+        <section class="field" aria-labelledby="dataToClearLabel">
+          <div class="section-header">
+            <h2 class="field-label" id="dataToClearLabel" data-i18n="dataToClearLabel">Data to clear</h2>
+            <div class="section-meta">
+              <span id="selectedCount"></span>
+              <button type="button" id="selectAll" class="text-btn">Select all</button>
+            </div>
+          </div>
+
+          <div class="data-panel checkbox-grid">
+            <div class="data-group" role="group" aria-labelledby="groupSession">
+              <div class="data-group-title" id="groupSession" data-i18n="groupSession">Session</div>
+              <div class="data-grid">
+                <label class="check-row" data-row="cookies" data-i18n-title="typeTipCookies">
+                  <input type="checkbox" value="cookies">
+                  <span class="check-label" data-i18n="dataTypeCookies">Cookies</span>
+                  <span class="scope-tag" data-i18n="cookieScopeTag" hidden>domain-wide</span>
+                  <span class="count mono" data-count-for="cookies">–</span>
+                </label>
+                <label class="check-row" data-row="sessionStorage" data-i18n-title="typeTipSessionStorage">
+                  <input type="checkbox" value="sessionStorage">
+                  <span class="check-label" data-i18n="dataTypeSessionStorage">Session Storage</span>
+                  <span class="count mono" data-count-for="sessionStorage">–</span>
+                </label>
+              </div>
+            </div>
+            <div class="data-group" role="group" aria-labelledby="groupStorage">
+              <div class="data-group-title" id="groupStorage" data-i18n="groupStorage">Storage</div>
+              <div class="data-grid">
+                <label class="check-row" data-row="localStorage" data-i18n-title="typeTipLocalStorage">
+                  <input type="checkbox" value="localStorage">
+                  <span class="check-label" data-i18n="dataTypeLocalStorage">Local Storage</span>
+                  <span class="count mono" data-count-for="localStorage">–</span>
+                </label>
+                <label class="check-row" data-row="indexedDB" data-i18n-title="typeTipIndexedDB">
+                  <input type="checkbox" value="indexedDB">
+                  <span class="check-label" data-i18n="dataTypeIndexedDB">IndexedDB</span>
+                  <span class="count mono" data-count-for="indexedDB">–</span>
+                </label>
+                <label class="check-row" data-row="fileSystems" data-i18n-title="typeTipFileSystems">
+                  <input type="checkbox" value="fileSystems">
+                  <span class="check-label" data-i18n="dataTypeFileSystems">File systems</span>
+                  <span class="count mono" data-count-for="fileSystems">–</span>
+                </label>
+              </div>
+            </div>
+            <div class="data-group" role="group" aria-labelledby="groupCache">
+              <div class="data-group-title" id="groupCache" data-i18n="groupCache">Cache &amp; offline</div>
+              <div class="data-grid">
+                <label class="check-row" data-row="cache" data-i18n-title="typeTipCache">
+                  <input type="checkbox" value="cache">
+                  <span class="check-label" data-i18n="dataTypeHttpCache">HTTP cache</span>
+                  <span class="count mono" data-count-for="cache">–</span>
+                </label>
+                <label class="check-row" data-row="cacheStorage" data-i18n-title="typeTipCacheStorage">
+                  <input type="checkbox" value="cacheStorage">
+                  <span class="check-label" data-i18n="dataTypeCacheStorage">Cache Storage</span>
+                  <span class="count mono" data-count-for="cacheStorage">–</span>
+                </label>
+                <label class="check-row" data-row="serviceWorkers" data-i18n-title="typeTipServiceWorkers">
+                  <input type="checkbox" value="serviceWorkers">
+                  <span class="check-label" data-i18n="dataTypeServiceWorkers">Service Workers</span>
+                  <span class="count mono" data-count-for="serviceWorkers">–</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <p id="rangeNote" class="hint" hidden></p>
+        </section>
+
+        <div id="cookieSummary" class="cookie-summary" hidden>
+          <span id="cookieSummaryText"></span>
+          <button type="button" id="cookieManageBtn" class="text-btn" data-i18n="cookieManage">Manage</button>
         </div>
       </div>
 
-      <section class="field" aria-labelledby="dataToClearLabel" data-hide-on-confirm>
-        <div class="section-header">
-          <h2 class="section-label" id="dataToClearLabel" data-i18n="dataToClearLabel">Data to clear</h2>
-          <div class="section-meta">
-            <span id="selectedCount"></span>
-            <button type="button" id="selectAll" class="text-btn">Deselect all</button>
+      <div class="screen-footer">
+        <div class="footer-grid">
+          <div class="footer-cell">
+            <label for="rangeSelect" data-i18n="rangeLabel">Time range</label>
+            <select id="rangeSelect" class="select">
+              <option value="all" data-i18n="rangeAll">All time</option>
+              <option value="15m" data-i18n="range15m">Last 15 minutes</option>
+              <option value="1h" data-i18n="rangeHour">Last hour</option>
+              <option value="session" data-i18n="rangeSession" disabled>Since test session started</option>
+            </select>
+          </div>
+          <div class="footer-cell">
+            <label for="afterSelect" data-i18n="afterLabel">After cleaning</label>
+            <select id="afterSelect" class="select">
+              <option value="hard" data-i18n="afterHard">Hard reload (bypass cache)</option>
+              <option value="reload" data-i18n="afterReload">Reload</option>
+              <option value="start" data-i18n="afterStart">Open start page</option>
+              <option value="none" data-i18n="afterNone">Don't reload</option>
+            </select>
           </div>
         </div>
+        <button type="button" id="clearBtn" class="btn btn-primary">
+          <span class="btn-text" data-i18n="clearOriginBtn">Clear this origin</span>
+          <kbd class="shortcut-tag" hidden></kbd>
+        </button>
+        <div id="statusMessage" class="status-message hidden" role="status" aria-live="polite"></div>
+      </div>
+    </section>
 
-        <div class="data-panel checkbox-grid">
-          <div class="data-group" role="group" aria-labelledby="groupSession">
-            <div class="data-group-title" id="groupSession" data-i18n="groupSession">Session</div>
-            <div class="data-grid">
-              <label class="check-row">
-                <input type="checkbox" value="cookies" checked>
-                <span data-i18n="dataTypeCookies">Cookies</span>
-                <span class="scope-tag" data-i18n="cookieScopeTag">domain-wide</span>
-              </label>
-            </div>
-          </div>
-          <div class="data-group" role="group" aria-labelledby="groupStorage">
-            <div class="data-group-title" id="groupStorage" data-i18n="groupStorage">Storage</div>
-            <div class="data-grid">
-              <label class="check-row">
-                <input type="checkbox" value="localStorage" checked>
-                <span data-i18n="dataTypeLocalStorage">Local Storage</span>
-              </label>
-              <label class="check-row">
-                <input type="checkbox" value="indexedDB" checked>
-                <span data-i18n="dataTypeIndexedDB">IndexedDB</span>
-              </label>
-            </div>
-          </div>
-          <div class="data-group" role="group" aria-labelledby="groupCache">
-            <div class="data-group-title" id="groupCache" data-i18n="groupCache">Cache &amp; offline</div>
-            <div class="data-grid">
-              <label class="check-row">
-                <input type="checkbox" value="cacheStorage" checked>
-                <span data-i18n="dataTypeCacheStorage">Cache Storage</span>
-              </label>
-              <label class="check-row">
-                <input type="checkbox" value="serviceWorkers" checked>
-                <span data-i18n="dataTypeServiceWorkers">Service Workers</span>
-              </label>
-            </div>
-          </div>
+    <!-- Screen 2: exact cookies -->
+    <section id="screenCookies" class="screen screen-cookies" aria-labelledby="cookieTitle" hidden>
+      <div class="screen-head">
+        <div class="head-left">
+          <button type="button" id="cookieBackBtn" class="icon-btn" data-i18n-aria="backBtnLabel"
+            data-i18n-title="backBtnLabel" aria-label="Back" title="Back">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <h2 class="screen-title" id="cookieTitle" data-i18n="cookieScreenTitle">Exact cookies</h2>
         </div>
-      </section>
+        <span id="cookieCountSummary" class="section-meta"></span>
+      </div>
+      <div class="screen-body">
+        <div id="cookieOrigin" class="origin-box mono"></div>
+        <div class="segmented segmented-2" role="group" data-i18n-aria="cookieModeLabel" aria-label="Cookie scope">
+          <button type="button" id="cookieModeExact" class="seg-btn" aria-pressed="true"
+            data-i18n="cookieModeExact">Exact origin (recommended)</button>
+          <button type="button" id="cookieModeWide" class="seg-btn" aria-pressed="false"
+            data-i18n="cookieModeWide">Domain-wide</button>
+        </div>
+        <div id="cookiePermissionNotice" class="notice" hidden>
+          <p id="cookiePermissionText"></p>
+          <button type="button" id="cookieGrantBtn" class="btn btn-secondary"
+            data-i18n="cookieGrantBtn">Grant access to read cookies</button>
+        </div>
+        <div id="cookieDenied" class="notice notice-warn" role="alert" hidden></div>
+        <div id="cookieStatus" class="hint" aria-live="polite" hidden></div>
+        <section class="cookie-group" id="cookieGroupHostOnly" hidden>
+          <header class="cookie-group-head">
+            <span class="cookie-group-title" data-i18n="cookieGroupHostOnly">Host-only</span>
+            <span class="mono cookie-group-sub" id="cookieHostOnlyHost"></span>
+          </header>
+          <div id="cookieListHostOnly" class="cookie-list"></div>
+        </section>
+        <section class="cookie-group" id="cookieGroupPartitioned" hidden>
+          <header class="cookie-group-head">
+            <span class="cookie-group-title" data-i18n="cookieGroupPartitioned">Partitioned (CHIPS)</span>
+            <span class="mono cookie-group-sub" id="cookiePartitionedSite"></span>
+          </header>
+          <div id="cookieListPartitioned" class="cookie-list"></div>
+        </section>
+        <section class="cookie-group cookie-group-shared" id="cookieGroupShared" hidden>
+          <header class="cookie-group-head">
+            <span class="cookie-group-title" data-i18n="cookieGroupShared">Shared domain</span>
+            <span class="mono cookie-group-sub" id="cookieSharedDomain"></span>
+          </header>
+          <div id="cookieListShared" class="cookie-list"></div>
+        </section>
+      </div>
+      <div class="screen-footer">
+        <p id="cookieFooterNote" class="footer-note"></p>
+        <button type="button" id="cookieSaveBtn" class="btn btn-primary" data-i18n="cookieSaveBtn">Save selection</button>
+      </div>
+    </section>
 
-      <section id="confirmArea" class="confirm-panel hidden" aria-labelledby="confirmTitle">
-        <h2 id="confirmTitle" data-i18n="confirmTitle">Confirm cleanup</h2>
+    <!-- Screen 3: confirm -->
+    <section id="screenConfirm" class="screen screen-confirm" aria-labelledby="confirmTitle" hidden>
+      <div class="screen-head">
+        <div class="head-left">
+          <button type="button" id="confirmBackBtn" class="icon-btn" data-i18n-aria="backBtnLabel"
+            data-i18n-title="backBtnLabel" aria-label="Back" title="Back">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <h2 class="screen-title" id="confirmTitle" data-i18n="confirmTitle">Confirm cleanup</h2>
+        </div>
+      </div>
+      <div class="screen-body">
+        <div class="confirm-card">
+          <div class="confirm-card-head">
+            <span class="section-label" data-i18n="confirmTargetLabel">Target</span>
+            <span id="confirmScope" class="scope-badge" data-scope="exact"></span>
+          </div>
+          <div id="confirmOrigin" class="confirm-origin"></div>
+          <div id="confirmPreset" class="confirm-sub"></div>
+        </div>
+        <p id="confirmWideNote" class="confirm-cookie-notice" hidden data-i18n="confirmCookieNotice">Cookies are
+          removed for the whole registrable domain, including related subdomains.</p>
         <div class="confirm-block">
-          <span class="section-label" data-i18n="confirmTargetLabel">Target</span>
-          <span class="confirm-origin" id="confirmOrigin"></span>
+          <h3 class="section-label" data-i18n="confirmDataLabel">Will be removed</h3>
+          <ul class="confirm-table" id="confirmTypes"></ul>
         </div>
         <div class="confirm-block">
-          <span class="section-label" data-i18n="confirmDataLabel">Will be removed</span>
-          <ul class="confirm-list" id="confirmTypes"></ul>
+          <h3 class="section-label" data-i18n="confirmUntouchedLabel">Not touched</h3>
+          <ul class="confirm-list" id="confirmKeep"></ul>
         </div>
-        <div class="confirm-block">
-          <span class="section-label" data-i18n="confirmUntouchedLabel">Not touched</span>
-          <ul class="confirm-list">
-            <li data-i18n="confirmUntouchedOrigins">Site storage of every other origin</li>
-            <li data-i18n="confirmUntouchedBrowser">History, downloads, form data and passwords</li>
-          </ul>
-        </div>
-        <p class="confirm-cookie-notice" data-i18n="confirmCookieNotice">Cookies are removed for the whole registrable
-          domain, including related subdomains.</p>
+      </div>
+      <div class="screen-footer">
         <div class="confirm-actions">
           <button type="button" id="cancelBtn" class="btn btn-secondary" data-i18n="cancelBtn">Cancel</button>
           <button type="button" id="confirmBtn" class="btn btn-danger">
             <span class="btn-text" data-i18n="confirmCleanupBtn">Clear including domain cookies</span>
           </button>
         </div>
-      </section>
+        <small class="hint-center" data-i18n="confirmHint">Enter to continue · Esc to cancel</small>
+      </div>
+    </section>
 
-      <div id="statusMessage" class="status-message hidden" role="status" aria-live="polite"></div>
-    </main>
+    <!-- Screen 4: result (built by popup-result.js) -->
+    <section id="screenResult" hidden></section>
 
-    <footer class="app-footer">
-      <button type="button" id="clearBtn" class="btn btn-primary" data-hide-on-confirm>
-        <span class="btn-text" data-i18n="clearSiteDataBtn">Clear site data</span>
-      </button>
-      <small data-i18n="poweredBy">Powered by AhliWeb.com</small>
-    </footer>
+    <!-- Screen 5: unsupported page (built by popup-unsupported.js) -->
+    <section id="screenUnsupported" hidden></section>
   </div>
   <script type="module" src="popup.js"></script>
 </body>

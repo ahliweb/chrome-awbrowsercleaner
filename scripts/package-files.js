@@ -10,10 +10,23 @@ const RUNTIME_FILES = Object.freeze([
     'manifest.json',
     'popup.html',
     'popup.js',
+    'popup-result.js',
+    'popup-unsupported.js',
+    'options.html',
+    'options.js',
+    'options.css',
     'origin-utils.js',
     'cleanup-core.js',
     'cookie-engine.js',
+    'background.js',
+    'chrome-helpers.js',
+    'presets.js',
+    'settings.js',
+    'report.js',
+    'page-probes.js',
+    'i18n.js',
     'styles.css',
+    'screens.css',
     'fonts/inter-latin-wght.woff2',
     'fonts/jetbrains-mono-latin-wght.woff2',
     'fonts/OFL-Inter.txt',
@@ -26,4 +39,10 @@ const RUNTIME_FILES = Object.freeze([
     'LICENSE'
 ]);
 
-module.exports = { RUNTIME_FILES };
+/** Store targets: same files and manifest, different artifact names. */
+const TARGETS = Object.freeze({
+    chrome: Object.freeze({ artifactPrefix: 'aw-browser-cleaner' }),
+    edge: Object.freeze({ artifactPrefix: 'aw-browser-cleaner-edge' })
+});
+
+module.exports = { RUNTIME_FILES, TARGETS };

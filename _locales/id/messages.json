@@ -220,5 +220,1399 @@
   "presetCustom": {
     "message": "Kustom",
     "description": "Label shown when the current selection no longer matches any preset."
+  },
+  "commandCleanLast": {
+    "message": "Bersihkan origin ini dengan preset terakhir",
+    "description": "Description of the keyboard shortcut (manifest commands) that runs the last used preset on the active tab's origin. Shown on chrome://extensions/shortcuts."
+  },
+  "commandCleanLogout": {
+    "message": "Bersihkan origin ini dengan preset Keluar akun",
+    "description": "Description of the keyboard shortcut (manifest commands) that runs the built-in Log out preset on the active tab's origin. Shown on chrome://extensions/shortcuts."
+  },
+  "menuCleanWithPreset": {
+    "message": "Bersihkan origin ini dengan preset…",
+    "description": "Title of the parent context-menu item (toolbar icon and page right-click menu). Its sub-items are the preset names."
+  },
+  "unsupportedTitle": {
+    "message": "Halaman ini tidak bisa dibersihkan",
+    "description": "Title of the screen shown when the active tab is not an http(s) page."
+  },
+  "unsupportedBody": {
+    "message": "$ARG1$ bukan origin web. Ekstensi hanya bekerja untuk origin $ARG2$ dan $ARG3$.",
+    "description": "Explains why the tab cannot be cleaned. $1 is the tab's scheme (e.g. chrome://settings), $2 and $3 are the supported schemes (http://, https://).",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "chrome://settings"
+      },
+      "arg2": {
+        "content": "$2",
+        "example": "http://"
+      },
+      "arg3": {
+        "content": "$3",
+        "example": "https://"
+      }
+    }
+  },
+  "unsupportedBodyProtected": {
+    "message": "$ARG1$ dilindungi oleh Chrome. Ekstensi hanya bekerja untuk origin $ARG2$ dan $ARG3$.",
+    "description": "Same as unsupportedBody for protected web pages such as the Chrome Web Store. $1 is the host.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "chromewebstore.google.com"
+      },
+      "arg2": {
+        "content": "$2",
+        "example": "http://"
+      },
+      "arg3": {
+        "content": "$3",
+        "example": "https://"
+      }
+    }
+  },
+  "unsupportedUnknownPage": {
+    "message": "Halaman ini",
+    "description": "Fallback name of the active tab when its address is unknown."
+  },
+  "unsupportedManualLabel": {
+    "message": "Atau ketik URL target",
+    "description": "Label of the manual target input on the unsupported-page screen."
+  },
+  "unsupportedPreviewLabel": {
+    "message": "Dinormalisasi menjadi",
+    "description": "Label above the normalized origin preview."
+  },
+  "previewNotePathDropped": {
+    "message": "Path, query, dan hash dibuang",
+    "description": "Part of the normalization notes line."
+  },
+  "previewNoteDefaultScheme": {
+    "message": "skema default $ARG1$",
+    "description": "Part of the normalization notes line. $1 is the scheme, e.g. https.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "https"
+      }
+    }
+  },
+  "previewNoteDefaultPort": {
+    "message": "port $ARG1$",
+    "description": "Part of the normalization notes line. $1 is the default port, e.g. 443.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "443"
+      }
+    }
+  },
+  "unsupportedContinueBtn": {
+    "message": "Lanjut dengan origin ini",
+    "description": "Button that continues with the manually entered origin."
+  },
+  "unsupportedRecentLabel": {
+    "message": "Origin terakhir",
+    "description": "Heading of the recent origins list."
+  },
+  "relTimeJustNow": {
+    "message": "baru saja",
+    "description": "Relative time: less than a minute ago."
+  },
+  "relTimeMinutes": {
+    "message": "$ARG1$ mnt lalu",
+    "description": "Relative time in minutes. $1 is the number.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
+  },
+  "relTimeHours": {
+    "message": "$ARG1$ jam lalu",
+    "description": "Relative time in hours. $1 is the number.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "relTimeDays": {
+    "message": "$ARG1$ hari lalu",
+    "description": "Relative time in days. $1 is the number.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "resultTitle": {
+    "message": "Hasil pembersihan",
+    "description": "Title of the result screen."
+  },
+  "resultDone": {
+    "message": "Selesai",
+    "description": "Button that closes the result screen."
+  },
+  "resultCleanedIn": {
+    "message": "Bersih dalam $ARG1$ ms",
+    "description": "Result banner title. $1 is the duration in milliseconds.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "412"
+      }
+    }
+  },
+  "resultCleanedWithErrors": {
+    "message": "Dibersihkan dengan kesalahan",
+    "description": "Result banner title when something failed."
+  },
+  "resultAfterNone": {
+    "message": "Tab dibiarkan apa adanya.",
+    "description": "Banner sentence when no after-action ran."
+  },
+  "resultAfterReload": {
+    "message": "Tab dimuat ulang.",
+    "description": "Banner sentence after a normal reload."
+  },
+  "resultAfterHard": {
+    "message": "Tab dimuat ulang tanpa cache.",
+    "description": "Banner sentence after a hard reload."
+  },
+  "resultAfterStart": {
+    "message": "Halaman awal dibuka.",
+    "description": "Banner sentence after navigating to the start page."
+  },
+  "resultOriginsOne": {
+    "message": "Hanya 1 origin yang diproses.",
+    "description": "Banner sentence for a single origin."
+  },
+  "resultOriginsMany": {
+    "message": "$ARG1$ origin diproses.",
+    "description": "Banner sentence for several origins. $1 is the count.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "resultMoreErrors": {
+    "message": "+$ARG1$ lainnya",
+    "description": "Shown when there are more errors than the one listed. $1 is the count.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "resultColType": {
+    "message": "Tipe",
+    "description": "Result table header: data type."
+  },
+  "resultColBefore": {
+    "message": "Sebelum",
+    "description": "Result table header: count before cleaning."
+  },
+  "resultColAfter": {
+    "message": "Sesudah",
+    "description": "Result table header: count after cleaning."
+  },
+  "resultStorageUsage": {
+    "message": "Pemakaian storage",
+    "description": "Result table row: bytes used by the origin."
+  },
+  "resultKeptCookiesOne": {
+    "message": "1 cookie domain bersama sengaja dipertahankan ($ARG2$).",
+    "description": "Footnote for kept cookies, singular. $1 is the count, $2 the domain (e.g. .example.test).",
+    "placeholders": {
+      "arg2": {
+        "content": "$2",
+        "example": ".example.test"
+      }
+    }
+  },
+  "resultKeptCookiesMany": {
+    "message": "$ARG1$ cookie domain bersama sengaja dipertahankan ($ARG2$).",
+    "description": "Footnote for kept cookies, plural. $1 is the count, $2 the domain.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "3"
+      },
+      "arg2": {
+        "content": "$2",
+        "example": ".example.test"
+      }
+    }
+  },
+  "resultKeptCookiesNoDomainOne": {
+    "message": "1 cookie domain bersama sengaja dipertahankan.",
+    "description": "Footnote for kept cookies, singular, domain unknown."
+  },
+  "resultKeptCookiesNoDomainMany": {
+    "message": "$ARG1$ cookie domain bersama sengaja dipertahankan.",
+    "description": "Footnote for kept cookies, plural, domain unknown. $1 is the count.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "resultCopySummary": {
+    "message": "Salin ringkasan",
+    "description": "Button that copies a short text summary of the result."
+  },
+  "resultExportJson": {
+    "message": "Ekspor JSON",
+    "description": "Button that saves the report as a JSON file."
+  },
+  "resultExportMd": {
+    "message": "Markdown",
+    "description": "Button that saves the report as a Markdown file."
+  },
+  "resultCopied": {
+    "message": "Disalin",
+    "description": "Feedback after copying the summary."
+  },
+  "resultCopyFailed": {
+    "message": "Gagal menyalin",
+    "description": "Feedback when the clipboard write failed."
+  },
+  "resultExported": {
+    "message": "Diekspor: $ARG1$",
+    "description": "Screen-reader message after saving a report file. $1 is the file name.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "aw-cleaner-example.test-20261023-104218.json"
+      }
+    }
+  },
+  "resultExportFailed": {
+    "message": "Gagal mengekspor laporan",
+    "description": "Message when saving the report file failed."
+  },
+  "optionsPageTitle": {
+    "message": "Pengaturan - AW Browser Cleaner",
+    "description": "Document title of the options page."
+  },
+  "optionsHeaderTitle": {
+    "message": "Pengaturan",
+    "description": "Header label next to the extension name on the options page."
+  },
+  "optionsNavLabel": {
+    "message": "Bagian pengaturan",
+    "description": "Accessible name of the side navigation."
+  },
+  "optionsNavPresets": {
+    "message": "Preset",
+    "description": "Section title and navigation item."
+  },
+  "optionsNavPermissions": {
+    "message": "Izin per origin",
+    "description": "Section title and navigation item."
+  },
+  "optionsNavTestMode": {
+    "message": "Test Mode",
+    "description": "Section title and navigation item. Keep the product term."
+  },
+  "optionsNavHistory": {
+    "message": "Riwayat & bukti",
+    "description": "Section title and navigation item."
+  },
+  "optionsNavShortcuts": {
+    "message": "Pintasan",
+    "description": "Section title and navigation item."
+  },
+  "optionsLoadFailed": {
+    "message": "Bagian ini tidak bisa dimuat: $ERROR$",
+    "description": "Error shown when a section fails to load.",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "Permission denied"
+      }
+    }
+  },
+  "optionsPresetsDesc": {
+    "message": "Kombinasi tipe data dan aksi lanjutan. Preset selalu dijalankan pada satu origin target.",
+    "description": "Presets section description."
+  },
+  "optionsImportJson": {
+    "message": "Impor JSON",
+    "description": "Button that imports presets from a JSON file."
+  },
+  "optionsExportJson": {
+    "message": "Ekspor JSON",
+    "description": "Button that exports custom presets to a JSON file."
+  },
+  "optionsExportNone": {
+    "message": "Belum ada preset kustom untuk diekspor.",
+    "description": "Tooltip of the disabled export button."
+  },
+  "optionsNewPreset": {
+    "message": "Preset baru",
+    "description": "Button that opens the preset editor."
+  },
+  "optionsPresetTableLabel": {
+    "message": "Daftar preset",
+    "description": "Accessible name of the preset table region."
+  },
+  "optionsColName": {
+    "message": "Nama",
+    "description": "Preset table column header."
+  },
+  "optionsColDataTypes": {
+    "message": "Tipe data",
+    "description": "Preset table column header."
+  },
+  "optionsColCookie": {
+    "message": "Cookie",
+    "description": "Preset table column header."
+  },
+  "optionsColAfter": {
+    "message": "Setelahnya",
+    "description": "Preset table column header: action after cleaning."
+  },
+  "optionsColBound": {
+    "message": "Origin terikat",
+    "description": "Preset table column header."
+  },
+  "optionsColActions": {
+    "message": "Aksi",
+    "description": "Preset table column header (visually hidden)."
+  },
+  "optionsBuiltinBadge": {
+    "message": "bawaan",
+    "description": "Badge on built-in presets."
+  },
+  "optionsCookieExact": {
+    "message": "Persis",
+    "description": "Cookie mode: exact origin only."
+  },
+  "optionsCookieDomainWide": {
+    "message": "Seluruh domain",
+    "description": "Cookie mode: whole registrable domain."
+  },
+  "optionsAfterNone": {
+    "message": "Tidak ada",
+    "description": "After-action: none."
+  },
+  "optionsAfterReload": {
+    "message": "Muat ulang",
+    "description": "After-action: reload the tab."
+  },
+  "optionsAfterHard": {
+    "message": "Muat ulang tanpa cache",
+    "description": "After-action: reload bypassing the cache."
+  },
+  "optionsAfterStart": {
+    "message": "Buka halaman awal",
+    "description": "After-action: open the start page."
+  },
+  "optionsAfterStartPath": {
+    "message": "Buka $PATH$",
+    "description": "After-action summary with the start path.",
+    "placeholders": {
+      "path": {
+        "content": "$1",
+        "example": "/cart"
+      }
+    }
+  },
+  "optionsBoundAny": {
+    "message": "Semua",
+    "description": "Bound origin when the preset is not tied to an origin."
+  },
+  "optionsAllTypes": {
+    "message": "Semua $COUNT$ tipe",
+    "description": "Summary when a preset selects every data type.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      }
+    }
+  },
+  "optionsTypesCount": {
+    "message": "$COUNT$ tipe",
+    "description": "Summary of a preset selecting many data types.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      }
+    }
+  },
+  "optionsDuplicate": {
+    "message": "Duplikat",
+    "description": "Action: copy a preset."
+  },
+  "optionsEdit": {
+    "message": "Ubah",
+    "description": "Action: edit a preset."
+  },
+  "optionsDelete": {
+    "message": "Hapus",
+    "description": "Action: delete a preset."
+  },
+  "optionsDuplicateAria": {
+    "message": "Duplikat preset $NAME$",
+    "description": "Accessible name of the duplicate button.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsEditAria": {
+    "message": "Ubah preset $NAME$",
+    "description": "Accessible name of the edit button.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsDeleteAria": {
+    "message": "Hapus preset $NAME$",
+    "description": "Accessible name of the delete button.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsDeleteConfirm": {
+    "message": "Hapus preset \"$NAME$\"?",
+    "description": "Confirmation before deleting a preset.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsPresetDeleted": {
+    "message": "Preset dihapus.",
+    "description": "Status after deleting a preset."
+  },
+  "optionsPresetSaved": {
+    "message": "Preset disimpan.",
+    "description": "Status after saving a preset."
+  },
+  "optionsPresetsImported": {
+    "message": "$COUNT$ preset diimpor.",
+    "description": "Status after a successful import.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      }
+    }
+  },
+  "optionsImportFailed": {
+    "message": "Impor gagal. Tidak ada yang diubah:",
+    "description": "Heading above import errors."
+  },
+  "optionsExported": {
+    "message": "Preset diekspor.",
+    "description": "Status after exporting presets."
+  },
+  "optionsEditorNewTitle": {
+    "message": "Preset baru",
+    "description": "Editor dialog title for a new preset."
+  },
+  "optionsEditorEditTitle": {
+    "message": "Ubah preset",
+    "description": "Editor dialog title for an existing preset."
+  },
+  "optionsFieldName": {
+    "message": "Nama",
+    "description": "Editor field label."
+  },
+  "optionsFieldId": {
+    "message": "ID",
+    "description": "Editor field label."
+  },
+  "optionsFieldIdHint": {
+    "message": "Huruf kecil, angka, dan tanda hubung. Tidak bisa diubah setelah disimpan.",
+    "description": "Hint under the preset ID field."
+  },
+  "optionsFieldDataTypes": {
+    "message": "Tipe data",
+    "description": "Editor field label."
+  },
+  "optionsFieldCookieMode": {
+    "message": "Mode cookie",
+    "description": "Editor field label."
+  },
+  "optionsCookieModeExact": {
+    "message": "Persis: hanya cookie origin ini",
+    "description": "Cookie mode option."
+  },
+  "optionsCookieModeWide": {
+    "message": "Seluruh domain: subdomain terkait ikut",
+    "description": "Cookie mode option."
+  },
+  "optionsFieldAfter": {
+    "message": "Setelah membersihkan",
+    "description": "Editor field label."
+  },
+  "optionsFieldStartPath": {
+    "message": "Path awal",
+    "description": "Editor field label."
+  },
+  "optionsFieldStartPathHint": {
+    "message": "Dibuka pada origin target, misalnya /cart.",
+    "description": "Hint under the start path field."
+  },
+  "optionsFieldBound": {
+    "message": "Origin terikat (opsional)",
+    "description": "Editor field label."
+  },
+  "optionsFieldBoundHint": {
+    "message": "Jika diisi, preset selalu dijalankan pada origin ini.",
+    "description": "Hint under the bound origin field."
+  },
+  "optionsBoundPreview": {
+    "message": "Akan disimpan sebagai $ORIGIN$",
+    "description": "Preview of the normalized origin.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "optionsFieldOrigins": {
+    "message": "Origin tambahan (opsional)",
+    "description": "Editor field label."
+  },
+  "optionsFieldOriginsHint": {
+    "message": "Satu origin persis per baris, misalnya https://example.com. Maksimal 10 termasuk origin terikat.",
+    "description": "Hint under the extra origins field."
+  },
+  "optionsFieldKeep": {
+    "message": "Cookie yang dipertahankan (opsional)",
+    "description": "Editor field label."
+  },
+  "optionsFieldKeepHint": {
+    "message": "Nama cookie dipisahkan koma. Nilainya tidak pernah dibaca.",
+    "description": "Hint under the keep-cookies field."
+  },
+  "optionsSave": {
+    "message": "Simpan",
+    "description": "Save button."
+  },
+  "optionsIdTaken": {
+    "message": "Sudah ada preset dengan ID ini.",
+    "description": "Validation error."
+  },
+  "optionsSaveFailed": {
+    "message": "Preset tidak bisa disimpan.",
+    "description": "Generic save error."
+  },
+  "optionsCopySuffix": {
+    "message": "$NAME$ (salinan)",
+    "description": "Name given to a duplicated preset.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsPermissionsDesc": {
+    "message": "Akses cookie presisi diminta saat pertama dipakai di sebuah origin dan bisa dicabut kapan saja. Ekstensi tidak pernah meminta akses ke semua situs.",
+    "description": "Per-origin permissions description."
+  },
+  "optionsPermissionsEmpty": {
+    "message": "Belum ada origin yang diberi akses.",
+    "description": "Empty state of the granted origins list."
+  },
+  "optionsGrantKindCookies": {
+    "message": "Cookie presisi",
+    "description": "Kind of a granted permission."
+  },
+  "optionsGrantedOn": {
+    "message": "diberikan $DATE$",
+    "description": "Grant date suffix.",
+    "placeholders": {
+      "date": {
+        "content": "$1",
+        "example": "21 Oct 2026"
+      }
+    }
+  },
+  "optionsRevoke": {
+    "message": "Cabut",
+    "description": "Button that revokes access to an origin."
+  },
+  "optionsRevokeAria": {
+    "message": "Cabut akses ke $ORIGIN$",
+    "description": "Accessible name of the revoke button.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "optionsRevoked": {
+    "message": "Akses ke $ORIGIN$ dicabut.",
+    "description": "Status after revoking.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "optionsRevokeFailed": {
+    "message": "Akses ke $ORIGIN$ tidak bisa dicabut.",
+    "description": "Error after a failed revoke.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "optionsInstallPermissions": {
+    "message": "Izin instalasi",
+    "description": "Heading of the install-time permission list."
+  },
+  "optionsPermBrowsingData": {
+    "message": "Menghapus data situs untuk origin yang Anda pilih.",
+    "description": "Purpose of the browsingData permission."
+  },
+  "optionsPermActiveTab": {
+    "message": "Membaca alamat tab saat ini, hanya ketika Anda membuka ekstensi.",
+    "description": "Purpose of the activeTab permission."
+  },
+  "optionsPermScripting": {
+    "message": "Menghapus session storage dan menghitung item di halaman yang Anda pilih.",
+    "description": "Purpose of the scripting permission."
+  },
+  "optionsPermCookies": {
+    "message": "Menampilkan dan menghapus cookie satu origin persis, setelah Anda memberi akses.",
+    "description": "Purpose of the cookies permission."
+  },
+  "optionsPermStorage": {
+    "message": "Menyimpan preset, riwayat, dan pengaturan Anda.",
+    "description": "Purpose of the storage permission."
+  },
+  "optionsPermContextMenus": {
+    "message": "Menambahkan menu klik kanan.",
+    "description": "Purpose of the contextMenus permission."
+  },
+  "optionsPermUnknown": {
+    "message": "Dipakai oleh ekstensi.",
+    "description": "Fallback purpose for other permissions."
+  },
+  "optionsTestModeDesc": {
+    "message": "Izinkan skrip Playwright, Puppeteer, atau Selenium memicu preset lewat pesan. Halaman hanya bisa membersihkan origin-nya sendiri.",
+    "description": "Test Mode description."
+  },
+  "optionsTestModeToggle": {
+    "message": "Aktifkan Test Mode",
+    "description": "Accessible name of the Test Mode switch."
+  },
+  "optionsAllowedOrigins": {
+    "message": "Origin yang diizinkan",
+    "description": "Field label."
+  },
+  "optionsAllowedOriginsHint": {
+    "message": "Pisahkan dengan koma atau baris baru. Origin tanpa port berarti semua port diizinkan.",
+    "description": "Hint under the allowed origins field."
+  },
+  "optionsTestModeNote": {
+    "message": "Nonaktif secara default. Cookie seluruh domain tidak tersedia di Test Mode.",
+    "description": "Note under the Test Mode field."
+  },
+  "optionsSaveOrigins": {
+    "message": "Simpan origin",
+    "description": "Button saving the allowed origins."
+  },
+  "optionsTestModeSaved": {
+    "message": "Pengaturan Test Mode disimpan.",
+    "description": "Status after saving Test Mode."
+  },
+  "optionsTestModeInvalid": {
+    "message": "Pengaturan Test Mode tidak disimpan:",
+    "description": "Heading above Test Mode validation errors."
+  },
+  "optionsProtocolLabel": {
+    "message": "Protokol pesan",
+    "description": "Label above the example message."
+  },
+  "optionsHistoryDesc": {
+    "message": "Menyimpan 20 pembersihan terakhir di perangkat ini. Tanpa nilai cookie atau isi storage.",
+    "description": "History description."
+  },
+  "optionsHistoryToggle": {
+    "message": "Simpan riwayat",
+    "description": "Accessible name of the history switch."
+  },
+  "optionsHistoryEmpty": {
+    "message": "Belum ada pembersihan yang tercatat.",
+    "description": "Empty state of the history list."
+  },
+  "optionsHistoryOff": {
+    "message": "Riwayat nonaktif. Pembersihan baru tidak dicatat.",
+    "description": "Empty state when history is off."
+  },
+  "optionsHistoryListLabel": {
+    "message": "Pembersihan terbaru",
+    "description": "Accessible name of the history list."
+  },
+  "optionsStatusOk": {
+    "message": "Berhasil",
+    "description": "History entry result."
+  },
+  "optionsStatusFailed": {
+    "message": "Gagal",
+    "description": "History entry result."
+  },
+  "optionsMoreOrigins": {
+    "message": "+$COUNT$ lagi",
+    "description": "Suffix when an entry covers more origins.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      }
+    }
+  },
+  "optionsExportHistory": {
+    "message": "Ekspor semua (JSON)",
+    "description": "Button exporting the history."
+  },
+  "optionsHistoryExported": {
+    "message": "Riwayat diekspor.",
+    "description": "Status after export."
+  },
+  "optionsClearHistory": {
+    "message": "Hapus riwayat",
+    "description": "Button clearing the history."
+  },
+  "optionsClearHistoryConfirm": {
+    "message": "Hapus semua riwayat di perangkat ini?",
+    "description": "Confirmation before clearing history."
+  },
+  "optionsHistoryCleared": {
+    "message": "Riwayat dihapus.",
+    "description": "Status after clearing."
+  },
+  "optionsRecentOrigins": {
+    "message": "Origin terbaru",
+    "description": "Heading of the recent origins list."
+  },
+  "optionsRecentEmpty": {
+    "message": "Belum ada origin terbaru.",
+    "description": "Empty state."
+  },
+  "optionsClearRecent": {
+    "message": "Hapus origin terbaru",
+    "description": "Button clearing recent origins."
+  },
+  "optionsRecentCleared": {
+    "message": "Origin terbaru dihapus.",
+    "description": "Status after clearing."
+  },
+  "optionsSessionTitle": {
+    "message": "Sesi pengujian",
+    "description": "Heading of the test session block."
+  },
+  "optionsSessionDesc": {
+    "message": "Tandai awal uji coba. Popup lalu bisa membatasi pembersihan ke data yang dibuat sejak saat itu.",
+    "description": "Test session description."
+  },
+  "optionsSessionStart": {
+    "message": "Mulai sesi pengujian",
+    "description": "Button starting a test session."
+  },
+  "optionsSessionEnd": {
+    "message": "Akhiri sesi",
+    "description": "Button ending a test session."
+  },
+  "optionsSessionNone": {
+    "message": "Tidak ada sesi yang berjalan.",
+    "description": "Test session state."
+  },
+  "optionsSessionStartedAt": {
+    "message": "Sesi dimulai pukul $TIME$",
+    "description": "Test session state.",
+    "placeholders": {
+      "time": {
+        "content": "$1",
+        "example": "10:42"
+      }
+    }
+  },
+  "optionsShortcutsDesc": {
+    "message": "Pintasan keyboard ekstensi.",
+    "description": "Shortcuts description."
+  },
+  "optionsShortcutNotSet": {
+    "message": "Belum diatur",
+    "description": "Shown when a command has no shortcut."
+  },
+  "optionsShortcutExecuteAction": {
+    "message": "Buka AW Browser Cleaner",
+    "description": "Fallback description of the toolbar action command."
+  },
+  "optionsShortcutsEmpty": {
+    "message": "Ekstensi tidak memiliki pintasan.",
+    "description": "Empty state."
+  },
+  "optionsShortcutsHint": {
+    "message": "Ubah kombinasi tombol di halaman pintasan peramban:",
+    "description": "Hint above the shortcuts page address."
+  },
+  "optionsOpenShortcuts": {
+    "message": "Ubah pintasan",
+    "description": "Button opening the browser shortcuts page."
+  },
+  "testModeTag": {
+    "message": "Mode Uji",
+    "description": "Popup UI text."
+  },
+  "testModeTagTitle": {
+    "message": "Mode Uji aktif: pintasan hanya membersihkan origin uji yang diizinkan.",
+    "description": "Popup UI text."
+  },
+  "addOriginBtn": {
+    "message": "+ Tambah origin",
+    "description": "Popup UI text."
+  },
+  "addOriginTitle": {
+    "message": "Bersihkan juga origin persis lain dalam satu proses",
+    "description": "Popup UI text."
+  },
+  "normalizedPreviewLabel": {
+    "message": "Akan memakai",
+    "description": "Popup UI text."
+  },
+  "extraOriginPlaceholder": {
+    "message": "https://api.example.com",
+    "description": "Popup UI text."
+  },
+  "extraOriginLabel": {
+    "message": "Origin tambahan",
+    "description": "Popup UI text."
+  },
+  "extraOriginAdd": {
+    "message": "Tambah",
+    "description": "Popup UI text."
+  },
+  "extraOriginsLabel": {
+    "message": "Origin tambahan",
+    "description": "Popup UI text."
+  },
+  "extraOriginsLimit": {
+    "message": "Maksimal $P1$ origin dalam satu pembersihan.",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "extraOriginDuplicate": {
+    "message": "Origin itu sudah ada di daftar.",
+    "description": "Popup UI text."
+  },
+  "extraOriginNeedsPrimary": {
+    "message": "Isi origin target terlebih dahulu.",
+    "description": "Popup UI text."
+  },
+  "removeOriginAria": {
+    "message": "Hapus $P1$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "idpWarning": {
+    "message": "$P1$ adalah penyedia login. Membersihkannya dapat mengeluarkan Anda dari situs lain.",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "errorEnterOrigin": {
+    "message": "Masukkan origin target.",
+    "description": "Popup UI text."
+  },
+  "presetLabel": {
+    "message": "Preset",
+    "description": "Popup UI text."
+  },
+  "presetMoreLabel": {
+    "message": "Preset lainnya",
+    "description": "Popup UI text."
+  },
+  "presetMoreOption": {
+    "message": "Preset lainnya…",
+    "description": "Popup UI text."
+  },
+  "presetStatusCustom": {
+    "message": "Kustom · $P1$ dari $P2$ dipilih",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "presetDropped": {
+    "message": "Session Storage dan aksi setelah pembersihan dilewati: origin ini bukan tab aktif.",
+    "description": "Popup UI text."
+  },
+  "typeTipCookies": {
+    "message": "Cookie origin ini. Mode persis menghapus cookie host-only dan terpartisi; domain-wide juga menghapus cookie yang dipakai bersama subdomain.",
+    "description": "Popup UI text."
+  },
+  "typeTipSessionStorage": {
+    "message": "sessionStorage milik tab aktif saja.",
+    "description": "Popup UI text."
+  },
+  "typeTipLocalStorage": {
+    "message": "Key localStorage milik origin ini.",
+    "description": "Popup UI text."
+  },
+  "typeTipIndexedDB": {
+    "message": "Database IndexedDB milik origin ini.",
+    "description": "Popup UI text."
+  },
+  "typeTipFileSystems": {
+    "message": "Berkas File System API dan OPFS milik origin ini.",
+    "description": "Popup UI text."
+  },
+  "typeTipCache": {
+    "message": "Berkas di cache HTTP browser untuk origin ini. Tidak bisa dihitung.",
+    "description": "Popup UI text."
+  },
+  "typeTipCacheStorage": {
+    "message": "Cache Storage, dipakai service worker dan aplikasi web.",
+    "description": "Popup UI text."
+  },
+  "typeTipServiceWorkers": {
+    "message": "Registrasi service worker milik origin ini.",
+    "description": "Popup UI text."
+  },
+  "cookieManage": {
+    "message": "Atur",
+    "description": "Popup UI text."
+  },
+  "cookieSummaryExact": {
+    "message": "Cookie presisi: $P1$, $P2$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "cookieSummaryRemoved": {
+    "message": "$P1$ dihapus",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "cookieSummaryKept": {
+    "message": "$P1$ cookie domain bersama dipertahankan",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "cookieSummaryUnknown": {
+    "message": "Cookie presisi: cookie host-only dan terpartisi dihapus, cookie domain bersama dipertahankan.",
+    "description": "Popup UI text."
+  },
+  "cookieSummaryWide": {
+    "message": "Domain-wide: cookie yang dipakai bersama subdomain lain ikut dihapus.",
+    "description": "Popup UI text."
+  },
+  "rangeLabel": {
+    "message": "Rentang waktu",
+    "description": "Popup UI text."
+  },
+  "rangeAll": {
+    "message": "Semua waktu",
+    "description": "Popup UI text."
+  },
+  "range15m": {
+    "message": "15 menit terakhir",
+    "description": "Popup UI text."
+  },
+  "rangeHour": {
+    "message": "1 jam terakhir",
+    "description": "Popup UI text."
+  },
+  "rangeSession": {
+    "message": "Sejak sesi uji dimulai",
+    "description": "Popup UI text."
+  },
+  "rangeSessionAt": {
+    "message": "Sejak sesi uji dimulai ($P1$)",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "rangeNote": {
+    "message": "Tidak semua jenis penyimpanan mengikuti rentang waktu secara tepat; sebagian dihapus seluruhnya.",
+    "description": "Popup UI text."
+  },
+  "afterLabel": {
+    "message": "Setelah dibersihkan",
+    "description": "Popup UI text."
+  },
+  "afterHard": {
+    "message": "Hard reload (abaikan cache)",
+    "description": "Popup UI text."
+  },
+  "afterReload": {
+    "message": "Muat ulang",
+    "description": "Popup UI text."
+  },
+  "afterStart": {
+    "message": "Buka halaman awal",
+    "description": "Popup UI text."
+  },
+  "afterNone": {
+    "message": "Jangan muat ulang",
+    "description": "Popup UI text."
+  },
+  "onlyActiveTabTitle": {
+    "message": "Hanya untuk tab aktif",
+    "description": "Popup UI text."
+  },
+  "cookiesNoTimeRangeTitle": {
+    "message": "Cookie presisi tidak bisa dibatasi waktu. Pilih Semua waktu atau gunakan cookie domain-wide.",
+    "description": "Popup UI text."
+  },
+  "noActiveTabTitle": {
+    "message": "Tidak ada tab aktif yang didukung",
+    "description": "Popup UI text."
+  },
+  "clearOriginBtn": {
+    "message": "Bersihkan origin ini",
+    "description": "Popup UI text."
+  },
+  "clearOriginsBtn": {
+    "message": "Bersihkan $P1$ origin",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "backBtnLabel": {
+    "message": "Kembali",
+    "description": "Popup UI text."
+  },
+  "cookieScreenTitle": {
+    "message": "Cookie presisi",
+    "description": "Popup UI text."
+  },
+  "cookieModeLabel": {
+    "message": "Cakupan cookie",
+    "description": "Popup UI text."
+  },
+  "cookieModeExact": {
+    "message": "Origin persis (disarankan)",
+    "description": "Popup UI text."
+  },
+  "cookieModeWide": {
+    "message": "Domain-wide",
+    "description": "Popup UI text."
+  },
+  "cookieGrantBtn": {
+    "message": "Izinkan akses membaca cookie",
+    "description": "Popup UI text."
+  },
+  "cookiePermissionExact": {
+    "message": "Untuk menampilkan dan menghapus cookie presisi, ekstensi perlu akses ke situs ini. Akses hanya diminta untuk origin yang Anda bersihkan.",
+    "description": "Popup UI text."
+  },
+  "cookiePermissionWide": {
+    "message": "Penghapusan domain-wide tidak butuh akses tambahan. Berikan akses hanya untuk melihat nama cookie.",
+    "description": "Popup UI text."
+  },
+  "cookieDenied": {
+    "message": "Akses tidak diberikan, jadi cookie presisi tidak bisa ditampilkan atau dihapus. Anda bisa beralih ke Domain-wide, yang menghapus cookie untuk seluruh domain.",
+    "description": "Popup UI text."
+  },
+  "cookieLoading": {
+    "message": "Membaca cookie…",
+    "description": "Popup UI text."
+  },
+  "cookieNone": {
+    "message": "Tidak ada cookie untuk origin ini.",
+    "description": "Popup UI text."
+  },
+  "cookieTopLevel": {
+    "message": "top-level: $P1$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "cookieGroupHostOnly": {
+    "message": "Host-only",
+    "description": "Popup UI text."
+  },
+  "cookieGroupPartitioned": {
+    "message": "Terpartisi (CHIPS)",
+    "description": "Popup UI text."
+  },
+  "cookieGroupShared": {
+    "message": "Domain bersama",
+    "description": "Popup UI text."
+  },
+  "cookieFooterExact": {
+    "message": "Cookie domain bersama dipertahankan kecuali Anda mencentangnya. Nilai cookie tidak pernah ditampilkan.",
+    "description": "Popup UI text."
+  },
+  "cookieFooterWide": {
+    "message": "Domain-wide: cookie domain bersama juga dipakai subdomain dan environment lain. Mereka bisa ikut logout.",
+    "description": "Popup UI text."
+  },
+  "cookieSaveBtn": {
+    "message": "Simpan pilihan",
+    "description": "Popup UI text."
+  },
+  "cookieRemovedOf": {
+    "message": "$P1$ dari $P2$ dihapus",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "confirmScopeExact": {
+    "message": "Origin persis",
+    "description": "Popup UI text."
+  },
+  "confirmScopeWide": {
+    "message": "Domain-wide",
+    "description": "Popup UI text."
+  },
+  "confirmTypesCount": {
+    "message": "$P1$ jenis",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "confirmPresetOnly": {
+    "message": "Preset $P1$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "confirmPresetThen": {
+    "message": "Preset $P1$ · lalu $P2$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "confirmThenReload": {
+    "message": "muat ulang tab ini",
+    "description": "Popup UI text."
+  },
+  "confirmThenHard": {
+    "message": "hard reload tab ini",
+    "description": "Popup UI text."
+  },
+  "confirmThenStart": {
+    "message": "buka halaman awalnya",
+    "description": "Popup UI text."
+  },
+  "confirmRange": {
+    "message": "Rentang waktu: $P1$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "confirmCookiesExact": {
+    "message": "Cookies (host-only + CHIPS)",
+    "description": "Popup UI text."
+  },
+  "confirmCookiesWide": {
+    "message": "Cookies (seluruh domain)",
+    "description": "Popup UI text."
+  },
+  "unitKeys": {
+    "message": "$P1$ key",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "unitDb": {
+    "message": "$P1$ db",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "unitCaches": {
+    "message": "$P1$ cache",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "confirmKeepShared": {
+    "message": "$P1$ cookie domain bersama di $P2$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "confirmKeepOtherOrigins": {
+    "message": "Semua origin lain, termasuk port dan skema berbeda",
+    "description": "Popup UI text."
+  },
+  "confirmKeepNotActiveTab": {
+    "message": "$P1$ di $P2$: bukan tab aktif, jadi tidak disentuh",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "confirmNowBtn": {
+    "message": "Bersihkan sekarang",
+    "description": "Popup UI text."
+  },
+  "confirmHint": {
+    "message": "Enter untuk lanjut · Esc untuk batal",
+    "description": "Popup UI text."
+  },
+  "cookieSummaryTimeLimited": {
+    "message": "Cookie presisi tidak bisa dibatasi waktu. Beralih ke domain-wide untuk membatasi cookie berdasarkan waktu.",
+    "description": "Popup UI text."
+  },
+  "popupSettingsLabel": {
+    "message": "Pengaturan",
+    "description": "Popup UI text."
+  },
+  "cookieSummaryOff": {
+    "message": "Cookies tidak dipilih. Buka Atur untuk memilih cookie presisi atau cakupan domain-wide.",
+    "description": "Popup UI text."
+  },
+  "presetShortLogout": {
+    "message": "Keluar",
+    "description": "Popup UI text."
+  },
+  "presetShortFresh": {
+    "message": "User baru",
+    "description": "Popup UI text."
+  },
+  "presetShortStale": {
+    "message": "Aset basi",
+    "description": "Popup UI text."
+  },
+  "presetShortFull": {
+    "message": "Reset penuh",
+    "description": "Popup UI text."
   }
 }

@@ -764,3 +764,18 @@ describe('deferred after-action', () => {
         expect(calls).toEqual([]);
     });
 });
+
+describe('encoded wildcard origins', () => {
+    test('Scope Guard rejects %2A hosts before any API call', async () => {
+        const { api, calls } = fakeApi();
+        for (const origin of ['https://%2A.example.test', 'https://%2a.example.test']) {
+            const created = createPlan({ origins: [origin], dataTypes: ['localStorage'] });
+            expect(created.ok).toBe(false);
+            expect(created.code).toBe('ORIGIN_WILDCARD');
+            expect(() => buildRemovalOptions({ origins: [origin] })).toThrow(ScopeGuardError);
+            const forged = { ...createPlan({ origins: [ORIGIN], dataTypes: ['localStorage'] }).plan, origins: [origin] };
+            await expect(executePlan(forged, { api })).rejects.toBeInstanceOf(ScopeGuardError);
+        }
+        expect(calls).toEqual([]);
+    });
+});

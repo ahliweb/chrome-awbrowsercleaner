@@ -25,6 +25,8 @@
  *   /sw.js                    trivial Service Worker
  *   /with-canary-iframe       embeds the canary in a cross-origin iframe (/frame-seed sets
  *                             sessionStorage inside that frame)
+ *   /with-same-origin-iframe  embeds the SAME origin's /frame-seed in an iframe
+ *   /with-asset               page that loads /asset.js as a subresource (cache / reload tests)
  *
  * `seedOrigin(page, origin)` creates, on that origin: host-only cookie `aw_host`, HttpOnly
  * cookie `aw_httponly`, Domain=localtest.me cookie `aw_shared` (localtest.me hosts only),
@@ -36,9 +38,16 @@
  * `page` when sessionStorage of an existing tab matters).
  *
  * Cookies are not isolated by port or by subdomain (RFC 6265), so A, A2 and B share the
- * `aw_shared` cookie and A/A2 share every cookie. The popup clears cookies domain-wide: a
- * cookie cleanup of A is EXPECTED to remove the cookies of B and A2 too (registrable-domain
- * behaviour), and must still leave the canary C untouched.
+ * `aw_shared` cookie and A/A2 share every cookie. In domain-wide cookie mode a cookie cleanup of A
+ * is EXPECTED to remove the cookies of B and A2 too (registrable-domain behaviour); Exact Cookie
+ * Mode removes only the host-only cookies of A. Either way the canary C must stay untouched.
+ *
+ * Popup note: opened as a tab, the popup is its own active tab, so it shows the "unsupported page"
+ * screen; helpers continue from there with a typed target (openPopupPage) or stub the active tab
+ * (openPopupForTab). Host access (needed by Exact Cookie Mode and for scripting the active tab)
+ * is an optional permission whose prompt cannot be answered in automation, so those tests use
+ * `launchE2E({ hostAccess: true })`, which installs a copy of the extension whose manifest lists
+ * http(s) host_permissions. Nothing else differs from the shipped extension.
  *
  * Typical test file:
  *
@@ -160,6 +169,14 @@ export async function startFixtures() {
                 return send(200, 'text/html; charset=utf-8',
                     htmlPage('iframe host', `<iframe id="canary" src="${canaryOrigin}/frame-seed" width="300" height="100"></iframe>`),
                     { 'Cache-Control': 'no-store' });
+            case '/with-same-origin-iframe':
+                return send(200, 'text/html; charset=utf-8',
+                    htmlPage('same-origin iframe host', '<iframe id="same" src="/frame-seed" width="300" height="100"></iframe>'),
+                    { 'Cache-Control': 'no-store' });
+            case '/with-asset':
+                return send(200, 'text/html; charset=utf-8',
+                    htmlPage('asset host', '<script src="/asset.js"></script>'),
+                    { 'Cache-Control': 'no-store' });
             case '/frame-seed':
                 return send(200, 'text/html; charset=utf-8',
                     htmlPage('frame', `<script>sessionStorage.setItem('${SEED.sessionStorage}', 'frame');</script>`),
@@ -190,6 +207,12 @@ export async function startFixtures() {
         },
         iframePageUrl(origin) {
             return `${origin}/with-canary-iframe`;
+        },
+        sameOriginIframePageUrl(origin) {
+            return `${origin}/with-same-origin-iframe`;
+        },
+        assetPageUrl(origin) {
+            return `${origin}/with-asset`;
         },
         async close() {
             await Promise.all([server1, server2].map((s) => new Promise((resolve) => {
@@ -302,14 +325,46 @@ export async function launchBrowser({ puppeteer, chromePath, fixtures }) {
     return browser;
 }
 
-/** Installs the unpacked extension and proves it is really loaded. Returns its id. */
-export async function loadExtension(browser) {
-    const id = await withTimeout(browser.installExtension(EXTENSION_PATH), 30000, 'browser.installExtension');
+/**
+ * Copies the unpacked extension to a temp dir with `host_permissions` for http(s). Optional host
+ * permissions cannot be granted in automation (the permission prompt never resolves), so tests of
+ * Exact Cookie Mode and of the active-tab features run against this copy. Only the manifest differs.
+ */
+export function prepareHostAccessCopy(patchManifest) {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'aw-e2e-ext-'));
+    for (const entry of fs.readdirSync(EXTENSION_PATH, { withFileTypes: true })) {
+        const from = path.join(EXTENSION_PATH, entry.name);
+        if (entry.isFile() && /\.(js|html|css|json)$/.test(entry.name) && entry.name !== 'package.json' && entry.name !== 'bun.lock') {
+            fs.copyFileSync(from, path.join(dir, entry.name));
+        } else if (entry.isDirectory() && ['_locales', 'icons', 'fonts'].includes(entry.name)) {
+            fs.cpSync(from, path.join(dir, entry.name), { recursive: true });
+        }
+    }
+    const manifestPath = path.join(dir, 'manifest.json');
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    manifest.host_permissions = ['http://*/*', 'https://*/*'];
+    delete manifest.optional_host_permissions;
+    if (typeof patchManifest === 'function') patchManifest(manifest);
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+    return dir;
+}
+
+/**
+ * Installs the unpacked extension and proves it is really loaded. Returns its id.
+ * `incognito: true` loads it with "Allow in Incognito" already on (CDP Extensions.loadUnpacked
+ * enableInIncognito); toggling the setting afterwards has no effect in recent Chrome for Testing.
+ */
+export async function loadExtension(browser, extensionPath = EXTENSION_PATH, { incognito = false } = {}) {
+    const install = incognito
+        ? browser.installExtension(extensionPath, { enabledInIncognito: true })
+        : browser.installExtension(extensionPath);
+    const id = await withTimeout(install, 30000, 'browser.installExtension');
     if (!/^[a-p]{32}$/.test(id)) throw new Error(`Extension id looks wrong: ${id}`);
     const manifest = JSON.parse(fs.readFileSync(path.join(EXTENSION_PATH, 'manifest.json'), 'utf8'));
     const page = await browser.newPage();
     try {
         const response = await page.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load', timeout: 20000 });
+        await page.waitForSelector('body[data-screen]', { timeout: 10000 });
         if (!response || !response.ok()) throw new Error(`popup.html did not load from the installed extension (${id}).`);
         const runtimeId = await page.evaluate(() => (typeof chrome !== 'undefined' && chrome.runtime ? chrome.runtime.id : null));
         if (runtimeId !== id) throw new Error(`chrome.runtime.id is ${runtimeId} on the popup page, expected ${id}; the extension did not load.`);
@@ -336,9 +391,10 @@ function banner(lines) {
  *
  * Call it with top-level await at the start of a test file.
  */
-export async function launchE2E() {
+export async function launchE2E({ hostAccess = false, patchManifest, incognito = false } = {}) {
     let fixtures;
     let browser;
+    let extensionCopy;
     const fail = (error) => {
         const message = error instanceof Error ? error.message : String(error);
         banner(['AW E2E: ENVIRONMENT ERROR' + (isCI() ? ' (CI: run fails)' : ''), message]);
@@ -371,7 +427,8 @@ export async function launchE2E() {
     try {
         fixtures = await startFixtures();
         browser = await withTimeout(launchBrowser({ puppeteer, chromePath: chrome.path, fixtures }), 90000, 'Chrome launch');
-        const extensionId = await loadExtension(browser);
+        extensionCopy = hostAccess ? prepareHostAccessCopy(patchManifest) : undefined;
+        const extensionId = await loadExtension(browser, extensionCopy, { incognito });
         const chromeVersion = await browser.version();
         console.log(`AW E2E: ${chromeVersion} (${chrome.source}: ${chrome.path}), extension ${extensionId}, ` +
             `origins ${Object.values(fixtures.origins).join(' ')}`);
@@ -382,10 +439,14 @@ export async function launchE2E() {
             origins: fixtures.origins,
             chromeVersion,
             chromePath: chrome.path,
+            hostAccess,
             async close() {
                 try { await browser.close(); } catch { /* already closed */ }
                 await fixtures.close();
                 try { fs.rmSync(browser.__awUserDataDir, { recursive: true, force: true }); } catch { /* best effort */ }
+                if (extensionCopy) {
+                    try { fs.rmSync(extensionCopy, { recursive: true, force: true }); } catch { /* best effort */ }
+                }
             }
         };
     } catch (e) {
@@ -494,7 +555,10 @@ export async function readState(browser, origin, { page: existing } = {}) {
         const inPage = await page.evaluate(readInPage);
         cdp = await page.createCDPSession();
         const { cookies } = await cdp.send('Network.getCookies', { urls: [`${origin}/`] });
-        const cookieInfo = cookies.map((c) => ({ name: c.name, httpOnly: c.httpOnly, domain: c.domain }));
+        // Chrome returns cookies in no fixed order: sort so states compare deterministically.
+        const cookieInfo = cookies
+            .map((c) => ({ name: c.name, httpOnly: c.httpOnly, domain: c.domain }))
+            .sort((a, b) => `${a.name}|${a.domain}`.localeCompare(`${b.name}|${b.domain}`));
         return { ...inPage, cookies: cookies.map((c) => c.name).sort(), cookieInfo };
     } finally {
         try { await cdp?.detach(); } catch { /* page gone */ }
@@ -560,29 +624,106 @@ export async function seedAll(browser, origins) {
 // ---------------------------------------------------------------------------
 // Popup helpers
 // ---------------------------------------------------------------------------
+//
+// A popup opened as a tab (chrome-extension://<id>/popup.html) has itself as the active tab, so
+// the extension shows screen 5 ("unsupported page"). openPopupPage() continues from there with a
+// typed target, which is the same path a user takes on chrome:// pages. The tab-driven features
+// (counts, sessionStorage, reload) are covered by openPopupForTab(), which stubs chrome.tabs.query
+// in the popup page to report a real fixture tab as the active one (needs a hostAccess env).
 
-/** Opens chrome-extension://<id>/popup.html in a normal tab and waits until it rendered. */
-export async function openPopupPage(browser, extensionId) {
+/** Target used when a test does not care about the origin. Never contacted. */
+export const DEFAULT_TARGET = 'http://localhost:9';
+
+const MAIN_SELECTOR = '#screenMain:not([hidden])';
+
+/** Waits until screen 1 is showing and its selection summary is rendered. */
+export async function waitForMain(popup, timeout = 10000) {
+    await popup.waitForSelector(MAIN_SELECTOR, { timeout });
+    await popup.waitForFunction(() => {
+        const el = document.getElementById('selectedCount');
+        return Boolean(el && el.textContent.trim());
+    }, { timeout });
+}
+
+/** Opens the popup in a tab and registers it for failure artifacts. */
+async function newPopupTab(browser, extensionId, beforeLoad) {
     const page = await browser.newPage();
     browserState(browser).popups.add(page);
     page.on('close', () => browserState(browser).popups.delete(page));
+    if (beforeLoad) await beforeLoad(page);
     await page.goto(`chrome-extension://${extensionId}/popup.html`, { waitUntil: 'load', timeout: 20000 });
-    await page.waitForSelector('#clearBtn', { visible: true, timeout: 10000 });
-    await page.waitForFunction(() => {
-        const el = document.getElementById('selectedCount');
-        return Boolean(el && el.textContent.trim());
-    }, { timeout: 10000 });
+    await page.waitForSelector('body[data-screen]', { timeout: 10000 });
     return page;
 }
 
+/**
+ * Opens the popup as a tab and continues from screen 5 with `target` (screen 1 is showing on return).
+ * @param {object} [options] `{ target }`; pass `target: null` to stay on the unsupported screen.
+ */
+export async function openPopupPage(browser, extensionId, { target = DEFAULT_TARGET } = {}) {
+    const page = await newPopupTab(browser, extensionId);
+    await page.waitForSelector('#screenUnsupported:not([hidden])', { timeout: 10000 });
+    if (target === null) return page;
+    await continueFromUnsupported(page, target);
+    return page;
+}
+
+/** Types `target` on screen 5 and presses Continue. */
+export async function continueFromUnsupported(popup, target) {
+    await popup.waitForSelector('#manualTargetInput', { visible: true });
+    await popup.click('#manualTargetInput', { clickCount: 3 });
+    await popup.type('#manualTargetInput', target);
+    await popup.click('#continueBtn');
+    await waitForMain(popup);
+}
+
+/**
+ * Opens the popup with `tabPage` reported as the active tab (chrome.tabs.query is stubbed in the
+ * popup page; everything else is the real extension). Requires `launchE2E({ hostAccess: true })`
+ * so that the extension may read the tab URL and script it. `{ screen: 'any' }` does not wait for
+ * screen 1.
+ */
+export async function openPopupForTab(browser, extensionId, tabPage, { screen = 'main' } = {}) {
+    const url = tabPage.url();
+    const lookup = await browser.newPage();
+    let tabId;
+    try {
+        await lookup.goto(`chrome-extension://${extensionId}/options.html`, { waitUntil: 'load' });
+        tabId = await lookup.evaluate(async (u) => (await chrome.tabs.query({})).find((t) => t.url === u)?.id, url);
+    } finally {
+        await lookup.close();
+    }
+    if (!Number.isInteger(tabId)) throw new Error(`openPopupForTab: no tab with url ${url} (is this a hostAccess env?)`);
+    const page = await newPopupTab(browser, extensionId, (p) => p.evaluateOnNewDocument((id, u) => {
+        chrome.tabs.query = async () => [{ id, url: u, active: true }];
+    }, tabId, url));
+    if (screen === 'main') {
+        await waitForMain(page);
+    } else {
+        // the popup may open straight on another screen (e.g. the pending confirmation of a shortcut)
+        await page.waitForFunction(() => {
+            const el = document.getElementById('selectedCount');
+            return Boolean(el && el.textContent.trim());
+        }, { timeout: 10000 });
+    }
+    return page;
+}
+
+const CHECKBOXES = '.checkbox-grid input[type="checkbox"]';
+
 /** Values of all data-type checkboxes the popup currently offers, in DOM order. */
 export async function getOfferedTypes(popup) {
-    return popup.$$eval('.checkbox-grid input[type="checkbox"]', (els) => els.map((e) => e.value));
+    return popup.$$eval(CHECKBOXES, (els) => els.map((e) => e.value));
 }
 
 /** Types whose checkbox is currently checked. */
 export async function getSelectedTypes(popup) {
-    return popup.$$eval('.checkbox-grid input[type="checkbox"]', (els) => els.filter((e) => e.checked).map((e) => e.value));
+    return popup.$$eval(CHECKBOXES, (els) => els.filter((e) => e.checked).map((e) => e.value));
+}
+
+/** Types whose checkbox is disabled right now. */
+export async function getDisabledTypes(popup) {
+    return popup.$$eval(CHECKBOXES, (els) => els.filter((e) => e.disabled).map((e) => e.value));
 }
 
 /** Types the popup offers, read from a throwaway popup tab. */
@@ -604,16 +745,20 @@ export async function setTarget(popup, origin) {
     }, origin);
 }
 
-/** Checks exactly the given data types (by checkbox value) with real clicks. */
+/** Checks exactly the given data types (by checkbox value) with real clicks. Disabled rows stay unchecked. */
 export async function selectTypes(popup, keys) {
     const wanted = new Set(keys);
     const offered = await getOfferedTypes(popup);
     const unknown = [...wanted].filter((k) => !offered.includes(k));
     if (unknown.length) throw new Error(`Popup does not offer data type(s): ${unknown.join(', ')} (offered: ${offered.join(', ')})`);
     for (const value of offered) {
-        const handle = await popup.$(`.checkbox-grid input[type="checkbox"][value="${value}"]`);
-        const checked = await handle.evaluate((el) => el.checked);
-        if (checked !== wanted.has(value)) await handle.evaluate((el) => el.click());
+        const handle = await popup.$(`${CHECKBOXES}[value="${value}"]`);
+        const { checked, disabled } = await handle.evaluate((el) => ({ checked: el.checked, disabled: el.disabled }));
+        if (disabled) {
+            if (wanted.has(value)) throw new Error(`selectTypes: "${value}" is disabled in the popup`);
+        } else if (checked !== wanted.has(value)) {
+            await handle.evaluate((el) => el.click());
+        }
         await handle.dispose();
     }
     const now = await getSelectedTypes(popup);
@@ -622,11 +767,25 @@ export async function selectTypes(popup, keys) {
     }
 }
 
-/** Clicks "Select all" until every checkbox is checked. */
+/** Clicks "Select all" until every enabled checkbox is checked. */
 export async function selectAllTypes(popup) {
-    const allChecked = () => popup.$$eval('.checkbox-grid input[type="checkbox"]', (els) => els.every((e) => e.checked));
+    const allChecked = () => popup.$$eval(CHECKBOXES, (els) => els.filter((e) => !e.disabled).every((e) => e.checked));
     if (!(await allChecked())) await popup.click('#selectAll');
-    if (!(await allChecked())) throw new Error('"Select all" did not check every data type');
+    if (!(await allChecked())) throw new Error('"Select all" did not check every enabled data type');
+}
+
+/** Clicks #cookieManageBtn, picks the cookie scope on screen 2 and saves. mode: 'exact' | 'wide'. */
+export async function setCookieMode(popup, mode) {
+    await popup.click('#cookieManageBtn');
+    await popup.waitForSelector('#screenCookies:not([hidden])');
+    await popup.click(mode === 'wide' ? '#cookieModeWide' : '#cookieModeExact');
+    await popup.click('#cookieSaveBtn');
+    await waitForMain(popup);
+}
+
+/** Current cookie scope as the popup shows it: 'wide' | 'exact' (scope note of screen 1). */
+export async function getScope(popup) {
+    return popup.$eval('#scopeNote', (el) => el.dataset.scope);
 }
 
 export async function clickClear(popup) {
@@ -645,27 +804,28 @@ export async function pressEscape(popup) {
     await popup.keyboard.press('Escape');
 }
 
-/** True while the confirmation panel is showing. */
+/** True while the confirmation screen is showing. */
 export async function isConfirming(popup) {
     return popup.evaluate(() => {
-        const area = document.getElementById('confirmArea');
-        return Boolean(area) && !area.classList.contains('hidden') && !area.hidden && document.body.classList.contains('is-confirming');
+        const screen = document.getElementById('screenConfirm');
+        return Boolean(screen) && !screen.hidden && document.body.classList.contains('is-confirming') &&
+            document.body.dataset.screen === 'confirm';
     });
 }
 
-/** Waits until the confirmation panel is showing. */
+/** Waits until the confirmation screen is showing. */
 export async function waitForConfirm(popup, timeout = 5000) {
     await popup.waitForFunction(() => {
-        const area = document.getElementById('confirmArea');
-        return Boolean(area) && !area.classList.contains('hidden') && !area.hidden && document.body.classList.contains('is-confirming');
+        const screen = document.getElementById('screenConfirm');
+        return Boolean(screen) && !screen.hidden && document.body.classList.contains('is-confirming');
     }, { timeout });
 }
 
-/** Waits until the confirmation panel is gone. */
+/** Waits until the confirmation screen is gone. */
 export async function waitForNoConfirm(popup, timeout = 5000) {
     await popup.waitForFunction(() => {
-        const area = document.getElementById('confirmArea');
-        return !area || area.classList.contains('hidden') || area.hidden;
+        const screen = document.getElementById('screenConfirm');
+        return !screen || screen.hidden;
     }, { timeout });
     await popup.waitForFunction(() => !document.body.classList.contains('is-confirming'), { timeout });
 }
@@ -683,37 +843,60 @@ export async function waitForStatus(popup, kind = 'success', timeout = 20000) {
 }
 
 /**
- * Full cleanup through the popup UI: set target, select types, click clear, confirm when the
- * confirmation panel appears, wait for success.
- * @param {object} [opts] { types?: string[] | 'all', confirm?: boolean }
- * @returns {Promise<{confirmed: boolean, status: string}>}
+ * Waits for the result screen (screen 4).
+ * @returns {Promise<{tone: string, text: string}>} banner tone ('success' | 'warning' | 'danger') and text
  */
-export async function runCleanup(popup, origin, { types = 'all', confirm = true } = {}) {
-    await setTarget(popup, origin);
+export async function waitForResult(popup, timeout = 20000) {
+    await popup.waitForFunction(() => {
+        const screen = document.getElementById('screenResult');
+        return Boolean(screen) && !screen.hidden && Boolean(document.getElementById('resultBanner'));
+    }, { timeout });
+    return popup.$eval('#resultBanner', (el) => ({ tone: el.dataset.tone, text: el.textContent.trim() }));
+}
+
+/**
+ * Full cleanup through the popup UI: set target, select types, pick the cookie scope, click clear,
+ * confirm when the confirmation screen appears, wait for the result screen.
+ *
+ * Cookies default to the domain-wide scope here because Exact Cookie Mode needs host access that
+ * cannot be granted in automation (hostAccess envs pass `cookieMode: 'exact'`).
+ *
+ * @param {object} [opts] { types?: string[] | 'all', confirm?: boolean, cookieMode?: 'wide' | 'exact' }
+ * @returns {Promise<{confirmed: boolean, status: string, tone: string}>}
+ */
+export async function runCleanup(popup, origin, { types = 'all', confirm = true, cookieMode = 'wide' } = {}) {
+    if (origin) await setTarget(popup, origin);
     if (types === 'all') await selectAllTypes(popup);
     else await selectTypes(popup, types);
+    if ((await getSelectedTypes(popup)).includes('cookies')) {
+        const isWide = (await getScope(popup)) === 'wide';
+        if ((cookieMode === 'wide') !== isWide) await setCookieMode(popup, cookieMode);
+    }
     await clickClear(popup);
 
     const outcome = await popup.waitForFunction(() => {
-        const area = document.getElementById('confirmArea');
-        if (area && !area.classList.contains('hidden') && !area.hidden) return 'confirm';
+        const confirmScreen = document.getElementById('screenConfirm');
+        if (confirmScreen && !confirmScreen.hidden) return 'confirm';
+        const result = document.getElementById('screenResult');
+        if (result && !result.hidden && document.getElementById('resultBanner')) return 'result';
         const status = document.getElementById('statusMessage');
-        if (status && !status.classList.contains('hidden') && status.textContent.trim()) {
-            if (status.classList.contains('success')) return 'success';
-            if (status.classList.contains('error')) return 'error:' + status.textContent.trim();
+        if (status && !status.classList.contains('hidden') && status.classList.contains('error') && status.textContent.trim()) {
+            return 'error:' + status.textContent.trim();
         }
+        const cookies = document.getElementById('screenCookies');
+        if (cookies && !cookies.hidden) return 'error:sent to the cookie screen (host access missing)';
         return false;
     }, { timeout: 20000 }).then((h) => h.jsonValue());
 
     if (String(outcome).startsWith('error:')) throw new Error(`Popup reported an error: ${outcome.slice(6)}`);
     let confirmed = false;
     if (outcome === 'confirm') {
-        if (!confirm) return { confirmed: false, status: '' };
+        if (!confirm) return { confirmed: false, status: '', tone: '' };
         await clickConfirm(popup);
         confirmed = true;
     }
-    const status = await waitForStatus(popup, 'success');
-    return { confirmed, status };
+    const { tone, text } = await waitForResult(popup);
+    return { confirmed, status: text, tone };
 }
 
 // ---------------------------------------------------------------------------
@@ -765,3 +948,189 @@ export function guarded(env, name, fn) {
 }
 
 export { sleep };
+
+// ---------------------------------------------------------------------------
+// Extension service worker access
+// ---------------------------------------------------------------------------
+//
+// The MV3 worker is suspended when idle and puppeteer's WebWorker handle dies with it, so
+// evaluating in it directly is flaky. workerEvaluate() wakes the worker (an extension page sends
+// it a message, which always starts it), re-acquires the target on every attempt and retries a
+// few times with a short backoff when the worker went away mid-call.
+
+/** Starts the extension service worker by messaging it from a short-lived extension page. */
+export async function wakeExtensionWorker(browser, extensionId) {
+    const page = await browser.newPage();
+    try {
+        await page.goto(`chrome-extension://${extensionId}/options.html`, { waitUntil: 'load', timeout: 20000 });
+        await page.evaluate(() => new Promise((resolve) => {
+            try {
+                chrome.runtime.sendMessage({ awWake: true }, () => { void chrome.runtime.lastError; resolve(); });
+            } catch { resolve(); }
+        }));
+    } finally {
+        await page.close();
+    }
+}
+
+const isWorkerTarget = (extensionId) => (t) =>
+    t.type() === 'service_worker' && t.url().startsWith(`chrome-extension://${extensionId}/`);
+
+/** Finds an extension service worker target (waits for one), or throws. */
+export async function getExtensionWorkerTarget(browser, extensionId, timeout = 10000) {
+    return browser.waitForTarget(isWorkerTarget(extensionId), { timeout });
+}
+
+/**
+ * Opens a CDP session on the live extension service worker. Puppeteer keeps listing workers that
+ * have been terminated (after an extension reload, or when an incognito window closes), and probing
+ * a dead one hangs until the probe times out. So every candidate is probed in parallel and the first
+ * live worker that matches (profile, ready) wins.
+ */
+async function openWorkerSession(browser, extensionId, incognito) {
+    await getExtensionWorkerTarget(browser, extensionId);
+    const candidates = browser.targets().filter(isWorkerTarget(extensionId));
+    const sessions = [];
+    const probe = async (target) => {
+        const cdp = await target.createCDPSession();
+        sessions.push(cdp);
+        // the module (and globalThis.awCleaner) is registered once the worker script has run
+        const ready = await withTimeout(cdp.send('Runtime.evaluate', {
+            expression: 'typeof globalThis.awCleaner === "object" && typeof chrome === "object"', returnByValue: true
+        }), 3000, 'worker readiness probe');
+        if (ready.result.value !== true) throw new Error('service worker not yet ready');
+        if (typeof incognito === 'boolean') {
+            // split-mode extensions have one worker per profile; pick the one of the wanted profile
+            const ctx = await cdp.send('Runtime.evaluate', { expression: 'chrome.extension.inIncognitoContext', returnByValue: true });
+            if (ctx.result.value !== incognito) throw new Error(`worker is ${incognito ? 'not ' : ''}the incognito instance`);
+        }
+        return cdp;
+    };
+    let winner;
+    try {
+        winner = await Promise.any(candidates.map(probe));
+    } catch (e) {
+        throw e instanceof AggregateError ? (e.errors[e.errors.length - 1] || e) : e;
+    } finally {
+        // sessions of the losers (dead or other-profile workers) are not needed
+        for (const cdp of sessions) {
+            if (cdp !== winner) cdp.detach().catch(() => {});
+        }
+    }
+    return winner;
+}
+
+/**
+ * Evaluates `fn(...args)` in the extension service worker (fn must be self-contained; args and the
+ * result must be JSON-serializable; async functions are awaited). Uses a raw CDP session on the
+ * worker target: puppeteer's WebWorker.evaluate() was observed to hang forever on MV3 workers.
+ * Wakes the worker first and retries (re-acquiring the target) when the worker was terminated.
+ */
+export function workerEvaluate(browser, extensionId, fn, ...args) {
+    return workerEvaluateIn(browser, extensionId, {}, fn, ...args);
+}
+
+/**
+ * Like workerEvaluate, for a split-mode extension: `incognito: true` targets the worker of the
+ * incognito profile, `false` the regular one (default: any live worker, newest first).
+ */
+export async function workerEvaluateIn(browser, extensionId, { incognito, wake = true } = {}, fn, ...args) {
+    const expression = `(${fn.toString()})(...${JSON.stringify(args)})`;
+    let lastError;
+    for (let attempt = 0; attempt < 5; attempt++) {
+        let cdp;
+        try {
+            if (wake) await wakeExtensionWorker(browser, extensionId);
+            cdp = await openWorkerSession(browser, extensionId, incognito);
+            const res = await withTimeout(cdp.send('Runtime.evaluate', {
+                expression, awaitPromise: true, returnByValue: true
+            }), 45000, 'worker evaluate');
+            if (res.exceptionDetails) {
+                const d = res.exceptionDetails;
+                const err = new Error(`worker evaluate threw: ${d.exception?.description || d.exception?.value || d.text}`);
+                err.fromFn = true;
+                throw err;
+            }
+            return res.result.value;
+        } catch (e) {
+            lastError = e;
+            if (e && e.fromFn) throw e;
+            await sleep(300 * (attempt + 1));
+        } finally {
+            try { await cdp?.detach(); } catch { /* worker gone */ }
+        }
+    }
+    throw lastError;
+}
+
+// ---------------------------------------------------------------------------
+// Incognito
+// ---------------------------------------------------------------------------
+
+/**
+ * Turns on "Allow in Incognito" for the extension in automation. Tried in order:
+ *   (b) chrome.developerPrivate.updateExtensionConfiguration from the chrome://extensions page,
+ *   (a) clicking the toggle inside the extensions-manager shadow DOM of chrome://extensions/?id=<id>.
+ * Chrome reloads the extension when the setting changes, so the call waits until the (new) worker
+ * reports chrome.extension.isAllowedIncognitoAccess() === true.
+ * @returns {Promise<{ok: boolean, method?: string, reason?: string}>}
+ */
+export async function enableIncognitoAccess(browser, extensionId) {
+    const isAllowed = async () => {
+        try {
+            return (await workerEvaluate(browser, extensionId, () => chrome.extension.isAllowedIncognitoAccess())) === true;
+        } catch { return false; }
+    };
+    if (await isAllowed()) return { ok: true, method: 'already enabled' };
+
+    const attempts = [
+        ['developerPrivate.updateExtensionConfiguration', async (page) => {
+            await page.goto('chrome://extensions/', { waitUntil: 'load', timeout: 20000 });
+            await page.evaluate(async (id) => {
+                await chrome.developerPrivate.updateExtensionConfiguration({ extensionId: id, incognitoAccess: true });
+            }, extensionId);
+        }],
+        ['extensions-manager shadow DOM toggle', async (page) => {
+            await page.goto(`chrome://extensions/?id=${extensionId}`, { waitUntil: 'load', timeout: 20000 });
+            await sleep(1000);
+            await page.evaluate(() => {
+                const view = document.querySelector('extensions-manager').shadowRoot.querySelector('extensions-detail-view');
+                view.shadowRoot.querySelector('#allow-incognito').shadowRoot.querySelector('cr-toggle').click();
+            });
+        }]
+    ];
+    const reasons = [];
+    for (const [method, run] of attempts) {
+        const page = await browser.newPage();
+        try {
+            await run(page);
+            for (let i = 0; i < 20; i++) {
+                await sleep(500);
+                if (await isAllowed()) return { ok: true, method };
+            }
+            reasons.push(`${method}: ran but "Allow in Incognito" stayed off`);
+        } catch (e) {
+            reasons.push(`${method}: ${e && e.message ? e.message : e}`);
+        } finally {
+            await page.close().catch(() => {});
+        }
+    }
+    return { ok: false, reason: reasons.join(' | ') };
+}
+
+/**
+ * Opens a real (off-the-record) incognito window on `url` through the extension (puppeteer's
+ * createBrowserContext() is not a real incognito window for extensions) and returns its page.
+ * Requires "Allow in Incognito" to be on.
+ */
+export async function openIncognitoPage(browser, extensionId, url) {
+    const known = new Set(browser.targets());
+    await workerEvaluateIn(browser, extensionId, { incognito: false }, async (url) => {
+        await chrome.windows.create({ incognito: true, url });
+    }, url);
+    const target = await browser.waitForTarget(
+        (t) => t.type() === 'page' && !known.has(t) && t.url() === url, { timeout: 15000 });
+    const page = await target.page();
+    if (!page) throw new Error('could not attach to the incognito page');
+    return page;
+}

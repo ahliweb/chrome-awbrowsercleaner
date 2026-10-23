@@ -26,6 +26,7 @@ export const KEYS = Object.freeze({
     historyEnabled: 'aw.historyEnabled',
     testMode: 'aw.testMode',
     sessionStart: 'aw.sessionStart',
+    pendingConfirmation: 'aw.pendingConfirmation',
     permissionGrants: 'aw.permissionGrants'
 });
 
@@ -33,6 +34,8 @@ export const MAX_RECENT_ORIGINS = 3;
 export const MAX_HISTORY = 20;
 export const MAX_ORIGIN_PRESETS = 100;
 export const MAX_TEST_ORIGINS = 20;
+/** How long a shortcut's pending confirmation stays valid for the popup. */
+export const PENDING_CONFIRMATION_TTL_MS = 60000;
 const MAX_PERMISSION_GRANTS = 200;
 
 /** Default Test Mode configuration (disabled). */
@@ -328,6 +331,32 @@ export function createSettings({
         await area('session').remove(KEYS.sessionStart);
     };
 
+    // ---- pending confirmation (session area) ----------------------------
+
+    /**
+     * Remembers that a shortcut/context menu needs the popup to confirm a
+     * preset (domain-wide cookies are never run without confirmation).
+     */
+    const setPendingConfirmation = async ({ presetId, origin }, now = Date.now()) => {
+        if (typeof presetId !== 'string' || !isExactOrigin(origin)) return false;
+        await write('session', KEYS.pendingConfirmation, { presetId, origin, at: now });
+        return true;
+    };
+
+    /**
+     * Reads and removes the pending confirmation when it matches the origin
+     * and is still fresh; returns null otherwise.
+     */
+    const takePendingConfirmation = async (origin, now = Date.now()) => {
+        const pending = await read('session', KEYS.pendingConfirmation, null);
+        if (!pending) return null;
+        await area('session').remove(KEYS.pendingConfirmation);
+        const fresh = Number.isFinite(pending.at) && now - pending.at >= 0 &&
+            now - pending.at <= PENDING_CONFIRMATION_TTL_MS;
+        if (!fresh || pending.origin !== origin || typeof pending.presetId !== 'string') return null;
+        return { presetId: pending.presetId, origin: pending.origin, at: pending.at };
+    };
+
     // ---- permission grant log ------------------------------------------
 
     const listPermissionGrants = async () => {
@@ -371,6 +400,8 @@ export function createSettings({
         getSessionStart,
         startSession,
         clearSession,
+        setPendingConfirmation,
+        takePendingConfirmation,
         recordPermissionGrant,
         listPermissionGrants,
         removePermissionGrant

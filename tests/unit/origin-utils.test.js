@@ -278,3 +278,13 @@ describe('wildcard rejection', () => {
         expect(validateOrigin('https://*.example.com').valid).toBe(false);
     });
 });
+
+describe('percent-encoded wildcard hosts (Chrome encodes "*" as %2A)', () => {
+    test.each(['https://%2A.example.test', 'https://%2a.example.test:8443'])('normalizeTarget rejects %s', (input) => {
+        expect(normalizeTarget(input).valid).toBe(false);
+    });
+
+    test('validateOrigin rejects an encoded wildcard host', () => {
+        expect(validateOrigin('https://%2A.example.test').valid).toBe(false);
+    });
+});

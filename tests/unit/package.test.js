@@ -71,3 +71,68 @@ describe('Runtime file list', () => {
         for (const entry of entries) expect(shipped.has(entry)).toBe(true);
     });
 });
+
+describe('Package build targets', () => {
+    const crypto = require('crypto');
+    const { spawnSync } = require('child_process');
+    const { RUNTIME_FILES } = require('../../scripts/package-files');
+    const version = require('../../manifest.json').version;
+    const chromeZip = path.join(DIST_DIR, `aw-browser-cleaner-v${version}.zip`);
+    const edgeZip = path.join(DIST_DIR, `aw-browser-cleaner-edge-v${version}.zip`);
+    const edgeSha = `${edgeZip}.sha256`;
+
+    const run = (cmd) => execSync(cmd, { cwd: ROOT_DIR, stdio: 'pipe', encoding: 'utf8' });
+
+    test('build-package --target=edge produces the edge zip and sha256', () => {
+        run('bun scripts/build-package.js --target=edge');
+
+        expect(fs.existsSync(edgeZip)).toBe(true);
+        expect(fs.existsSync(edgeSha)).toBe(true);
+
+        const shaContent = fs.readFileSync(edgeSha, 'utf8').trim();
+        expect(shaContent).toMatch(/^[a-f0-9]{64}\s+aw-browser-cleaner-edge-v\S+\.zip$/);
+
+        const recorded = shaContent.split(/\s+/)[0];
+        const computed = crypto.createHash('sha256').update(fs.readFileSync(edgeZip)).digest('hex');
+        expect(recorded).toBe(computed);
+    });
+
+    test('edge package has the same entries and manifest as the chrome package', () => {
+        run('bun scripts/build-package.js');
+        run('bun scripts/build-package.js --target=edge');
+
+        const edgeEntries = run(`unzip -Z1 "${edgeZip}"`).trim().split('\n').map(e => e.trim()).sort();
+        expect(edgeEntries).toEqual([...RUNTIME_FILES].sort());
+
+        const edgeManifest = run(`unzip -p "${edgeZip}" manifest.json`);
+        const chromeManifest = run(`unzip -p "${chromeZip}" manifest.json`);
+        expect(edgeManifest).toBe(chromeManifest);
+    });
+
+    test('validate-package --target=edge passes for the edge artifact', () => {
+        run('bun scripts/build-package.js --target=edge');
+        expect(() => run('bun scripts/validate-package.js --target=edge')).not.toThrow();
+    });
+
+    test('validate-package accepts a version and --target=edge together, in either order', () => {
+        run('bun scripts/build-package.js --target=edge');
+        expect(() => run(`bun scripts/validate-package.js ${version} --target=edge`)).not.toThrow();
+        expect(() => run(`bun scripts/validate-package.js --target=edge ${version}`)).not.toThrow();
+    });
+
+    test('unknown target fails with a non-zero exit code in both scripts', () => {
+        for (const script of ['scripts/build-package.js', 'scripts/validate-package.js']) {
+            const result = spawnSync('bun', [script, '--target=firefox'], { cwd: ROOT_DIR, encoding: 'utf8' });
+            expect(result.status).not.toBe(0);
+            expect(result.stderr).toContain('Unknown target');
+        }
+    });
+
+    test('chrome artifact name is unchanged when no target is given', () => {
+        const output = run('bun scripts/build-package.js');
+        expect(output).toContain(`Output artifact: aw-browser-cleaner-v${version}.zip`);
+        expect(output).not.toContain('aw-browser-cleaner-edge');
+        expect(fs.existsSync(chromeZip)).toBe(true);
+        expect(fs.existsSync(`${chromeZip}.sha256`)).toBe(true);
+    });
+});
