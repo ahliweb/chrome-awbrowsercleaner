@@ -15,6 +15,7 @@ const read = (p) => fs.readFileSync(path.join(ROOT_DIR, p), 'utf8');
 
 const html = read('popup.html');
 const js = read('popup.js');
+const core = read('cleanup-core.js');
 const css = read('styles.css');
 const locales = ['en', 'id'].map(lang => ({
     lang,
@@ -26,6 +27,7 @@ function collectKeys() {
     for (const m of html.matchAll(/data-i18n(?:-[a-z]+)?="([A-Za-z]+)"/g)) keys.add(m[1]);
     for (const m of js.matchAll(/getMessage\('([A-Za-z]+)'/g)) keys.add(m[1]);
     for (const m of js.matchAll(/label: '([A-Za-z]+)'/g)) keys.add(m[1]);
+    for (const m of core.matchAll(/labelKey: '([A-Za-z]+)'/g)) keys.add(m[1]);
     for (const m of js.matchAll(/'(scopeWide|scopeExact)'/g)) keys.add(m[1]);
     return [...keys].sort();
 }

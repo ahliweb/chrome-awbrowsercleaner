@@ -69,8 +69,20 @@
     "message": "Cache & offline",
     "description": "Data group heading."
   },
-  "dataTypeCache": {
+  "dataTypeCacheStorage": {
     "message": "Cache Storage",
+    "description": "Data type label."
+  },
+  "dataTypeHttpCache": {
+    "message": "Cache HTTP",
+    "description": "Data type label."
+  },
+  "dataTypeSessionStorage": {
+    "message": "Session Storage",
+    "description": "Data type label."
+  },
+  "dataTypeFileSystems": {
+    "message": "Sistem file",
     "description": "Data type label."
   },
   "dataTypeCookies": {
@@ -172,5 +184,41 @@
   "poweredBy": {
     "message": "Didukung oleh AhliWeb.com",
     "description": "Footer credit."
+  },
+  "presetLogout": {
+    "message": "Keluar akun",
+    "description": "Name of the built-in preset that ends the login session for the target origin."
+  },
+  "presetLogoutDesc": {
+    "message": "Menghapus cookie dan session storage situs ini, lalu memuat ulang tab.",
+    "description": "Description of the Log out preset."
+  },
+  "presetFresh": {
+    "message": "Mulai dari awal",
+    "description": "Name of the built-in preset that resets the site's stored state."
+  },
+  "presetFreshDesc": {
+    "message": "Menghapus cookie dan penyimpanan situs untuk origin ini, lalu membuka halaman awalnya. Cache HTTP tetap disimpan.",
+    "description": "Description of the Fresh start preset."
+  },
+  "presetStale": {
+    "message": "Atasi berkas usang",
+    "description": "Name of the built-in preset that clears cached files and service workers."
+  },
+  "presetStaleDesc": {
+    "message": "Menghapus cache HTTP, Cache Storage, dan service worker, lalu memuat ulang tanpa cache. Login tetap aman.",
+    "description": "Description of the Fix stale files preset."
+  },
+  "presetFull": {
+    "message": "Semuanya",
+    "description": "Name of the built-in preset that selects every supported data type for the target origin only."
+  },
+  "presetFullDesc": {
+    "message": "Memilih semua jenis data yang didukung, hanya untuk origin ini, lalu memuat ulang tanpa cache.",
+    "description": "Description of the Everything preset."
+  },
+  "presetCustom": {
+    "message": "Kustom",
+    "description": "Label shown when the current selection no longer matches any preset."
   }
 }

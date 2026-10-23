@@ -20,23 +20,9 @@ const crypto = require('crypto');
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DIST_DIR = path.join(ROOT_DIR, 'dist');
 
-const ALLOWED_FILES = new Set([
-    'manifest.json',
-    'popup.html',
-    'popup.js',
-    'origin-utils.js',
-    'styles.css',
-    'fonts/inter-latin-wght.woff2',
-    'fonts/jetbrains-mono-latin-wght.woff2',
-    'fonts/OFL-Inter.txt',
-    'fonts/OFL-JetBrainsMono.txt',
-    'icons/icon16.png',
-    'icons/icon48.png',
-    'icons/icon128.png',
-    '_locales/en/messages.json',
-    '_locales/id/messages.json',
-    'LICENSE'
-]);
+const { RUNTIME_FILES } = require('./package-files');
+
+const ALLOWED_FILES = new Set(RUNTIME_FILES);
 
 function validatePackage(targetVersion) {
     const version = targetVersion || JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'manifest.json'), 'utf8')).version;

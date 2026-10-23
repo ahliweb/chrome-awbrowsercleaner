@@ -6,19 +6,27 @@ on:
   pull_request:
     branches: [main]
 
+# Least privilege: every job opts in to exactly what it needs.
+permissions: {}
+
 jobs:
   validate:
-    name: Lint, Test & Package Validation
+    name: Lint, Unit Tests & Package Validation
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
-          bun-version: latest
+          bun-version-file: .bun-version
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -32,9 +40,6 @@ jobs:
       - name: Run unit tests
         run: bun run test:unit
 
-      - name: Run E2E tests
-        run: bun run test:e2e
-
       - name: Build extension package
         run: bun run build:package
 
@@ -42,10 +47,87 @@ jobs:
         run: bun run validate:package
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: extension-package
           path: |
             dist/*.zip
             dist/*.sha256
           if-no-files-found: error
+
+  e2e:
+    name: E2E (Chrome ${{ matrix.chrome }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Chrome beta may break before stable does: it still runs and reports, but never blocks.
+    continue-on-error: ${{ matrix.chrome == 'beta' }}
+    permissions:
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        chrome: [stable, beta]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: .bun-version
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # Chrome for Testing honors extension flags; branded Chrome >= 137 does not.
+      # Bun does not run puppeteer's postinstall, so the browser is installed explicitly.
+      - name: Install Chrome for Testing (${{ matrix.chrome }})
+        env:
+          CHROME_CHANNEL: ${{ matrix.chrome }}
+        run: |
+          set -euo pipefail
+          chrome_path="$(bunx @puppeteer/browsers install "chrome@${CHROME_CHANNEL}" \
+            --path "${RUNNER_TEMP}/chrome-for-testing" --format 'AW_CHROME_PATH={{path}}' \
+            | grep -o 'AW_CHROME_PATH=.*' | tail -n 1 | cut -d= -f2-)"
+          test -x "${chrome_path}"
+          echo "AW_CHROME_PATH=${chrome_path}" >> "${GITHUB_ENV}"
+          echo "AW_CHROME_CHANNEL=${CHROME_CHANNEL}" >> "${GITHUB_ENV}"
+
+      - name: Log Chrome version
+        run: |
+          set -euo pipefail
+          version="$("${AW_CHROME_PATH}" --version)"
+          echo "${version}"
+          echo "Chrome for Testing ${AW_CHROME_CHANNEL}: \`${version}\` (\`${AW_CHROME_PATH}\`)" >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Run E2E tests
+        run: bun run test:e2e
+
+      - name: Publish deletion matrix to the job summary
+        if: always()
+        run: |
+          if [ -f test-artifacts/e2e-matrix.md ]; then
+            cat test-artifacts/e2e-matrix.md >> "${GITHUB_STEP_SUMMARY}"
+          else
+            echo "No deletion matrix was produced (the E2E run did not reach the matrix test)." >> "${GITHUB_STEP_SUMMARY}"
+          fi
+
+      - name: Upload deletion matrix
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: e2e-matrix-${{ matrix.chrome }}
+          path: test-artifacts/e2e-matrix.md
+          if-no-files-found: ignore
+
+      - name: Upload E2E failure artifacts (screenshots, console logs)
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: e2e-failure-${{ matrix.chrome }}
+          path: test-artifacts/
+          if-no-files-found: ignore

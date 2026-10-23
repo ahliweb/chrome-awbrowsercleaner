@@ -4,9 +4,9 @@
   "private": true,
   "description": "Chrome extension to selectively clear site data for a specific origin",
   "scripts": {
-    "test": "bun test",
+    "test": "bun run test:unit && bun run test:e2e",
     "test:unit": "bun test tests/unit",
-    "test:e2e": "bun test tests/e2e",
+    "test:e2e": "bun test tests/e2e --timeout 60000",
     "lint": "eslint *.js --ignore-pattern 'node_modules/**'",
     "check:version": "bun scripts/check-version.js",
     "build:package": "bun scripts/build-package.js",
@@ -15,8 +15,9 @@
     "setup:cws": "bun scripts/setup-cws-credentials.js"
   },
   "devDependencies": {
+    "@puppeteer/browsers": "3.2.6",
     "eslint": "^8.57.0",
-    "puppeteer": "^23.0.0"
+    "puppeteer": "25.16.0"
   },
   "author": "AhliWeb.com",
   "license": "MIT"
