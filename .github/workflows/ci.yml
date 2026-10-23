@@ -37,6 +37,9 @@ jobs:
       - name: Run ESLint
         run: bun run lint
 
+      - name: Check permission documentation
+        run: bun run check:permissions
+
       - name: Run unit tests
         run: bun run test:unit
 

@@ -6,9 +6,10 @@
   "scripts": {
     "test": "bun run test:unit && bun run test:e2e",
     "test:unit": "bun test tests/unit",
-    "test:e2e": "bun test tests/e2e --timeout 60000",
+    "test:e2e": "bun test tests/e2e tests/automation --timeout 60000",
     "lint": "eslint *.js --ignore-pattern 'node_modules/**'",
     "check:version": "bun scripts/check-version.js",
+    "check:permissions": "bun scripts/check-permissions.js",
     "build:package": "bun scripts/build-package.js",
     "validate:package": "bun scripts/validate-package.js",
     "upload:cws": "bun scripts/upload-cws.js",
