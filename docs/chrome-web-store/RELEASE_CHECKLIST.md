@@ -123,4 +123,5 @@ Edge ships the same Chromium MV3 package. Build, submission and test steps for E
 | ------- | ---------- | -------- | ----------------------------------------------------------- |
 | 1.1     | 2026-08-22 | —        | Initial Chrome Web Store release                            |
 | 1.2.0   | 2026-09-20 | `v1.2.0` | Production hardening, permission minimization, localization |
+| 1.3.0   | 2026-10-23 | `v1.3.0` | Exact-origin tester workflows (roadmap v1.3–v1.5, epic #43) |
 

@@ -55,13 +55,14 @@ AW Browser Cleaner only ever cleans **exact origins** (`scheme://host:port`). It
 
 ## Usage
 
-1. Navigate to the website you want to clean (e.g., `https://example.com`).
-2. Click the **AW Browser Cleaner** icon in the Chrome toolbar.
-3. The "Target Origin" field will auto-fill with the current origin.
-    - *Tip:* You can manually edit this field if you want to clean a different origin.
-4. Select the data types you wish to remove (or use "Select All").
-5. Click **Clear Site Data**.
-    - If Cookies are selected, confirm after reviewing the domain scope disclosure.
+1. Open the page you want to test (e.g. `https://staging.app.example.test/checkout`).
+2. Click the **AW Browser Cleaner** icon. The target is the page's exact origin (`https://staging.app.example.test`); path, query and hash are never part of it. On pages that cannot be cleaned (`chrome://`, `file://`, extension stores) the popup explains why and lets you type a target.
+3. Pick a preset (**Log out**, **Fresh start**, **Fix stale files**, **Everything**) or tick data types yourself. Counts per type come from a snapshot of the page.
+4. Optional: add more exact origins (max. 10), choose a time range, and choose what happens after cleaning (hard reload, reload, open start page, nothing).
+5. Click **Clear this origin**. Cookie cleanups show a confirmation built from the exact plan: blue for exact cookies, red when cookies of the whole registrable domain would be removed.
+6. The result screen shows before/after counts and lets you copy a summary or export JSON/Markdown evidence.
+
+Keyboard: `Alt+Shift+K` runs the last preset on the active tab, `Alt+Shift+L` runs Log out (change them at `chrome://extensions/shortcuts`). Settings live in the Options page (slider icon in the popup header).
 
 ## Development
 

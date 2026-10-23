@@ -66,9 +66,10 @@ Alur: Popup utama → (Atur) Cookie presisi → Konfirmasi → Hasil. Halaman `c
 | Shortcut & context menu | Diimplementasikan (v1.3.0) | #35 |
 | Hasil & bukti uji (layar 4) | Diimplementasikan (v1.3.0) | #36 |
 | Test Mode (Options) | Diimplementasikan (v1.3.0) | #39 |
-| Pekerjaan pendukung v1.3 | Diimplementasikan (v1.3.0) | #47, #48 |
-| Rentang waktu (layar 1b, Options sesi uji) | Desain siap | #37 |
-| Kumpulan origin (layar 1c, 3b) | Desain siap | #38 |
+| Halaman Options (layar 6) | Diimplementasikan (v1.3.0) | #47 |
+| Halaman tidak didukung (layar 5) | Diimplementasikan (v1.3.0) | #48 |
+| Rentang waktu (layar 1b, Options sesi uji) | Diimplementasikan (v1.3.0) | #37 |
+| Kumpulan origin (layar 1c, 3b) | Diimplementasikan (v1.3.0) | #38 |
 
 Angka, domain, dan tanggal di desain adalah data contoh.
 
