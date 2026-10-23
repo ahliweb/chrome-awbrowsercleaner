@@ -184,5 +184,41 @@
   "poweredBy": {
     "message": "Powered by AhliWeb.com",
     "description": "Footer credit."
+  },
+  "presetLogout": {
+    "message": "Log out",
+    "description": "Name of the built-in preset that ends the login session for the target origin."
+  },
+  "presetLogoutDesc": {
+    "message": "Removes this site's cookies and session storage, then reloads the tab.",
+    "description": "Description of the Log out preset."
+  },
+  "presetFresh": {
+    "message": "Fresh start",
+    "description": "Name of the built-in preset that resets the site's stored state."
+  },
+  "presetFreshDesc": {
+    "message": "Clears cookies and site storage for this origin, then opens its start page. The HTTP cache is kept.",
+    "description": "Description of the Fresh start preset."
+  },
+  "presetStale": {
+    "message": "Fix stale files",
+    "description": "Name of the built-in preset that clears cached files and service workers."
+  },
+  "presetStaleDesc": {
+    "message": "Clears the HTTP cache, Cache Storage and service workers, then reloads without cache. Logins stay.",
+    "description": "Description of the Fix stale files preset."
+  },
+  "presetFull": {
+    "message": "Everything",
+    "description": "Name of the built-in preset that selects every supported data type for the target origin only."
+  },
+  "presetFullDesc": {
+    "message": "Selects every supported data type, for this origin only, then reloads without cache.",
+    "description": "Description of the Everything preset."
+  },
+  "presetCustom": {
+    "message": "Custom",
+    "description": "Label shown when the current selection no longer matches any preset."
   }
 }
