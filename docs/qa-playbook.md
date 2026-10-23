@@ -195,6 +195,19 @@ Issue #37.
   3. In the popup, set **Time range** to "Since test session started" (the option shows the start time) and run the cleanup.
   4. In Options, choose **End session**.
 - **Expected result.** Data created since the start is removed; older data of the same origin is kept where Chrome supports a time range. Not every storage type honors it precisely: the popup says so, and some types are removed completely. Exact cookies cannot be limited by time; the popup explains this and asks you to choose All time or the domain-wide mode.
+- **Verified Chrome behavior.** `tests/e2e/since-matrix.test.js` seeds old data, waits 3 s, seeds new data and cleans origin A with `since` set between the two (Chrome/141.0.7390.37, `chrome.browsingData.remove` with `origins` and `since`; output in `test-artifacts/since-matrix.md`). Re-run it on the Chrome version you test with; do not assume the table stays the same.
+
+  | Data type | Old data (before the start time) | New data (after the start time) |
+  | --- | --- | --- |
+  | Local Storage | removed (time range ignored) | removed |
+  | IndexedDB | removed (time range ignored) | removed |
+  | File systems (OPFS) | removed (time range ignored) | removed |
+  | Cache Storage | removed (time range ignored) | removed |
+  | Service Workers | removed (time range ignored) | removed |
+  | HTTP cache | kept | removed |
+  | Cookies (domain-wide only) | kept | removed |
+
+  So with a time range, only the HTTP cache and domain-wide cookies keep older data in this Chrome version. For the other types the cleanup removes everything of the origin, which is why the popup warns that some types are removed completely. In every case new data is removed and other origins (including the canary) are untouched.
 - **Evidence.** The report's "Since" field holds the start of the range in Markdown and `since` in JSON. Attach it and state which types were affected.
 - **Design screens.** [Time range in the popup](../design/exports/png/PopupRange.png), [Options](../design/exports/png/Options.png), [Result](../design/exports/png/PopupResult.png).
 

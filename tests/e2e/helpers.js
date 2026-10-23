@@ -25,6 +25,8 @@
  *   /sw.js                    trivial Service Worker
  *   /with-canary-iframe       embeds the canary in a cross-origin iframe (/frame-seed sets
  *                             sessionStorage inside that frame)
+ *   /with-same-origin-iframe  embeds the SAME origin's /frame-seed in an iframe
+ *   /with-asset               page that loads /asset.js as a subresource (cache / reload tests)
  *
  * `seedOrigin(page, origin)` creates, on that origin: host-only cookie `aw_host`, HttpOnly
  * cookie `aw_httponly`, Domain=localtest.me cookie `aw_shared` (localtest.me hosts only),
@@ -167,6 +169,14 @@ export async function startFixtures() {
                 return send(200, 'text/html; charset=utf-8',
                     htmlPage('iframe host', `<iframe id="canary" src="${canaryOrigin}/frame-seed" width="300" height="100"></iframe>`),
                     { 'Cache-Control': 'no-store' });
+            case '/with-same-origin-iframe':
+                return send(200, 'text/html; charset=utf-8',
+                    htmlPage('same-origin iframe host', '<iframe id="same" src="/frame-seed" width="300" height="100"></iframe>'),
+                    { 'Cache-Control': 'no-store' });
+            case '/with-asset':
+                return send(200, 'text/html; charset=utf-8',
+                    htmlPage('asset host', '<script src="/asset.js"></script>'),
+                    { 'Cache-Control': 'no-store' });
             case '/frame-seed':
                 return send(200, 'text/html; charset=utf-8',
                     htmlPage('frame', `<script>sessionStorage.setItem('${SEED.sessionStorage}', 'frame');</script>`),
@@ -197,6 +207,12 @@ export async function startFixtures() {
         },
         iframePageUrl(origin) {
             return `${origin}/with-canary-iframe`;
+        },
+        sameOriginIframePageUrl(origin) {
+            return `${origin}/with-same-origin-iframe`;
+        },
+        assetPageUrl(origin) {
+            return `${origin}/with-asset`;
         },
         async close() {
             await Promise.all([server1, server2].map((s) => new Promise((resolve) => {
@@ -314,7 +330,7 @@ export async function launchBrowser({ puppeteer, chromePath, fixtures }) {
  * permissions cannot be granted in automation (the permission prompt never resolves), so tests of
  * Exact Cookie Mode and of the active-tab features run against this copy. Only the manifest differs.
  */
-export function prepareHostAccessCopy() {
+export function prepareHostAccessCopy(patchManifest) {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'aw-e2e-ext-'));
     for (const entry of fs.readdirSync(EXTENSION_PATH, { withFileTypes: true })) {
         const from = path.join(EXTENSION_PATH, entry.name);
@@ -328,6 +344,7 @@ export function prepareHostAccessCopy() {
     const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
     manifest.host_permissions = ['http://*/*', 'https://*/*'];
     delete manifest.optional_host_permissions;
+    if (typeof patchManifest === 'function') patchManifest(manifest);
     fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
     return dir;
 }
@@ -367,7 +384,7 @@ function banner(lines) {
  *
  * Call it with top-level await at the start of a test file.
  */
-export async function launchE2E({ hostAccess = false } = {}) {
+export async function launchE2E({ hostAccess = false, patchManifest } = {}) {
     let fixtures;
     let browser;
     let extensionCopy;
@@ -403,7 +420,7 @@ export async function launchE2E({ hostAccess = false } = {}) {
     try {
         fixtures = await startFixtures();
         browser = await withTimeout(launchBrowser({ puppeteer, chromePath: chrome.path, fixtures }), 90000, 'Chrome launch');
-        extensionCopy = hostAccess ? prepareHostAccessCopy() : undefined;
+        extensionCopy = hostAccess ? prepareHostAccessCopy(patchManifest) : undefined;
         const extensionId = await loadExtension(browser, extensionCopy);
         const chromeVersion = await browser.version();
         console.log(`AW E2E: ${chromeVersion} (${chrome.source}: ${chrome.path}), extension ${extensionId}, ` +
@@ -921,3 +938,189 @@ export function guarded(env, name, fn) {
 }
 
 export { sleep };
+
+// ---------------------------------------------------------------------------
+// Extension service worker access
+// ---------------------------------------------------------------------------
+//
+// The MV3 worker is suspended when idle and puppeteer's WebWorker handle dies with it, so
+// evaluating in it directly is flaky. workerEvaluate() wakes the worker (an extension page sends
+// it a message, which always starts it), re-acquires the target on every attempt and retries a
+// few times with a short backoff when the worker went away mid-call.
+
+/** Starts the extension service worker by messaging it from a short-lived extension page. */
+export async function wakeExtensionWorker(browser, extensionId) {
+    const page = await browser.newPage();
+    try {
+        await page.goto(`chrome-extension://${extensionId}/options.html`, { waitUntil: 'load', timeout: 20000 });
+        await page.evaluate(() => new Promise((resolve) => {
+            try {
+                chrome.runtime.sendMessage({ awWake: true }, () => { void chrome.runtime.lastError; resolve(); });
+            } catch { resolve(); }
+        }));
+    } finally {
+        await page.close();
+    }
+}
+
+const isWorkerTarget = (extensionId) => (t) =>
+    t.type() === 'service_worker' && t.url().startsWith(`chrome-extension://${extensionId}/`);
+
+/** Finds an extension service worker target (waits for one), or throws. */
+export async function getExtensionWorkerTarget(browser, extensionId, timeout = 10000) {
+    return browser.waitForTarget(isWorkerTarget(extensionId), { timeout });
+}
+
+/**
+ * Opens a CDP session on the live extension service worker. Puppeteer keeps listing workers that
+ * have been terminated (after an extension reload, or when an incognito window closes), and probing
+ * a dead one hangs until the probe times out. So every candidate is probed in parallel and the first
+ * live worker that matches (profile, ready) wins.
+ */
+async function openWorkerSession(browser, extensionId, incognito) {
+    await getExtensionWorkerTarget(browser, extensionId);
+    const candidates = browser.targets().filter(isWorkerTarget(extensionId));
+    const sessions = [];
+    const probe = async (target) => {
+        const cdp = await target.createCDPSession();
+        sessions.push(cdp);
+        // the module (and globalThis.awCleaner) is registered once the worker script has run
+        const ready = await withTimeout(cdp.send('Runtime.evaluate', {
+            expression: 'typeof globalThis.awCleaner === "object" && typeof chrome === "object"', returnByValue: true
+        }), 3000, 'worker readiness probe');
+        if (ready.result.value !== true) throw new Error('service worker not yet ready');
+        if (typeof incognito === 'boolean') {
+            // split-mode extensions have one worker per profile; pick the one of the wanted profile
+            const ctx = await cdp.send('Runtime.evaluate', { expression: 'chrome.extension.inIncognitoContext', returnByValue: true });
+            if (ctx.result.value !== incognito) throw new Error(`worker is ${incognito ? 'not ' : ''}the incognito instance`);
+        }
+        return cdp;
+    };
+    let winner;
+    try {
+        winner = await Promise.any(candidates.map(probe));
+    } catch (e) {
+        throw e instanceof AggregateError ? (e.errors[e.errors.length - 1] || e) : e;
+    } finally {
+        // sessions of the losers (dead or other-profile workers) are not needed
+        for (const cdp of sessions) {
+            if (cdp !== winner) cdp.detach().catch(() => {});
+        }
+    }
+    return winner;
+}
+
+/**
+ * Evaluates `fn(...args)` in the extension service worker (fn must be self-contained; args and the
+ * result must be JSON-serializable; async functions are awaited). Uses a raw CDP session on the
+ * worker target: puppeteer's WebWorker.evaluate() was observed to hang forever on MV3 workers.
+ * Wakes the worker first and retries (re-acquiring the target) when the worker was terminated.
+ */
+export function workerEvaluate(browser, extensionId, fn, ...args) {
+    return workerEvaluateIn(browser, extensionId, {}, fn, ...args);
+}
+
+/**
+ * Like workerEvaluate, for a split-mode extension: `incognito: true` targets the worker of the
+ * incognito profile, `false` the regular one (default: any live worker, newest first).
+ */
+export async function workerEvaluateIn(browser, extensionId, { incognito, wake = true } = {}, fn, ...args) {
+    const expression = `(${fn.toString()})(...${JSON.stringify(args)})`;
+    let lastError;
+    for (let attempt = 0; attempt < 5; attempt++) {
+        let cdp;
+        try {
+            if (wake) await wakeExtensionWorker(browser, extensionId);
+            cdp = await openWorkerSession(browser, extensionId, incognito);
+            const res = await withTimeout(cdp.send('Runtime.evaluate', {
+                expression, awaitPromise: true, returnByValue: true
+            }), 45000, 'worker evaluate');
+            if (res.exceptionDetails) {
+                const d = res.exceptionDetails;
+                const err = new Error(`worker evaluate threw: ${d.exception?.description || d.exception?.value || d.text}`);
+                err.fromFn = true;
+                throw err;
+            }
+            return res.result.value;
+        } catch (e) {
+            lastError = e;
+            if (e && e.fromFn) throw e;
+            await sleep(300 * (attempt + 1));
+        } finally {
+            try { await cdp?.detach(); } catch { /* worker gone */ }
+        }
+    }
+    throw lastError;
+}
+
+// ---------------------------------------------------------------------------
+// Incognito
+// ---------------------------------------------------------------------------
+
+/**
+ * Turns on "Allow in Incognito" for the extension in automation. Tried in order:
+ *   (b) chrome.developerPrivate.updateExtensionConfiguration from the chrome://extensions page,
+ *   (a) clicking the toggle inside the extensions-manager shadow DOM of chrome://extensions/?id=<id>.
+ * Chrome reloads the extension when the setting changes, so the call waits until the (new) worker
+ * reports chrome.extension.isAllowedIncognitoAccess() === true.
+ * @returns {Promise<{ok: boolean, method?: string, reason?: string}>}
+ */
+export async function enableIncognitoAccess(browser, extensionId) {
+    const isAllowed = async () => {
+        try {
+            return (await workerEvaluate(browser, extensionId, () => chrome.extension.isAllowedIncognitoAccess())) === true;
+        } catch { return false; }
+    };
+    if (await isAllowed()) return { ok: true, method: 'already enabled' };
+
+    const attempts = [
+        ['developerPrivate.updateExtensionConfiguration', async (page) => {
+            await page.goto('chrome://extensions/', { waitUntil: 'load', timeout: 20000 });
+            await page.evaluate(async (id) => {
+                await chrome.developerPrivate.updateExtensionConfiguration({ extensionId: id, incognitoAccess: true });
+            }, extensionId);
+        }],
+        ['extensions-manager shadow DOM toggle', async (page) => {
+            await page.goto(`chrome://extensions/?id=${extensionId}`, { waitUntil: 'load', timeout: 20000 });
+            await sleep(1000);
+            await page.evaluate(() => {
+                const view = document.querySelector('extensions-manager').shadowRoot.querySelector('extensions-detail-view');
+                view.shadowRoot.querySelector('#allow-incognito').shadowRoot.querySelector('cr-toggle').click();
+            });
+        }]
+    ];
+    const reasons = [];
+    for (const [method, run] of attempts) {
+        const page = await browser.newPage();
+        try {
+            await run(page);
+            for (let i = 0; i < 20; i++) {
+                await sleep(500);
+                if (await isAllowed()) return { ok: true, method };
+            }
+            reasons.push(`${method}: ran but "Allow in Incognito" stayed off`);
+        } catch (e) {
+            reasons.push(`${method}: ${e && e.message ? e.message : e}`);
+        } finally {
+            await page.close().catch(() => {});
+        }
+    }
+    return { ok: false, reason: reasons.join(' | ') };
+}
+
+/**
+ * Opens a real (off-the-record) incognito window on `url` through the extension (puppeteer's
+ * createBrowserContext() is not a real incognito window for extensions) and returns its page.
+ * Requires "Allow in Incognito" to be on.
+ */
+export async function openIncognitoPage(browser, extensionId, url) {
+    const known = new Set(browser.targets());
+    await workerEvaluateIn(browser, extensionId, { incognito: false }, async (url) => {
+        await chrome.windows.create({ incognito: true, url });
+    }, url);
+    const target = await browser.waitForTarget(
+        (t) => t.type() === 'page' && !known.has(t) && t.url() === url, { timeout: 15000 });
+    const page = await target.page();
+    if (!page) throw new Error('could not attach to the incognito page');
+    return page;
+}

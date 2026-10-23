@@ -464,6 +464,22 @@ describe('context menus', () => {
         await until(() => fake.state.menus.length === 5);
     });
 
+    test('the incognito instance (split mode) creates its own items and never calls removeAll', async () => {
+        await bg.rebuildContextMenus();
+        fake.state.menus.length = 0;
+        const before = callsOf('contextMenus.removeAll').length;
+        fake.chrome.extension = { inIncognitoContext: true };
+        try {
+            await bg.rebuildContextMenus();
+        } finally {
+            delete fake.chrome.extension;
+        }
+        // removeAll would also clear the regular instance's items
+        expect(callsOf('contextMenus.removeAll')).toHaveLength(before);
+        expect(fake.state.menus).toHaveLength(5);
+        expect(fake.state.menus[0]).toMatchObject({ id: 'aw-clean-with-preset' });
+    });
+
     test('ignores storage changes that are not presets', async () => {
         await bg.rebuildContextMenus();
         const before = callsOf('contextMenus.removeAll').length;

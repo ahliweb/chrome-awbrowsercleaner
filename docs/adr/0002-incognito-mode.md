@@ -1,16 +1,18 @@
 # ADR 0002: Incognito mode
 
-- **Status:** Accepted
+- **Status:** Accepted. Amended after E2E verification: the manifest now
+  declares `"incognito": "split"`.
 - **Date:** 2026-10-23
 - **Scope:** How the extension behaves in incognito windows and across Chrome
-  profiles, and the verification still outstanding.
+  profiles. Verified by E2E (`tests/e2e/incognito.test.js`) on Chrome 141.
 
 ## Context
 
 ### Manifest
 
-`manifest.json` does not declare the `incognito` key. Chrome therefore applies
-its default mode, `spanning`. The extension runs in incognito windows only when
+The first version of `manifest.json` did not declare the `incognito` key, so
+Chrome applied its default mode, `spanning`; the verified outcome below changed
+that to `split`. In both modes the extension runs in incognito windows only when
 the user turns on "Allow in Incognito" for it on `chrome://extensions`.
 
 ### Spanning mode
@@ -54,39 +56,73 @@ What is known from the code:
 - The call contains no store or profile key, so the extension does not say
   which profile it means.
 
-What is not verified:
+## Verified outcome (E2E, Chrome 141.0.7390.37)
 
-- **To be verified by E2E:** whether `browsingData.remove` called from the
-  service worker or popup in an incognito window removes data from the incognito
-  profile, from the regular profile, or from both, when the extension is in
-  spanning mode.
+`tests/e2e/incognito.test.js` turns on "Allow in Incognito" (through
+`chrome.developerPrivate.updateExtensionConfiguration` from `chrome://extensions`;
+the toggle in the `extensions-manager` shadow DOM works as well), opens a real
+incognito window from the extension, seeds the same origin in both profiles with
+different values, runs the "Fresh start" preset through the shortcut path
+(`runPresetOnTab`) for the tab of one profile and reads both profiles back.
+
+Result in the default `spanning` mode (the original decision) - a real scope bug:
+
+| Data of origin A | Cleanup from the incognito tab | Result |
+| --- | --- | --- |
+| Cookies | removed in the incognito cookie store (store `"1"`), regular store `"0"` untouched | correct |
+| sessionStorage | cleared in the incognito tab | correct |
+| localStorage, IndexedDB, Cache Storage, Service Workers, OPFS | **incognito data stayed, the regular profile's data for the same origin was removed** (its tab's sessionStorage went with it) | wrong profile |
+
+`browsingData.remove` has no profile selector and acts on the profile of the
+extension instance that calls it. In spanning mode that is always the regular
+profile, whichever window the user cleaned from. A cleanup started in an
+incognito window therefore left the incognito data in place and silently
+deleted regular-profile data. The reverse direction (cleaning from a regular
+window) was correct.
+
+A cookie query without `storeId` (the fallback when `getCookieStoreId` returns
+`undefined`) is answered from the store of the calling instance: in spanning
+mode the regular store, even for an incognito tab; in split mode the incognito
+store from the incognito instance.
 
 ## Decision
 
-1. **Keep `spanning` mode for now.** The extension has no separate incognito
-   state to manage, and the cookie-store handling above already keeps cookie
-   reads and removals in the store of the active tab.
-2. **Track an E2E verification as a follow-up.** The E2E suite must cover:
-   - an incognito window with "Allow in Incognito" enabled, clean a site with
-     cookies and storage in both profiles, and confirm which profile lost data;
-   - that cookies in the regular store survive an incognito cleanup of the same
-     origin, and the reverse;
-   - the case where `getCookieStoreId` returns `undefined`, and confirm which
-     store the fallback query (no `storeId`) reads.
-3. **Do not change the manifest** (no `incognito: "split"` or
-   `"not_allowed"`) until the E2E result is known.
+1. **Use `"incognito": "split"`.** An incognito window then runs its own
+   instance of the extension (its own service worker, popup and options), and
+   every `browsingData` call from it acts on the incognito profile. E2E with
+   split mode: cleaning from the incognito window removes all selected data of
+   incognito A (cookies, sessionStorage, localStorage, IndexedDB, Cache Storage,
+   Service Workers, OPFS) and leaves the regular profile byte-for-byte as it
+   was; cleaning from the regular window leaves the incognito window untouched.
+   The incognito tab uses its own cookie store and the fallback query reads that
+   store.
+2. **Settings are shared.** `chrome.storage.sync` and `chrome.storage.local`
+   are visible to the incognito instance (verified), so custom presets, history
+   and the other settings are the same in both windows. `chrome.storage.session`
+   (the pending confirmation of a shortcut) is per instance, which is what the
+   shortcut flow needs.
+3. **Context menus are per instance, and `contextMenus.removeAll()` clears the
+   items of both instances (verified).** The incognito instance never receives
+   `onInstalled`, so `background.js` creates its menu at worker start, and its
+   `rebuildContextMenus` skips `removeAll()`. Known limitation: when the
+   regular instance rebuilds its menu (a custom preset changed), it clears the
+   incognito items too; they come back the next time the incognito worker
+   starts. Menus are a convenience; the toolbar popup and the shortcuts are not
+   affected.
+4. **"Allow in Incognito" stays the user's choice.** It is off by default and
+   the extension does nothing in incognito windows until it is on. Chrome
+   reloads the extension when the setting changes.
 
 ## Consequences
 
 - With "Allow in Incognito" off (the default), the extension does nothing in
   incognito windows.
-- With it on, the popup works in incognito, but the `browsingData` result is
-  not yet verified. The UI must not claim that incognito data is cleared until
-  the E2E follow-up is closed.
-- Cookie handling depends on `getAllCookieStores()` returning a `tabIds` entry
-  for the active tab. If that lookup fails, the cookie query falls back to a
-  query without `storeId`. Which store that query reads in an incognito window
-  is part of the E2E follow-up.
+- With it on, a cleanup started in an incognito window only affects the
+  incognito profile, and one started in a regular window only affects the
+  regular profile.
+- Not covered by E2E: the popup UI opened inside an incognito window (the
+  worker path, `runPresetOnTab`, runs the same `executePlan`), and the stale
+  incognito context-menu items after a preset change described above.
 
 ## Multiple Chrome profiles
 
@@ -94,16 +130,19 @@ What is not verified:
   extension storage. Settings are not shared between profiles.
 - A cleanup runs in the profile whose popup the user opened. The popup and the
   service worker belong to that profile.
-- Whether a `browsingData` call scopes exactly to that profile is part of the
-  same **to be verified by E2E** item above.
+- A cleanup runs in the profile whose popup the user opened. This holds for
+  the incognito profile in split mode (see the verified outcome above); a
+  different Chrome profile is a different installation and is not reachable
+  from this one.
 
 ## References
 
-- `manifest.json` (no `incognito` key)
+- `manifest.json` (`"incognito": "split"`)
+- `tests/e2e/incognito.test.js`, `tests/e2e/helpers.js` (`enableIncognitoAccess`, `openIncognitoPage`, `workerEvaluateIn`)
 - `chrome-helpers.js` (`getCookieStoreId`, `tabContext`)
 - `cleanup-core.js` (`collectCookies`, `runBrowsingData`, `buildRemovalOptions`)
 - `cookie-engine.js` (`cookieRemovalDetails`)
-- `background.js` (service worker, `getCookieStoreId` use)
+- `background.js` (service worker, `getCookieStoreId` use, per-instance context menus)
 - Chrome extensions reference, `incognito` manifest key:
   <https://developer.chrome.com/docs/extensions/reference/manifest/incognito>
 - Chrome extensions reference, `cookies` API (`getAllCookieStores`):

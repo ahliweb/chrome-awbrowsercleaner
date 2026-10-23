@@ -42,6 +42,7 @@ Rilis ini menuntaskan roadmap v1.3–v1.5 (epic #43): AW Browser Cleaner menjadi
 
 ### Fixed
 
+- **Incognito**: manifest memakai `"incognito": "split"`. Dengan mode bawaan (*spanning*), pembersihan dari tab Incognito justru menghapus data origin yang sama di profil reguler dan membiarkan data Incognito; kini setiap profil hanya membersihkan dirinya sendiri (diverifikasi E2E dua arah) (#41).
 - E2E tidak lagi lolos diam-diam: CI gagal bila browser/ekstensi tidak termuat; E2E memverifikasi penghapusan per tipe data dan origin, dengan origin canary (#26).
 - E2E memakai Chrome for Testing stable dan beta, Bun dipin (`.bun-version`) (#31).
 - Label **Select All** sinkron dengan status checkbox; pesan sukses tidak hilang setelah 3 detik; panel konfirmasi tanpa `innerHTML` (#28).

@@ -26,6 +26,8 @@ All keys are prefixed `aw.`. Quotas (Chrome): `storage.sync` 100 KB total and 8 
 | `aw.pendingConfirmation` | session | object | `{ presetId, origin, at }` | 1 value | Read once and removed; valid for 60 seconds (`PENDING_CONFIRMATION_TTL_MS`); discarded when the browser closes | Service worker (`setPendingConfirmation`) | Popup (`takePendingConfirmation`) |
 | `aw.permissionGrants` | local | array | `[{ origin, kind, at }]`; `kind` matches `^[a-zA-Z][a-zA-Z0-9_-]{0,31}$` (the popup writes `exactCookies`) | 200 entries | Removed when the user revokes access in Options; oldest dropped beyond 200 | Popup (`recordPermissionGrant`), Options (`removePermissionGrant`) | Options (`listPermissionGrants`) |
 
+The manifest uses `"incognito": "split"`: an incognito window runs its own extension instance. `sync` and `local` are shared by both instances (presets and history are the same everywhere); `session` (test session start, pending confirmation) is per instance.
+
 "Written by / read by" lists the callers in `popup.js`, `options.js` and `background.js` at the time of writing; the popup is the file most likely to change.
 
 Reads are defensive: malformed entries are dropped (for example a recent origin that is not an exact origin), and `aw.history` and `aw.recentOrigins` are truncated to their caps on read.

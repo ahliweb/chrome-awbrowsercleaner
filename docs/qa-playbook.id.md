@@ -195,6 +195,19 @@ Issue #37.
   3. Di popup, atur **Rentang waktu** ke "Sejak sesi uji dimulai" (opsi menampilkan waktu mulai) lalu jalankan pembersihan.
   4. Di Options, pilih **Akhiri sesi**.
 - **Hasil yang diharapkan.** Data yang dibuat sejak awal sesi dihapus; data lama pada origin yang sama dipertahankan selama Chrome mendukung rentang waktu. Tidak semua jenis penyimpanan mengikuti rentang waktu secara tepat: popup menyatakannya, dan sebagian jenis dihapus seluruhnya. Cookie presisi tidak bisa dibatasi waktu; popup menjelaskannya dan meminta Anda memilih Semua waktu atau mode domain-wide.
+- **Perilaku Chrome yang terverifikasi.** `tests/e2e/since-matrix.test.js` membuat data lama, menunggu 3 detik, membuat data baru, lalu membersihkan origin A dengan `since` di antara keduanya (Chrome/141.0.7390.37, `chrome.browsingData.remove` dengan `origins` dan `since`; keluaran di `test-artifacts/since-matrix.md`). Jalankan ulang pada versi Chrome yang Anda uji; jangan berasumsi tabel ini tetap sama.
+
+  | Jenis data | Data lama (sebelum waktu mulai) | Data baru (setelah waktu mulai) |
+  | --- | --- | --- |
+  | Local Storage | dihapus (rentang waktu diabaikan) | dihapus |
+  | IndexedDB | dihapus (rentang waktu diabaikan) | dihapus |
+  | Sistem berkas (OPFS) | dihapus (rentang waktu diabaikan) | dihapus |
+  | Cache Storage | dihapus (rentang waktu diabaikan) | dihapus |
+  | Service Worker | dihapus (rentang waktu diabaikan) | dihapus |
+  | Cache HTTP | dipertahankan | dihapus |
+  | Cookie (hanya domain-wide) | dipertahankan | dihapus |
+
+  Jadi dengan rentang waktu, hanya cache HTTP dan cookie domain-wide yang mempertahankan data lama pada versi Chrome ini. Untuk jenis lain, pembersihan menghapus semua data origin, sebab itu popup memperingatkan bahwa sebagian jenis dihapus seluruhnya. Dalam semua kasus data baru dihapus dan origin lain (termasuk canary) tidak tersentuh.
 - **Bukti.** Kolom "Since" pada laporan berisi awal rentang (Markdown) dan `since` (JSON). Lampirkan dan sebutkan jenis mana yang terdampak.
 - **Layar desain.** [Rentang waktu pada popup](../design/exports/png/PopupRange.png), [Options](../design/exports/png/Options.png), [Hasil](../design/exports/png/PopupResult.png).
 

@@ -303,7 +303,9 @@ export function rebuildContextMenus() {
         } catch (e) {
             // storage unavailable: built-ins only
         }
-        await api.contextMenus.removeAll();
+        // removeAll() clears the items of BOTH instances in split incognito mode (verified in E2E), so the
+        // incognito instance only creates its own items (duplicates are ignored by createMenuItem).
+        if (!api.extension || !api.extension.inIncognitoContext) await api.contextMenus.removeAll();
         createMenuItem({
             id: MENU_PARENT_ID,
             title: menuTitle(getMessage('menuCleanWithPreset')),
@@ -500,6 +502,12 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 chrome.runtime.onInstalled.addListener(() => {
     rebuildContextMenus();
 });
+
+// manifest "incognito": "split" gives an incognito window its own instance of this worker, which never
+// receives onInstalled. Context menus are per instance, so that instance creates its own at startup.
+if (chrome.extension && chrome.extension.inIncognitoContext) {
+    rebuildContextMenus();
+}
 
 chrome.storage.onChanged.addListener((changes, areaName) => {
     if (areaName !== 'sync') return;
