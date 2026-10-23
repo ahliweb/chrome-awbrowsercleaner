@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Rentang waktu</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1d4ed8}a:hover{color:#1e3a8a}
+</style>
+</helmet>
+<div style="position: relative; width: 380px; height: 600px; box-sizing: border-box; background: #ffffff; color: #111827; font-family: Inter, system-ui, sans-serif; font-size: 13px; display: flex; flex-direction: column">
+
+<div style="display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-bottom: 1px solid #e5e7eb">
+<img src="/_blob/e43c2f8444afb16fbf26f97c287f9606" alt="" style="width: 24px; height: 24px; border-radius: 5px">
+<div style="font-size: 14px; font-weight: 600; flex-grow: 1">AW Browser Cleaner</div>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #4b5563; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 4px; padding: 1px 6px">v1.3</span>
+<a href="Options.dc.html" aria-label="Pengaturan" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 6px; color: #4b5563">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+</a>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 8px 14px 6px; flex-grow: 1; overflow: hidden">
+<div style="display: flex; flex-direction: column; gap: 5px">
+<div style="display: flex; align-items: center; gap: 8px; min-height: 20px">
+<div style="font-size: 12px; font-weight: 600; color: #374151">Target origin</div>
+<div style="font-size: 12px; color: #6b7280; flex-grow: 1">1 dari 10</div>
+<button type="button" style="display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 6px; border-radius: 4px; border: 0; background: transparent; color: #1d4ed8; font-family: Inter, sans-serif; font-size: 12px; font-weight: 600"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Tambah origin</button>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; height: 28px; box-sizing: border-box; padding: 0 6px 0 8px; border: 1px solid #d1d5db; border-radius: 6px; background: #ffffff"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; flex-grow: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">https://staging.app.example.test</span><span style="display: inline-flex; align-items: center; height: 18px; padding: 0 7px; border-radius: 999px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; font-size: 10.5px; font-weight: 600">Tab aktif</span></div>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: #4b5563"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg><span>Rentang berlaku di atas origin ini, bukan penggantinya.</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 5px">
+<div style="font-size: 12px; font-weight: 600; color: #374151">Preset</div>
+<div role="group" aria-label="Preset" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; padding: 2px; gap: 2px">
+<button type="button" aria-pressed="false" style="height: 26px; border-radius: 4px; border: 0; font-size: 12px; font-weight: 500; font-family: Inter, sans-serif; background: transparent; color: #4b5563">Logout</button>
+<button type="button" aria-pressed="true" style="height: 26px; border-radius: 4px; border: 0; font-size: 12px; font-weight: 500; font-family: Inter, sans-serif; background: #ffffff; color: #111827; box-shadow: 0 1px 2px rgba(17,24,39,0.12)">Fresh user</button>
+<button type="button" aria-pressed="false" style="height: 26px; border-radius: 4px; border: 0; font-size: 12px; font-weight: 500; font-family: Inter, sans-serif; background: transparent; color: #4b5563">Stale assets</button>
+<button type="button" aria-pressed="false" style="height: 26px; border-radius: 4px; border: 0; font-size: 12px; font-weight: 500; font-family: Inter, sans-serif; background: transparent; color: #4b5563">Full reset</button>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 5px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><div style="font-size: 12px; font-weight: 600; color: #374151">Data yang dibersihkan</div><div style="font-size: 12px; color: #6b7280">6 dari 8 dipilih</div></div>
+<div style="border: 1px solid #e5e7eb; border-radius: 6px; overflow: hidden">
+<div style="display: flex; flex-direction: column; border-top: 0">
+<div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: #6b7280; padding: 5px 10px 1px; background: #f9fafb"><span>Sesi</span></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: #f9fafb; padding: 0 4px 3px">
+<button type="button" aria-pressed="false" disabled title="Cookie persis tidak bisa dibatasi waktu — gunakan Domain-wide atau Sepanjang waktu" style="display: flex; align-items: center; gap: 8px; height: 25px; padding: 0 6px; border-radius: 4px; background: transparent; border: 0; color: #111827; font-size: 13px; font-family: Inter, sans-serif; text-align: left; opacity: 0.6; cursor: not-allowed;"><span style="width: 14px; height: 14px; flex-shrink: 0; border-radius: 3px; display: flex; align-items: center; justify-content: center; background: #ffffff; border: 1.5px solid #9ca3af"></span><span style="flex-grow: 1">Cookies</span><span style="color: #6b7280; display: flex"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b7280; ">9</span></button>
+<button type="button" aria-pressed="true" style="display: flex; align-items: center; gap: 8px; height: 25px; padding: 0 6px; border-radius: 4px; background: transparent; border: 0; color: #111827; font-size: 13px; font-family: Inter, sans-serif; text-align: left; cursor: pointer;"><span style="width: 14px; height: 14px; flex-shrink: 0; border-radius: 3px; display: flex; align-items: center; justify-content: center; background: #1d4ed8; border: 1.5px solid #1d4ed8"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg></span><span style="flex-grow: 1">Session</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b7280; ">4</span></button>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; border-top: 1px solid #e5e7eb">
+<div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: #6b7280; padding: 5px 10px 1px; background: #f9fafb"><span>Storage</span></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: #f9fafb; padding: 0 4px 3px">
+<button type="button" aria-pressed="true" style="display: flex; align-items: center; gap: 8px; height: 25px; padding: 0 6px; border-radius: 4px; background: transparent; border: 0; color: #111827; font-size: 13px; font-family: Inter, sans-serif; text-align: left; cursor: pointer;"><span style="width: 14px; height: 14px; flex-shrink: 0; border-radius: 3px; display: flex; align-items: center; justify-content: center; background: #1d4ed8; border: 1.5px solid #1d4ed8"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg></span><span style="flex-grow: 1">Local Storage</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b7280; ">14</span></button>
+<button type="button" aria-pressed="true" style="display: flex; align-items: center; gap: 8px; height: 25px; padding: 0 6px; border-radius: 4px; background: transparent; border: 0; color: #111827; font-size: 13px; font-family: Inter, sans-serif; text-align: left; cursor: pointer;"><span style="width: 14px; height: 14px; flex-shrink: 0; border-radius: 3px; display: flex; align-items: center; justify-content: center; background: #1d4ed8; border: 1.5px solid #1d4ed8"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg></span><span style="flex-grow: 1">IndexedDB</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b7280; ">2</span></button>
+<button type="button" aria-pressed="true" style="display: flex; align-items: center; gap: 8px; height: 25px; padding: 0 6px; border-radius: 4px; background: transparent; border: 0; color: #111827; font-size: 13px; font-family: Inter, sans-serif; text-align: left; cursor: pointer;"><span style="width: 14px; height: 14px; flex-shrink: 0; border-radius: 3px; display: flex; align-items: center; justify-content: center; background: #1d4ed8; border: 1.5px solid #1d4ed8"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg></span><span style="flex-grow: 1">File Systems</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b7280; ">0</span></button>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; border-top: 1px solid #e5e7eb">
+<div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: #6b7280; padding: 5px 10px 1px; background: #f9fafb"><span>Cache & offline</span></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: #f9fafb; padding: 0 4px 3px">
+<button type="button" aria-pressed="false" style="display: flex; align-items: center; gap: 8px; height: 25px; padding: 0 6px; border-radius: 4px; background: transparent; border: 0; color: #111827; font-size: 13px; font-family: Inter, sans-serif; text-align: left; cursor: pointer;"><span style="width: 14px; height: 14px; flex-shrink: 0; border-radius: 3px; display: flex; align-items: center; justify-content: center; background: #ffffff; border: 1.5px solid #9ca3af"></span><span style="flex-grow: 1">HTTP Cache</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b7280; ">–</span></button>
+<button type="button" aria-pressed="true" style="display: flex; align-items: center; gap: 8px; height: 25px; padding: 0 6px; border-radius: 4px; background: transparent; border: 0; color: #111827; font-size: 13px; font-family: Inter, sans-serif; text-align: left; cursor: pointer;"><span style="width: 14px; height: 14px; flex-shrink: 0; border-radius: 3px; display: flex; align-items: center; justify-content: center; background: #1d4ed8; border: 1.5px solid #1d4ed8"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg></span><span style="flex-grow: 1">Cache Storage</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b7280; ">3</span></button>
+<button type="button" aria-pressed="true" style="display: flex; align-items: center; gap: 8px; height: 25px; padding: 0 6px; border-radius: 4px; background: transparent; border: 0; color: #111827; font-size: 13px; font-family: Inter, sans-serif; text-align: left; cursor: pointer;"><span style="width: 14px; height: 14px; flex-shrink: 0; border-radius: 3px; display: flex; align-items: center; justify-content: center; background: #1d4ed8; border: 1.5px solid #1d4ed8"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg></span><span style="flex-grow: 1">Service Workers</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b7280; ">1</span></button>
+</div>
+</div>
+</div>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; background: #f9fafb; border: 1px solid #e5e7eb; color: #6b7280; font-size: 12px; opacity: 0.6"><span style="flex-grow: 1">Cookie presisi tidak tersedia</span><span style="font-weight: 600">Atur</span></div>
+</div>
+
+<div style="padding: 8px 14px 12px; border-top: 1px solid #e5e7eb; background: #f9fafb; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; flex-direction: column; gap: 3px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<label for="rangeSelect" style="font-size: 12px; color: #374151">Rentang</label>
+<select id="rangeSelect" style="height: 28px; background: #ffffff; color: #111827; border: 1px solid #d1d5db; border-radius: 6px; padding: 0 6px; font-family: Inter, sans-serif; font-size: 12px; width: 182px; border-color: #1d4ed8; box-shadow: 0 0 0 3px #93c5fd">
+<option value="all">1 jam terakhir</option>
+</select>
+</div>
+<div style="font-size: 11px; color: #6b7280; text-align: right">Tidak semua jenis storage mematuhi rentang secara rinci.</div>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<label for="afterSelect" style="font-size: 12px; color: #374151">Setelah dibersihkan</label>
+<select id="afterSelect" style="height: 28px; background: #ffffff; color: #111827; border: 1px solid #d1d5db; border-radius: 6px; padding: 0 6px; font-family: Inter, sans-serif; font-size: 12px; width: 182px">
+<option value="start">Buka halaman awal</option>
+</select>
+</div>
+<a href="PopupConfirm.dc.html" style="height: 36px; border-radius: 6px; background: #1d4ed8; color: #ffffff; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none">Bersihkan origin ini<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 400; color: #dbeafe; border: 1px solid #3b5fd9; border-radius: 4px; padding: 0 5px">Alt+Shift+K</span></a>
+</div>
+
+<div role="tooltip" style="position: absolute; left: 14px; top: 190px; width: 268px; box-sizing: border-box; padding: 7px 9px; border-radius: 6px; background: #111827; color: #f9fafb; font-size: 11.5px; line-height: 1.4; box-shadow: 0 4px 12px rgba(17,24,39,0.25)" id="tip">Cookie persis tidak bisa dibatasi waktu — gunakan Domain-wide atau Sepanjang waktu<span style="position: absolute; left: 22px; bottom: -4px; width: 8px; height: 8px; background: #111827; transform: rotate(45deg)"></span></div>
+<div role="listbox" aria-label="Rentang" style="position: absolute; right: 14px; bottom: 140px; width: 182px; box-sizing: border-box; padding: 3px; background: #ffffff; border: 1px solid #d1d5db; border-radius: 6px; box-shadow: 0 6px 16px rgba(17,24,39,0.18); display: flex; flex-direction: column; gap: 1px">
+<div role="option" aria-selected="false" aria-disabled="false" style="display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 4px; background: transparent; color: #111827; font-weight: 400; font-size: 12px"><span style="width: 12px"></span><div>Sepanjang waktu</div></div>
+<div role="option" aria-selected="false" aria-disabled="false" style="display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 4px; background: transparent; color: #111827; font-weight: 400; font-size: 12px"><span style="width: 12px"></span><div>15 menit terakhir</div></div>
+<div role="option" aria-selected="true" aria-disabled="false" style="display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 4px; background: #eff6ff; color: #1e3a8a; font-weight: 600; font-size: 12px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg><div>1 jam terakhir</div></div>
+<div role="option" aria-selected="false" aria-disabled="true" style="display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 4px; background: transparent; color: #9ca3af; font-weight: 400; font-size: 12px"><span style="width: 12px"></span><div>Sejak sesi uji dimulai<div style="font-size: 10.5px; color: #9ca3af; font-weight: 400">Mulai sesi di Options › Riwayat & bukti</div></div></div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":380,"height":600}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

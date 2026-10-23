@@ -27,6 +27,21 @@ Desain dibuat di kanvas Claude Design. Folder ini adalah salinan versi-terkontro
 | **4 · Hasil & bukti uji** | **5 · Halaman tidak didukung** | **Varian** |
 | ![Hasil](exports/png/PopupResult.png) | ![Tidak didukung](exports/png/PopupUnsupported.png) | [Preset Stale assets](exports/png/PopupMain--preset-stale-assets.png) · [Cookie domain-wide](exports/png/PopupCookies--domain-wide.png) |
 
+### Rentang waktu dan kumpulan origin (v1.3, #37 dan #38)
+
+| 1b · Rentang waktu (#37) | 1c · Kumpulan origin (#38) | 3b · Konfirmasi beberapa origin |
+| --- | --- | --- |
+| ![Rentang waktu](exports/png/PopupRange.png) | ![Kumpulan origin](exports/png/PopupOrigins.png) | ![Konfirmasi beberapa origin](exports/png/PopupOriginsConfirm.png) |
+
+- **Rentang (`#rangeSelect`)** berada di footer, di atas "Setelah dibersihkan" (`#afterSelect`). Opsi: Sepanjang waktu (default), 15 menit terakhir, 1 jam terakhir, Sejak sesi uji dimulai (nonaktif sampai sesi dimulai). Rentang selalu berlaku di atas origin yang dipilih, tidak pernah menggantikannya.
+- Saat rentang selain Sepanjang waktu dipilih dan Cookies dalam mode Origin persis, baris Cookies nonaktif (opacity 0,6) dengan tooltip bahwa cookie persis tidak bisa dibatasi waktu. Catatan di bawah select: tidak semua jenis storage mematuhi rentang secara rinci.
+- **Sesi uji** dimulai dari Options › Riwayat & bukti:
+
+  ![Options: sesi uji](exports/png/OptionsSession.png)
+
+- **Kumpulan origin**: origin utama adalah tab aktif (teks mono), origin tambahan berupa chip yang bisa dihapus lewat "+ Tambah origin" (maksimal 10). Setiap chip adalah origin persis `skema://host:port`, tanpa wildcard dan tanpa opsi "semua kecuali". Penyedia identitas pihak ketiga (accounts.google.com, login.microsoftonline.com, appleid.apple.com, github.com) menampilkan peringatan kuning karena dipakai bersama situs lain. Session Storage ditandai N/A untuk origin selain tab aktif. Konfirmasi (3b) mencantumkan setiap origin beserta jumlah item yang dihapus.
+- Di 1c, isi popup menggulir saat daftar origin panjang (pegangan gulir dan pudar di tepi bawah).
+
 Alur: Popup utama → (Atur) Cookie presisi → Konfirmasi → Hasil. Halaman `chrome://` membuka layar 5.
 
 ## Halaman Options
@@ -44,13 +59,16 @@ Alur: Popup utama → (Atur) Cookie presisi → Konfirmasi → Hasil. Halaman `c
 | Layar / fitur | Status | Issue / PR |
 | --- | --- | --- |
 | Gaya visual, token, font lokal, konfirmasi | Diimplementasikan | PR #44 (menutup #28) |
-| Cookie presisi (layar 2) | Desain | #32 |
-| HTTP Cache, File Systems | Desain | #29 |
-| Session Storage + reload | Desain | #30 |
-| Preset (layar 1, Options) | Desain | #34 |
-| Shortcut & context menu | Desain | #35 |
-| Hasil & bukti uji (layar 4) | Desain | #36 |
-| Test Mode (Options) | Desain | #39 |
+| Cookie presisi (layar 2) | Diimplementasikan (v1.3.0) | #32 |
+| HTTP Cache, File Systems | Diimplementasikan (v1.3.0) | #29 |
+| Session Storage + reload | Diimplementasikan (v1.3.0) | #30 |
+| Preset (layar 1, Options) | Diimplementasikan (v1.3.0) | #34 |
+| Shortcut & context menu | Diimplementasikan (v1.3.0) | #35 |
+| Hasil & bukti uji (layar 4) | Diimplementasikan (v1.3.0) | #36 |
+| Test Mode (Options) | Diimplementasikan (v1.3.0) | #39 |
+| Pekerjaan pendukung v1.3 | Diimplementasikan (v1.3.0) | #47, #48 |
+| Rentang waktu (layar 1b, Options sesi uji) | Desain siap | #37 |
+| Kumpulan origin (layar 1c, 3b) | Desain siap | #38 |
 
 Angka, domain, dan tanggal di desain adalah data contoh.
 
