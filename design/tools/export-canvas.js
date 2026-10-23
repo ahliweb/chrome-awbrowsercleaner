@@ -102,11 +102,21 @@ function renderInPage(stateOverride) {
   }
   Array.from(root.childNodes).forEach(c => processNode(c, vals));
   root.replaceWith(...Array.from(root.childNodes));
+  document.querySelectorAll('x-select').forEach(xs => {
+    const sel = document.createElement('select');
+    Array.from(xs.attributes).forEach(a => sel.setAttribute(a.name, a.value));
+    Array.from(xs.childNodes).forEach(c => sel.appendChild(c));
+    xs.replaceWith(sel);
+  });
   scriptEl.remove();
 }
 
 function preprocess(src, title) {
+  // The HTML parser drops unknown elements inside <select>, so template
+  // loops there are parsed under a placeholder tag and restored after render.
   return src
+    .replace(/<select(\s)/g, '<x-select$1')
+    .replace(/<\/select>/g, '</x-select>')
     .replace(/<script src="\.\/support\.js"><\/script>\n?/, '')
     .replace(/<link rel="preconnect"[^>]*>\n?/g, '')
     .replace(/<link href="https:\/\/fonts\.googleapis\.com[^>]*>\n?/g, '')
