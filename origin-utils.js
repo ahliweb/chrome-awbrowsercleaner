@@ -13,6 +13,17 @@
 export const VALID_SCHEMES = new Set(['http:', 'https:']);
 
 /**
+ * Whether a parsed hostname is a wildcard or percent-encoded.
+ * Chrome's URL parser turns "*" into "%2A"; a valid host never contains "%".
+ *
+ * @param {string} hostname - URL.hostname.
+ * @returns {boolean} True when the host must be rejected.
+ */
+function hasWildcardOrEncodedHost(hostname) {
+    return hostname.includes('*') || hostname.includes('%');
+}
+
+/**
  * Result of a target normalization/validation operation.
  * @typedef {Object} NormalizeResult
  * @property {boolean} valid - Whether the input was successfully normalized.
@@ -116,8 +127,9 @@ export function normalizeTarget(input) {
         };
     }
 
-    // Wildcards are never a target: the URL parser accepts "*" in hosts.
-    if (url.hostname.includes('*')) {
+    // Wildcards are never a target. Parsers differ: some keep "*" in the
+    // host, Chrome percent-encodes it ("%2A"). A real host never has "%".
+    if (hasWildcardOrEncodedHost(url.hostname)) {
         return {
             valid: false,
             origin: '',
@@ -170,7 +182,7 @@ export function validateOrigin(origin) {
             };
         }
 
-        if (url.hostname.includes('*')) {
+        if (hasWildcardOrEncodedHost(url.hostname)) {
             return {
                 valid: false,
                 origin: '',

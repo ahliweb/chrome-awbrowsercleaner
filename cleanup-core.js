@@ -122,8 +122,12 @@ function originViolation(origin) {
     if (typeof origin !== 'string') {
         return { code: 'ORIGIN_INVALID', message: 'Every origin must be a string.' };
     }
-    if (origin.includes('*')) {
+    // Chrome percent-encodes "*" in hosts ("%2A"); origins never contain "%".
+    if (origin.includes('*') || /%2a/i.test(origin)) {
         return { code: 'ORIGIN_WILDCARD', message: `Wildcards are not allowed: ${origin}` };
+    }
+    if (origin.includes('%')) {
+        return { code: 'ORIGIN_INVALID', message: `Percent-encoded hosts are not allowed: ${origin}` };
     }
     if (origin.includes('@')) {
         return { code: 'ORIGIN_INVALID', message: `Origins must not contain credentials: ${origin}` };

@@ -1086,5 +1086,533 @@
   "optionsOpenShortcuts": {
     "message": "Change shortcuts",
     "description": "Button opening the browser shortcuts page."
+  },
+  "testModeTag": {
+    "message": "Test Mode",
+    "description": "Popup UI text."
+  },
+  "testModeTagTitle": {
+    "message": "Test Mode is on: shortcuts only clean the allowed test origins.",
+    "description": "Popup UI text."
+  },
+  "addOriginBtn": {
+    "message": "+ Add origin",
+    "description": "Popup UI text."
+  },
+  "addOriginTitle": {
+    "message": "Also clear another exact origin in the same run",
+    "description": "Popup UI text."
+  },
+  "normalizedPreviewLabel": {
+    "message": "Will use",
+    "description": "Popup UI text."
+  },
+  "extraOriginPlaceholder": {
+    "message": "https://api.example.com",
+    "description": "Popup UI text."
+  },
+  "extraOriginLabel": {
+    "message": "Additional origin",
+    "description": "Popup UI text."
+  },
+  "extraOriginAdd": {
+    "message": "Add",
+    "description": "Popup UI text."
+  },
+  "extraOriginsLabel": {
+    "message": "Additional origins",
+    "description": "Popup UI text."
+  },
+  "extraOriginsLimit": {
+    "message": "At most $P1$ origins in one cleanup.",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "extraOriginDuplicate": {
+    "message": "That origin is already in the list.",
+    "description": "Popup UI text."
+  },
+  "extraOriginNeedsPrimary": {
+    "message": "Enter the target origin first.",
+    "description": "Popup UI text."
+  },
+  "removeOriginAria": {
+    "message": "Remove $P1$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "idpWarning": {
+    "message": "$P1$ is a sign-in provider. Clearing it may sign you out of other sites.",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "errorEnterOrigin": {
+    "message": "Please enter a target origin.",
+    "description": "Popup UI text."
+  },
+  "presetLabel": {
+    "message": "Preset",
+    "description": "Popup UI text."
+  },
+  "presetMoreLabel": {
+    "message": "More presets",
+    "description": "Popup UI text."
+  },
+  "presetMoreOption": {
+    "message": "More presets…",
+    "description": "Popup UI text."
+  },
+  "presetStatusCustom": {
+    "message": "Custom · $P1$ of $P2$ selected",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "presetDropped": {
+    "message": "Session Storage and the after-clean action were skipped: this origin is not the active tab.",
+    "description": "Popup UI text."
+  },
+  "typeTipCookies": {
+    "message": "Cookies of this origin. Exact mode removes host-only and partitioned cookies; domain-wide also removes cookies shared with subdomains.",
+    "description": "Popup UI text."
+  },
+  "typeTipSessionStorage": {
+    "message": "sessionStorage of the active tab only.",
+    "description": "Popup UI text."
+  },
+  "typeTipLocalStorage": {
+    "message": "localStorage keys of this origin.",
+    "description": "Popup UI text."
+  },
+  "typeTipIndexedDB": {
+    "message": "IndexedDB databases of this origin.",
+    "description": "Popup UI text."
+  },
+  "typeTipFileSystems": {
+    "message": "File System API and OPFS files of this origin.",
+    "description": "Popup UI text."
+  },
+  "typeTipCache": {
+    "message": "Files in the browser HTTP cache for this origin. Not countable.",
+    "description": "Popup UI text."
+  },
+  "typeTipCacheStorage": {
+    "message": "Cache Storage caches, used by service workers and web apps.",
+    "description": "Popup UI text."
+  },
+  "typeTipServiceWorkers": {
+    "message": "Service worker registrations of this origin.",
+    "description": "Popup UI text."
+  },
+  "cookieManage": {
+    "message": "Manage",
+    "description": "Popup UI text."
+  },
+  "cookieSummaryExact": {
+    "message": "Exact cookies: $P1$, $P2$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "cookieSummaryRemoved": {
+    "message": "$P1$ removed",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "cookieSummaryKept": {
+    "message": "$P1$ shared domain cookies kept",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "cookieSummaryUnknown": {
+    "message": "Exact cookies: host-only and partitioned cookies are removed, shared domain cookies are kept.",
+    "description": "Popup UI text."
+  },
+  "cookieSummaryWide": {
+    "message": "Domain-wide: cookies shared with other subdomains are removed too.",
+    "description": "Popup UI text."
+  },
+  "rangeLabel": {
+    "message": "Time range",
+    "description": "Popup UI text."
+  },
+  "rangeAll": {
+    "message": "All time",
+    "description": "Popup UI text."
+  },
+  "range15m": {
+    "message": "Last 15 minutes",
+    "description": "Popup UI text."
+  },
+  "rangeHour": {
+    "message": "Last hour",
+    "description": "Popup UI text."
+  },
+  "rangeSession": {
+    "message": "Since test session started",
+    "description": "Popup UI text."
+  },
+  "rangeSessionAt": {
+    "message": "Since test session started ($P1$)",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "rangeNote": {
+    "message": "Not every storage type honors the time range precisely; some are removed completely.",
+    "description": "Popup UI text."
+  },
+  "afterLabel": {
+    "message": "After cleaning",
+    "description": "Popup UI text."
+  },
+  "afterHard": {
+    "message": "Hard reload (bypass cache)",
+    "description": "Popup UI text."
+  },
+  "afterReload": {
+    "message": "Reload",
+    "description": "Popup UI text."
+  },
+  "afterStart": {
+    "message": "Open start page",
+    "description": "Popup UI text."
+  },
+  "afterNone": {
+    "message": "Don't reload",
+    "description": "Popup UI text."
+  },
+  "onlyActiveTabTitle": {
+    "message": "Only for the active tab",
+    "description": "Popup UI text."
+  },
+  "cookiesNoTimeRangeTitle": {
+    "message": "Exact cookies cannot be limited by time. Choose All time or use domain-wide cookies.",
+    "description": "Popup UI text."
+  },
+  "noActiveTabTitle": {
+    "message": "No supported active tab",
+    "description": "Popup UI text."
+  },
+  "clearOriginBtn": {
+    "message": "Clear this origin",
+    "description": "Popup UI text."
+  },
+  "clearOriginsBtn": {
+    "message": "Clear $P1$ origins",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "backBtnLabel": {
+    "message": "Back",
+    "description": "Popup UI text."
+  },
+  "cookieScreenTitle": {
+    "message": "Exact cookies",
+    "description": "Popup UI text."
+  },
+  "cookieModeLabel": {
+    "message": "Cookie scope",
+    "description": "Popup UI text."
+  },
+  "cookieModeExact": {
+    "message": "Exact origin (recommended)",
+    "description": "Popup UI text."
+  },
+  "cookieModeWide": {
+    "message": "Domain-wide",
+    "description": "Popup UI text."
+  },
+  "cookieGrantBtn": {
+    "message": "Grant access to read cookies",
+    "description": "Popup UI text."
+  },
+  "cookiePermissionExact": {
+    "message": "To list and remove exact cookies, the extension needs access to this site. It is requested only for the origins you clean.",
+    "description": "Popup UI text."
+  },
+  "cookiePermissionWide": {
+    "message": "Domain-wide removal needs no extra access. Grant access only to preview the cookie names.",
+    "description": "Popup UI text."
+  },
+  "cookieDenied": {
+    "message": "Access was not granted, so exact cookies cannot be listed or removed. You can switch to Domain-wide, which removes cookies for the whole domain.",
+    "description": "Popup UI text."
+  },
+  "cookieLoading": {
+    "message": "Reading cookies…",
+    "description": "Popup UI text."
+  },
+  "cookieNone": {
+    "message": "No cookies found for this origin.",
+    "description": "Popup UI text."
+  },
+  "cookieTopLevel": {
+    "message": "top-level: $P1$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "cookieGroupHostOnly": {
+    "message": "Host-only",
+    "description": "Popup UI text."
+  },
+  "cookieGroupPartitioned": {
+    "message": "Partitioned (CHIPS)",
+    "description": "Popup UI text."
+  },
+  "cookieGroupShared": {
+    "message": "Shared domain",
+    "description": "Popup UI text."
+  },
+  "cookieFooterExact": {
+    "message": "Shared domain cookies are kept unless you tick them. Cookie values are never shown.",
+    "description": "Popup UI text."
+  },
+  "cookieFooterWide": {
+    "message": "Domain-wide: shared domain cookies are also used by other subdomains and environments. They may be signed out too.",
+    "description": "Popup UI text."
+  },
+  "cookieSaveBtn": {
+    "message": "Save selection",
+    "description": "Popup UI text."
+  },
+  "cookieRemovedOf": {
+    "message": "$P1$ of $P2$ removed",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "confirmScopeExact": {
+    "message": "Exact origin",
+    "description": "Popup UI text."
+  },
+  "confirmScopeWide": {
+    "message": "Domain-wide",
+    "description": "Popup UI text."
+  },
+  "confirmTypesCount": {
+    "message": "$P1$ types",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "confirmPresetOnly": {
+    "message": "Preset $P1$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "confirmPresetThen": {
+    "message": "Preset $P1$ · then $P2$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "confirmThenReload": {
+    "message": "reload this tab",
+    "description": "Popup UI text."
+  },
+  "confirmThenHard": {
+    "message": "hard reload this tab",
+    "description": "Popup UI text."
+  },
+  "confirmThenStart": {
+    "message": "open its start page",
+    "description": "Popup UI text."
+  },
+  "confirmRange": {
+    "message": "Time range: $P1$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "confirmCookiesExact": {
+    "message": "Cookies (host-only + CHIPS)",
+    "description": "Popup UI text."
+  },
+  "confirmCookiesWide": {
+    "message": "Cookies (whole domain)",
+    "description": "Popup UI text."
+  },
+  "unitKeys": {
+    "message": "$P1$ key",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "unitDb": {
+    "message": "$P1$ db",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "unitCaches": {
+    "message": "$P1$ cache",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "confirmKeepShared": {
+    "message": "$P1$ shared domain cookies on $P2$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "confirmKeepOtherOrigins": {
+    "message": "Every other origin, including other ports and schemes",
+    "description": "Popup UI text."
+  },
+  "confirmKeepNotActiveTab": {
+    "message": "$P1$ of $P2$: not the active tab, so it is not touched",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "confirmNowBtn": {
+    "message": "Clear now",
+    "description": "Popup UI text."
+  },
+  "confirmHint": {
+    "message": "Enter to continue · Esc to cancel",
+    "description": "Popup UI text."
+  },
+  "cookieSummaryTimeLimited": {
+    "message": "Exact cookies cannot be limited by time. Switch to domain-wide to limit cookies by time.",
+    "description": "Popup UI text."
+  },
+  "popupSettingsLabel": {
+    "message": "Settings",
+    "description": "Popup UI text."
+  },
+  "cookieSummaryOff": {
+    "message": "Cookies are not selected. Open Manage to choose exact cookies or the domain-wide scope.",
+    "description": "Popup UI text."
+  },
+  "presetShortLogout": {
+    "message": "Log out",
+    "description": "Popup UI text."
+  },
+  "presetShortFresh": {
+    "message": "Fresh start",
+    "description": "Popup UI text."
+  },
+  "presetShortStale": {
+    "message": "Stale files",
+    "description": "Popup UI text."
+  },
+  "presetShortFull": {
+    "message": "Everything",
+    "description": "Popup UI text."
   }
 }

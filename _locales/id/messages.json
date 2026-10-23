@@ -1086,5 +1086,533 @@
   "optionsOpenShortcuts": {
     "message": "Ubah pintasan",
     "description": "Button opening the browser shortcuts page."
+  },
+  "testModeTag": {
+    "message": "Mode Uji",
+    "description": "Popup UI text."
+  },
+  "testModeTagTitle": {
+    "message": "Mode Uji aktif: pintasan hanya membersihkan origin uji yang diizinkan.",
+    "description": "Popup UI text."
+  },
+  "addOriginBtn": {
+    "message": "+ Tambah origin",
+    "description": "Popup UI text."
+  },
+  "addOriginTitle": {
+    "message": "Bersihkan juga origin persis lain dalam satu proses",
+    "description": "Popup UI text."
+  },
+  "normalizedPreviewLabel": {
+    "message": "Akan memakai",
+    "description": "Popup UI text."
+  },
+  "extraOriginPlaceholder": {
+    "message": "https://api.example.com",
+    "description": "Popup UI text."
+  },
+  "extraOriginLabel": {
+    "message": "Origin tambahan",
+    "description": "Popup UI text."
+  },
+  "extraOriginAdd": {
+    "message": "Tambah",
+    "description": "Popup UI text."
+  },
+  "extraOriginsLabel": {
+    "message": "Origin tambahan",
+    "description": "Popup UI text."
+  },
+  "extraOriginsLimit": {
+    "message": "Maksimal $P1$ origin dalam satu pembersihan.",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "extraOriginDuplicate": {
+    "message": "Origin itu sudah ada di daftar.",
+    "description": "Popup UI text."
+  },
+  "extraOriginNeedsPrimary": {
+    "message": "Isi origin target terlebih dahulu.",
+    "description": "Popup UI text."
+  },
+  "removeOriginAria": {
+    "message": "Hapus $P1$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "idpWarning": {
+    "message": "$P1$ adalah penyedia login. Membersihkannya dapat mengeluarkan Anda dari situs lain.",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "errorEnterOrigin": {
+    "message": "Masukkan origin target.",
+    "description": "Popup UI text."
+  },
+  "presetLabel": {
+    "message": "Preset",
+    "description": "Popup UI text."
+  },
+  "presetMoreLabel": {
+    "message": "Preset lainnya",
+    "description": "Popup UI text."
+  },
+  "presetMoreOption": {
+    "message": "Preset lainnya…",
+    "description": "Popup UI text."
+  },
+  "presetStatusCustom": {
+    "message": "Kustom · $P1$ dari $P2$ dipilih",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "presetDropped": {
+    "message": "Session Storage dan aksi setelah pembersihan dilewati: origin ini bukan tab aktif.",
+    "description": "Popup UI text."
+  },
+  "typeTipCookies": {
+    "message": "Cookie origin ini. Mode persis menghapus cookie host-only dan terpartisi; domain-wide juga menghapus cookie yang dipakai bersama subdomain.",
+    "description": "Popup UI text."
+  },
+  "typeTipSessionStorage": {
+    "message": "sessionStorage milik tab aktif saja.",
+    "description": "Popup UI text."
+  },
+  "typeTipLocalStorage": {
+    "message": "Key localStorage milik origin ini.",
+    "description": "Popup UI text."
+  },
+  "typeTipIndexedDB": {
+    "message": "Database IndexedDB milik origin ini.",
+    "description": "Popup UI text."
+  },
+  "typeTipFileSystems": {
+    "message": "Berkas File System API dan OPFS milik origin ini.",
+    "description": "Popup UI text."
+  },
+  "typeTipCache": {
+    "message": "Berkas di cache HTTP browser untuk origin ini. Tidak bisa dihitung.",
+    "description": "Popup UI text."
+  },
+  "typeTipCacheStorage": {
+    "message": "Cache Storage, dipakai service worker dan aplikasi web.",
+    "description": "Popup UI text."
+  },
+  "typeTipServiceWorkers": {
+    "message": "Registrasi service worker milik origin ini.",
+    "description": "Popup UI text."
+  },
+  "cookieManage": {
+    "message": "Atur",
+    "description": "Popup UI text."
+  },
+  "cookieSummaryExact": {
+    "message": "Cookie presisi: $P1$, $P2$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "cookieSummaryRemoved": {
+    "message": "$P1$ dihapus",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "cookieSummaryKept": {
+    "message": "$P1$ cookie domain bersama dipertahankan",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "cookieSummaryUnknown": {
+    "message": "Cookie presisi: cookie host-only dan terpartisi dihapus, cookie domain bersama dipertahankan.",
+    "description": "Popup UI text."
+  },
+  "cookieSummaryWide": {
+    "message": "Domain-wide: cookie yang dipakai bersama subdomain lain ikut dihapus.",
+    "description": "Popup UI text."
+  },
+  "rangeLabel": {
+    "message": "Rentang waktu",
+    "description": "Popup UI text."
+  },
+  "rangeAll": {
+    "message": "Semua waktu",
+    "description": "Popup UI text."
+  },
+  "range15m": {
+    "message": "15 menit terakhir",
+    "description": "Popup UI text."
+  },
+  "rangeHour": {
+    "message": "1 jam terakhir",
+    "description": "Popup UI text."
+  },
+  "rangeSession": {
+    "message": "Sejak sesi uji dimulai",
+    "description": "Popup UI text."
+  },
+  "rangeSessionAt": {
+    "message": "Sejak sesi uji dimulai ($P1$)",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "rangeNote": {
+    "message": "Tidak semua jenis penyimpanan mengikuti rentang waktu secara tepat; sebagian dihapus seluruhnya.",
+    "description": "Popup UI text."
+  },
+  "afterLabel": {
+    "message": "Setelah dibersihkan",
+    "description": "Popup UI text."
+  },
+  "afterHard": {
+    "message": "Hard reload (abaikan cache)",
+    "description": "Popup UI text."
+  },
+  "afterReload": {
+    "message": "Muat ulang",
+    "description": "Popup UI text."
+  },
+  "afterStart": {
+    "message": "Buka halaman awal",
+    "description": "Popup UI text."
+  },
+  "afterNone": {
+    "message": "Jangan muat ulang",
+    "description": "Popup UI text."
+  },
+  "onlyActiveTabTitle": {
+    "message": "Hanya untuk tab aktif",
+    "description": "Popup UI text."
+  },
+  "cookiesNoTimeRangeTitle": {
+    "message": "Cookie presisi tidak bisa dibatasi waktu. Pilih Semua waktu atau gunakan cookie domain-wide.",
+    "description": "Popup UI text."
+  },
+  "noActiveTabTitle": {
+    "message": "Tidak ada tab aktif yang didukung",
+    "description": "Popup UI text."
+  },
+  "clearOriginBtn": {
+    "message": "Bersihkan origin ini",
+    "description": "Popup UI text."
+  },
+  "clearOriginsBtn": {
+    "message": "Bersihkan $P1$ origin",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "backBtnLabel": {
+    "message": "Kembali",
+    "description": "Popup UI text."
+  },
+  "cookieScreenTitle": {
+    "message": "Cookie presisi",
+    "description": "Popup UI text."
+  },
+  "cookieModeLabel": {
+    "message": "Cakupan cookie",
+    "description": "Popup UI text."
+  },
+  "cookieModeExact": {
+    "message": "Origin persis (disarankan)",
+    "description": "Popup UI text."
+  },
+  "cookieModeWide": {
+    "message": "Domain-wide",
+    "description": "Popup UI text."
+  },
+  "cookieGrantBtn": {
+    "message": "Izinkan akses membaca cookie",
+    "description": "Popup UI text."
+  },
+  "cookiePermissionExact": {
+    "message": "Untuk menampilkan dan menghapus cookie presisi, ekstensi perlu akses ke situs ini. Akses hanya diminta untuk origin yang Anda bersihkan.",
+    "description": "Popup UI text."
+  },
+  "cookiePermissionWide": {
+    "message": "Penghapusan domain-wide tidak butuh akses tambahan. Berikan akses hanya untuk melihat nama cookie.",
+    "description": "Popup UI text."
+  },
+  "cookieDenied": {
+    "message": "Akses tidak diberikan, jadi cookie presisi tidak bisa ditampilkan atau dihapus. Anda bisa beralih ke Domain-wide, yang menghapus cookie untuk seluruh domain.",
+    "description": "Popup UI text."
+  },
+  "cookieLoading": {
+    "message": "Membaca cookie…",
+    "description": "Popup UI text."
+  },
+  "cookieNone": {
+    "message": "Tidak ada cookie untuk origin ini.",
+    "description": "Popup UI text."
+  },
+  "cookieTopLevel": {
+    "message": "top-level: $P1$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "cookieGroupHostOnly": {
+    "message": "Host-only",
+    "description": "Popup UI text."
+  },
+  "cookieGroupPartitioned": {
+    "message": "Terpartisi (CHIPS)",
+    "description": "Popup UI text."
+  },
+  "cookieGroupShared": {
+    "message": "Domain bersama",
+    "description": "Popup UI text."
+  },
+  "cookieFooterExact": {
+    "message": "Cookie domain bersama dipertahankan kecuali Anda mencentangnya. Nilai cookie tidak pernah ditampilkan.",
+    "description": "Popup UI text."
+  },
+  "cookieFooterWide": {
+    "message": "Domain-wide: cookie domain bersama juga dipakai subdomain dan environment lain. Mereka bisa ikut logout.",
+    "description": "Popup UI text."
+  },
+  "cookieSaveBtn": {
+    "message": "Simpan pilihan",
+    "description": "Popup UI text."
+  },
+  "cookieRemovedOf": {
+    "message": "$P1$ dari $P2$ dihapus",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "confirmScopeExact": {
+    "message": "Origin persis",
+    "description": "Popup UI text."
+  },
+  "confirmScopeWide": {
+    "message": "Domain-wide",
+    "description": "Popup UI text."
+  },
+  "confirmTypesCount": {
+    "message": "$P1$ jenis",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "confirmPresetOnly": {
+    "message": "Preset $P1$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "confirmPresetThen": {
+    "message": "Preset $P1$ · lalu $P2$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "confirmThenReload": {
+    "message": "muat ulang tab ini",
+    "description": "Popup UI text."
+  },
+  "confirmThenHard": {
+    "message": "hard reload tab ini",
+    "description": "Popup UI text."
+  },
+  "confirmThenStart": {
+    "message": "buka halaman awalnya",
+    "description": "Popup UI text."
+  },
+  "confirmRange": {
+    "message": "Rentang waktu: $P1$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "confirmCookiesExact": {
+    "message": "Cookies (host-only + CHIPS)",
+    "description": "Popup UI text."
+  },
+  "confirmCookiesWide": {
+    "message": "Cookies (seluruh domain)",
+    "description": "Popup UI text."
+  },
+  "unitKeys": {
+    "message": "$P1$ key",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "unitDb": {
+    "message": "$P1$ db",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "unitCaches": {
+    "message": "$P1$ cache",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      }
+    }
+  },
+  "confirmKeepShared": {
+    "message": "$P1$ cookie domain bersama di $P2$",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "confirmKeepOtherOrigins": {
+    "message": "Semua origin lain, termasuk port dan skema berbeda",
+    "description": "Popup UI text."
+  },
+  "confirmKeepNotActiveTab": {
+    "message": "$P1$ di $P2$: bukan tab aktif, jadi tidak disentuh",
+    "description": "Popup UI text.",
+    "placeholders": {
+      "p1": {
+        "content": "$1",
+        "example": "x"
+      },
+      "p2": {
+        "content": "$2",
+        "example": "x"
+      }
+    }
+  },
+  "confirmNowBtn": {
+    "message": "Bersihkan sekarang",
+    "description": "Popup UI text."
+  },
+  "confirmHint": {
+    "message": "Enter untuk lanjut · Esc untuk batal",
+    "description": "Popup UI text."
+  },
+  "cookieSummaryTimeLimited": {
+    "message": "Cookie presisi tidak bisa dibatasi waktu. Beralih ke domain-wide untuk membatasi cookie berdasarkan waktu.",
+    "description": "Popup UI text."
+  },
+  "popupSettingsLabel": {
+    "message": "Pengaturan",
+    "description": "Popup UI text."
+  },
+  "cookieSummaryOff": {
+    "message": "Cookies tidak dipilih. Buka Atur untuk memilih cookie presisi atau cakupan domain-wide.",
+    "description": "Popup UI text."
+  },
+  "presetShortLogout": {
+    "message": "Keluar",
+    "description": "Popup UI text."
+  },
+  "presetShortFresh": {
+    "message": "User baru",
+    "description": "Popup UI text."
+  },
+  "presetShortStale": {
+    "message": "Aset basi",
+    "description": "Popup UI text."
+  },
+  "presetShortFull": {
+    "message": "Reset penuh",
+    "description": "Popup UI text."
   }
 }

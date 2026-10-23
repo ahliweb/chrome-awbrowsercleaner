@@ -38,6 +38,7 @@ The extension keeps a small amount of its own data in `chrome.storage`. Keys are
 | --- | --- | --- | --- |
 | Custom presets | `chrome.storage.sync` | `aw.preset.<id>` | Name, data types, cookie mode, after-action, start path, optional exact origins and cookie names to keep. At most 50. |
 | Last used preset | `chrome.storage.sync` | `aw.lastPreset` | A preset id. |
+| Reload choice per preset | `chrome.storage.sync` | `aw.afterByPreset` | Preset id → after-cleanup action (`none`, `reload`, `hard`, `start`). |
 | Last preset per origin | `chrome.storage.local` | `aw.lastPresetByOrigin` | Pairs of origin and preset id, up to 100. |
 | Recent origins | `chrome.storage.local` | `aw.recentOrigins` | The last 3 origins only (`scheme://host:port`), never paths or query strings. |
 | History summaries | `chrome.storage.local` | `aw.history` | Up to 20 entries: time, origins, preset id, duration, success flag. |
