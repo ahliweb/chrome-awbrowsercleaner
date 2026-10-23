@@ -500,5 +500,591 @@
   "resultExportFailed": {
     "message": "Gagal mengekspor laporan",
     "description": "Message when saving the report file failed."
+  },
+  "optionsPageTitle": {
+    "message": "Pengaturan - AW Browser Cleaner",
+    "description": "Document title of the options page."
+  },
+  "optionsHeaderTitle": {
+    "message": "Pengaturan",
+    "description": "Header label next to the extension name on the options page."
+  },
+  "optionsNavLabel": {
+    "message": "Bagian pengaturan",
+    "description": "Accessible name of the side navigation."
+  },
+  "optionsNavPresets": {
+    "message": "Preset",
+    "description": "Section title and navigation item."
+  },
+  "optionsNavPermissions": {
+    "message": "Izin per origin",
+    "description": "Section title and navigation item."
+  },
+  "optionsNavTestMode": {
+    "message": "Test Mode",
+    "description": "Section title and navigation item. Keep the product term."
+  },
+  "optionsNavHistory": {
+    "message": "Riwayat & bukti",
+    "description": "Section title and navigation item."
+  },
+  "optionsNavShortcuts": {
+    "message": "Pintasan",
+    "description": "Section title and navigation item."
+  },
+  "optionsLoadFailed": {
+    "message": "Bagian ini tidak bisa dimuat: $ERROR$",
+    "description": "Error shown when a section fails to load.",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "Permission denied"
+      }
+    }
+  },
+  "optionsPresetsDesc": {
+    "message": "Kombinasi tipe data dan aksi lanjutan. Preset selalu dijalankan pada satu origin target.",
+    "description": "Presets section description."
+  },
+  "optionsImportJson": {
+    "message": "Impor JSON",
+    "description": "Button that imports presets from a JSON file."
+  },
+  "optionsExportJson": {
+    "message": "Ekspor JSON",
+    "description": "Button that exports custom presets to a JSON file."
+  },
+  "optionsExportNone": {
+    "message": "Belum ada preset kustom untuk diekspor.",
+    "description": "Tooltip of the disabled export button."
+  },
+  "optionsNewPreset": {
+    "message": "Preset baru",
+    "description": "Button that opens the preset editor."
+  },
+  "optionsPresetTableLabel": {
+    "message": "Daftar preset",
+    "description": "Accessible name of the preset table region."
+  },
+  "optionsColName": {
+    "message": "Nama",
+    "description": "Preset table column header."
+  },
+  "optionsColDataTypes": {
+    "message": "Tipe data",
+    "description": "Preset table column header."
+  },
+  "optionsColCookie": {
+    "message": "Cookie",
+    "description": "Preset table column header."
+  },
+  "optionsColAfter": {
+    "message": "Setelahnya",
+    "description": "Preset table column header: action after cleaning."
+  },
+  "optionsColBound": {
+    "message": "Origin terikat",
+    "description": "Preset table column header."
+  },
+  "optionsColActions": {
+    "message": "Aksi",
+    "description": "Preset table column header (visually hidden)."
+  },
+  "optionsBuiltinBadge": {
+    "message": "bawaan",
+    "description": "Badge on built-in presets."
+  },
+  "optionsCookieExact": {
+    "message": "Persis",
+    "description": "Cookie mode: exact origin only."
+  },
+  "optionsCookieDomainWide": {
+    "message": "Seluruh domain",
+    "description": "Cookie mode: whole registrable domain."
+  },
+  "optionsAfterNone": {
+    "message": "Tidak ada",
+    "description": "After-action: none."
+  },
+  "optionsAfterReload": {
+    "message": "Muat ulang",
+    "description": "After-action: reload the tab."
+  },
+  "optionsAfterHard": {
+    "message": "Muat ulang tanpa cache",
+    "description": "After-action: reload bypassing the cache."
+  },
+  "optionsAfterStart": {
+    "message": "Buka halaman awal",
+    "description": "After-action: open the start page."
+  },
+  "optionsAfterStartPath": {
+    "message": "Buka $PATH$",
+    "description": "After-action summary with the start path.",
+    "placeholders": {
+      "path": {
+        "content": "$1",
+        "example": "/cart"
+      }
+    }
+  },
+  "optionsBoundAny": {
+    "message": "Semua",
+    "description": "Bound origin when the preset is not tied to an origin."
+  },
+  "optionsAllTypes": {
+    "message": "Semua $COUNT$ tipe",
+    "description": "Summary when a preset selects every data type.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      }
+    }
+  },
+  "optionsTypesCount": {
+    "message": "$COUNT$ tipe",
+    "description": "Summary of a preset selecting many data types.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      }
+    }
+  },
+  "optionsDuplicate": {
+    "message": "Duplikat",
+    "description": "Action: copy a preset."
+  },
+  "optionsEdit": {
+    "message": "Ubah",
+    "description": "Action: edit a preset."
+  },
+  "optionsDelete": {
+    "message": "Hapus",
+    "description": "Action: delete a preset."
+  },
+  "optionsDuplicateAria": {
+    "message": "Duplikat preset $NAME$",
+    "description": "Accessible name of the duplicate button.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsEditAria": {
+    "message": "Ubah preset $NAME$",
+    "description": "Accessible name of the edit button.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsDeleteAria": {
+    "message": "Hapus preset $NAME$",
+    "description": "Accessible name of the delete button.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsDeleteConfirm": {
+    "message": "Hapus preset \"$NAME$\"?",
+    "description": "Confirmation before deleting a preset.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsPresetDeleted": {
+    "message": "Preset dihapus.",
+    "description": "Status after deleting a preset."
+  },
+  "optionsPresetSaved": {
+    "message": "Preset disimpan.",
+    "description": "Status after saving a preset."
+  },
+  "optionsPresetsImported": {
+    "message": "$COUNT$ preset diimpor.",
+    "description": "Status after a successful import.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      }
+    }
+  },
+  "optionsImportFailed": {
+    "message": "Impor gagal. Tidak ada yang diubah:",
+    "description": "Heading above import errors."
+  },
+  "optionsExported": {
+    "message": "Preset diekspor.",
+    "description": "Status after exporting presets."
+  },
+  "optionsEditorNewTitle": {
+    "message": "Preset baru",
+    "description": "Editor dialog title for a new preset."
+  },
+  "optionsEditorEditTitle": {
+    "message": "Ubah preset",
+    "description": "Editor dialog title for an existing preset."
+  },
+  "optionsFieldName": {
+    "message": "Nama",
+    "description": "Editor field label."
+  },
+  "optionsFieldId": {
+    "message": "ID",
+    "description": "Editor field label."
+  },
+  "optionsFieldIdHint": {
+    "message": "Huruf kecil, angka, dan tanda hubung. Tidak bisa diubah setelah disimpan.",
+    "description": "Hint under the preset ID field."
+  },
+  "optionsFieldDataTypes": {
+    "message": "Tipe data",
+    "description": "Editor field label."
+  },
+  "optionsFieldCookieMode": {
+    "message": "Mode cookie",
+    "description": "Editor field label."
+  },
+  "optionsCookieModeExact": {
+    "message": "Persis: hanya cookie origin ini",
+    "description": "Cookie mode option."
+  },
+  "optionsCookieModeWide": {
+    "message": "Seluruh domain: subdomain terkait ikut",
+    "description": "Cookie mode option."
+  },
+  "optionsFieldAfter": {
+    "message": "Setelah membersihkan",
+    "description": "Editor field label."
+  },
+  "optionsFieldStartPath": {
+    "message": "Path awal",
+    "description": "Editor field label."
+  },
+  "optionsFieldStartPathHint": {
+    "message": "Dibuka pada origin target, misalnya /cart.",
+    "description": "Hint under the start path field."
+  },
+  "optionsFieldBound": {
+    "message": "Origin terikat (opsional)",
+    "description": "Editor field label."
+  },
+  "optionsFieldBoundHint": {
+    "message": "Jika diisi, preset selalu dijalankan pada origin ini.",
+    "description": "Hint under the bound origin field."
+  },
+  "optionsBoundPreview": {
+    "message": "Akan disimpan sebagai $ORIGIN$",
+    "description": "Preview of the normalized origin.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "optionsFieldOrigins": {
+    "message": "Origin tambahan (opsional)",
+    "description": "Editor field label."
+  },
+  "optionsFieldOriginsHint": {
+    "message": "Satu origin persis per baris, misalnya https://example.com. Maksimal 10 termasuk origin terikat.",
+    "description": "Hint under the extra origins field."
+  },
+  "optionsFieldKeep": {
+    "message": "Cookie yang dipertahankan (opsional)",
+    "description": "Editor field label."
+  },
+  "optionsFieldKeepHint": {
+    "message": "Nama cookie dipisahkan koma. Nilainya tidak pernah dibaca.",
+    "description": "Hint under the keep-cookies field."
+  },
+  "optionsSave": {
+    "message": "Simpan",
+    "description": "Save button."
+  },
+  "optionsIdTaken": {
+    "message": "Sudah ada preset dengan ID ini.",
+    "description": "Validation error."
+  },
+  "optionsSaveFailed": {
+    "message": "Preset tidak bisa disimpan.",
+    "description": "Generic save error."
+  },
+  "optionsCopySuffix": {
+    "message": "$NAME$ (salinan)",
+    "description": "Name given to a duplicated preset.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsPermissionsDesc": {
+    "message": "Akses cookie presisi diminta saat pertama dipakai di sebuah origin dan bisa dicabut kapan saja. Ekstensi tidak pernah meminta akses ke semua situs.",
+    "description": "Per-origin permissions description."
+  },
+  "optionsPermissionsEmpty": {
+    "message": "Belum ada origin yang diberi akses.",
+    "description": "Empty state of the granted origins list."
+  },
+  "optionsGrantKindCookies": {
+    "message": "Cookie presisi",
+    "description": "Kind of a granted permission."
+  },
+  "optionsGrantedOn": {
+    "message": "diberikan $DATE$",
+    "description": "Grant date suffix.",
+    "placeholders": {
+      "date": {
+        "content": "$1",
+        "example": "21 Oct 2026"
+      }
+    }
+  },
+  "optionsRevoke": {
+    "message": "Cabut",
+    "description": "Button that revokes access to an origin."
+  },
+  "optionsRevokeAria": {
+    "message": "Cabut akses ke $ORIGIN$",
+    "description": "Accessible name of the revoke button.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "optionsRevoked": {
+    "message": "Akses ke $ORIGIN$ dicabut.",
+    "description": "Status after revoking.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "optionsRevokeFailed": {
+    "message": "Akses ke $ORIGIN$ tidak bisa dicabut.",
+    "description": "Error after a failed revoke.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "optionsInstallPermissions": {
+    "message": "Izin instalasi",
+    "description": "Heading of the install-time permission list."
+  },
+  "optionsPermBrowsingData": {
+    "message": "Menghapus data situs untuk origin yang Anda pilih.",
+    "description": "Purpose of the browsingData permission."
+  },
+  "optionsPermActiveTab": {
+    "message": "Membaca alamat tab saat ini, hanya ketika Anda membuka ekstensi.",
+    "description": "Purpose of the activeTab permission."
+  },
+  "optionsPermScripting": {
+    "message": "Menghapus session storage dan menghitung item di halaman yang Anda pilih.",
+    "description": "Purpose of the scripting permission."
+  },
+  "optionsPermCookies": {
+    "message": "Menampilkan dan menghapus cookie satu origin persis, setelah Anda memberi akses.",
+    "description": "Purpose of the cookies permission."
+  },
+  "optionsPermStorage": {
+    "message": "Menyimpan preset, riwayat, dan pengaturan Anda.",
+    "description": "Purpose of the storage permission."
+  },
+  "optionsPermContextMenus": {
+    "message": "Menambahkan menu klik kanan.",
+    "description": "Purpose of the contextMenus permission."
+  },
+  "optionsPermUnknown": {
+    "message": "Dipakai oleh ekstensi.",
+    "description": "Fallback purpose for other permissions."
+  },
+  "optionsTestModeDesc": {
+    "message": "Izinkan skrip Playwright, Puppeteer, atau Selenium memicu preset lewat pesan. Halaman hanya bisa membersihkan origin-nya sendiri.",
+    "description": "Test Mode description."
+  },
+  "optionsTestModeToggle": {
+    "message": "Aktifkan Test Mode",
+    "description": "Accessible name of the Test Mode switch."
+  },
+  "optionsAllowedOrigins": {
+    "message": "Origin yang diizinkan",
+    "description": "Field label."
+  },
+  "optionsAllowedOriginsHint": {
+    "message": "Pisahkan dengan koma atau baris baru. Origin tanpa port berarti semua port diizinkan.",
+    "description": "Hint under the allowed origins field."
+  },
+  "optionsTestModeNote": {
+    "message": "Nonaktif secara default. Cookie seluruh domain tidak tersedia di Test Mode.",
+    "description": "Note under the Test Mode field."
+  },
+  "optionsSaveOrigins": {
+    "message": "Simpan origin",
+    "description": "Button saving the allowed origins."
+  },
+  "optionsTestModeSaved": {
+    "message": "Pengaturan Test Mode disimpan.",
+    "description": "Status after saving Test Mode."
+  },
+  "optionsTestModeInvalid": {
+    "message": "Pengaturan Test Mode tidak disimpan:",
+    "description": "Heading above Test Mode validation errors."
+  },
+  "optionsProtocolLabel": {
+    "message": "Protokol pesan",
+    "description": "Label above the example message."
+  },
+  "optionsHistoryDesc": {
+    "message": "Menyimpan 20 pembersihan terakhir di perangkat ini. Tanpa nilai cookie atau isi storage.",
+    "description": "History description."
+  },
+  "optionsHistoryToggle": {
+    "message": "Simpan riwayat",
+    "description": "Accessible name of the history switch."
+  },
+  "optionsHistoryEmpty": {
+    "message": "Belum ada pembersihan yang tercatat.",
+    "description": "Empty state of the history list."
+  },
+  "optionsHistoryOff": {
+    "message": "Riwayat nonaktif. Pembersihan baru tidak dicatat.",
+    "description": "Empty state when history is off."
+  },
+  "optionsHistoryListLabel": {
+    "message": "Pembersihan terbaru",
+    "description": "Accessible name of the history list."
+  },
+  "optionsStatusOk": {
+    "message": "Berhasil",
+    "description": "History entry result."
+  },
+  "optionsStatusFailed": {
+    "message": "Gagal",
+    "description": "History entry result."
+  },
+  "optionsMoreOrigins": {
+    "message": "+$COUNT$ lagi",
+    "description": "Suffix when an entry covers more origins.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      }
+    }
+  },
+  "optionsExportHistory": {
+    "message": "Ekspor semua (JSON)",
+    "description": "Button exporting the history."
+  },
+  "optionsHistoryExported": {
+    "message": "Riwayat diekspor.",
+    "description": "Status after export."
+  },
+  "optionsClearHistory": {
+    "message": "Hapus riwayat",
+    "description": "Button clearing the history."
+  },
+  "optionsClearHistoryConfirm": {
+    "message": "Hapus semua riwayat di perangkat ini?",
+    "description": "Confirmation before clearing history."
+  },
+  "optionsHistoryCleared": {
+    "message": "Riwayat dihapus.",
+    "description": "Status after clearing."
+  },
+  "optionsRecentOrigins": {
+    "message": "Origin terbaru",
+    "description": "Heading of the recent origins list."
+  },
+  "optionsRecentEmpty": {
+    "message": "Belum ada origin terbaru.",
+    "description": "Empty state."
+  },
+  "optionsClearRecent": {
+    "message": "Hapus origin terbaru",
+    "description": "Button clearing recent origins."
+  },
+  "optionsRecentCleared": {
+    "message": "Origin terbaru dihapus.",
+    "description": "Status after clearing."
+  },
+  "optionsSessionTitle": {
+    "message": "Sesi pengujian",
+    "description": "Heading of the test session block."
+  },
+  "optionsSessionDesc": {
+    "message": "Tandai awal uji coba. Popup lalu bisa membatasi pembersihan ke data yang dibuat sejak saat itu.",
+    "description": "Test session description."
+  },
+  "optionsSessionStart": {
+    "message": "Mulai sesi pengujian",
+    "description": "Button starting a test session."
+  },
+  "optionsSessionEnd": {
+    "message": "Akhiri sesi",
+    "description": "Button ending a test session."
+  },
+  "optionsSessionNone": {
+    "message": "Tidak ada sesi yang berjalan.",
+    "description": "Test session state."
+  },
+  "optionsSessionStartedAt": {
+    "message": "Sesi dimulai pukul $TIME$",
+    "description": "Test session state.",
+    "placeholders": {
+      "time": {
+        "content": "$1",
+        "example": "10:42"
+      }
+    }
+  },
+  "optionsShortcutsDesc": {
+    "message": "Pintasan keyboard ekstensi.",
+    "description": "Shortcuts description."
+  },
+  "optionsShortcutNotSet": {
+    "message": "Belum diatur",
+    "description": "Shown when a command has no shortcut."
+  },
+  "optionsShortcutExecuteAction": {
+    "message": "Buka AW Browser Cleaner",
+    "description": "Fallback description of the toolbar action command."
+  },
+  "optionsShortcutsEmpty": {
+    "message": "Ekstensi tidak memiliki pintasan.",
+    "description": "Empty state."
+  },
+  "optionsShortcutsHint": {
+    "message": "Ubah kombinasi tombol di halaman pintasan peramban:",
+    "description": "Hint above the shortcuts page address."
+  },
+  "optionsOpenShortcuts": {
+    "message": "Ubah pintasan",
+    "description": "Button opening the browser shortcuts page."
   }
 }

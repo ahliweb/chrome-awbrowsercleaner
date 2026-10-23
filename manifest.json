@@ -4,10 +4,23 @@
   "version": "1.2.0",
   "description": "__MSG_extensionDescription__",
   "default_locale": "en",
+  "minimum_chrome_version": "120",
   "permissions": [
+    "activeTab",
     "browsingData",
-    "activeTab"
+    "contextMenus",
+    "cookies",
+    "scripting",
+    "storage"
   ],
+  "optional_host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -15,6 +28,30 @@
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "commands": {
+    "clean-last-preset": {
+      "suggested_key": {
+        "default": "Alt+Shift+K"
+      },
+      "description": "__MSG_commandCleanLast__"
+    },
+    "clean-logout": {
+      "suggested_key": {
+        "default": "Alt+Shift+L"
+      },
+      "description": "__MSG_commandCleanLogout__"
+    }
+  },
+  "externally_connectable": {
+    "matches": [
+      "http://localhost/*",
+      "http://127.0.0.1/*"
+    ]
   },
   "icons": {
     "16": "icons/icon16.png",

@@ -500,5 +500,591 @@
   "resultExportFailed": {
     "message": "Could not export the report",
     "description": "Message when saving the report file failed."
+  },
+  "optionsPageTitle": {
+    "message": "Settings - AW Browser Cleaner",
+    "description": "Document title of the options page."
+  },
+  "optionsHeaderTitle": {
+    "message": "Settings",
+    "description": "Header label next to the extension name on the options page."
+  },
+  "optionsNavLabel": {
+    "message": "Settings sections",
+    "description": "Accessible name of the side navigation."
+  },
+  "optionsNavPresets": {
+    "message": "Presets",
+    "description": "Section title and navigation item."
+  },
+  "optionsNavPermissions": {
+    "message": "Per-origin permissions",
+    "description": "Section title and navigation item."
+  },
+  "optionsNavTestMode": {
+    "message": "Test Mode",
+    "description": "Section title and navigation item. Keep the product term."
+  },
+  "optionsNavHistory": {
+    "message": "History & evidence",
+    "description": "Section title and navigation item."
+  },
+  "optionsNavShortcuts": {
+    "message": "Shortcuts",
+    "description": "Section title and navigation item."
+  },
+  "optionsLoadFailed": {
+    "message": "Could not load this section: $ERROR$",
+    "description": "Error shown when a section fails to load.",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "Permission denied"
+      }
+    }
+  },
+  "optionsPresetsDesc": {
+    "message": "Combine data types and a follow-up action. A preset always runs on one target origin.",
+    "description": "Presets section description."
+  },
+  "optionsImportJson": {
+    "message": "Import JSON",
+    "description": "Button that imports presets from a JSON file."
+  },
+  "optionsExportJson": {
+    "message": "Export JSON",
+    "description": "Button that exports custom presets to a JSON file."
+  },
+  "optionsExportNone": {
+    "message": "There are no custom presets to export.",
+    "description": "Tooltip of the disabled export button."
+  },
+  "optionsNewPreset": {
+    "message": "New preset",
+    "description": "Button that opens the preset editor."
+  },
+  "optionsPresetTableLabel": {
+    "message": "Presets",
+    "description": "Accessible name of the preset table region."
+  },
+  "optionsColName": {
+    "message": "Name",
+    "description": "Preset table column header."
+  },
+  "optionsColDataTypes": {
+    "message": "Data types",
+    "description": "Preset table column header."
+  },
+  "optionsColCookie": {
+    "message": "Cookie",
+    "description": "Preset table column header."
+  },
+  "optionsColAfter": {
+    "message": "After",
+    "description": "Preset table column header: action after cleaning."
+  },
+  "optionsColBound": {
+    "message": "Bound origin",
+    "description": "Preset table column header."
+  },
+  "optionsColActions": {
+    "message": "Actions",
+    "description": "Preset table column header (visually hidden)."
+  },
+  "optionsBuiltinBadge": {
+    "message": "built-in",
+    "description": "Badge on built-in presets."
+  },
+  "optionsCookieExact": {
+    "message": "Exact",
+    "description": "Cookie mode: exact origin only."
+  },
+  "optionsCookieDomainWide": {
+    "message": "Domain-wide",
+    "description": "Cookie mode: whole registrable domain."
+  },
+  "optionsAfterNone": {
+    "message": "Nothing",
+    "description": "After-action: none."
+  },
+  "optionsAfterReload": {
+    "message": "Reload",
+    "description": "After-action: reload the tab."
+  },
+  "optionsAfterHard": {
+    "message": "Hard reload",
+    "description": "After-action: reload bypassing the cache."
+  },
+  "optionsAfterStart": {
+    "message": "Open start page",
+    "description": "After-action: open the start page."
+  },
+  "optionsAfterStartPath": {
+    "message": "Open $PATH$",
+    "description": "After-action summary with the start path.",
+    "placeholders": {
+      "path": {
+        "content": "$1",
+        "example": "/cart"
+      }
+    }
+  },
+  "optionsBoundAny": {
+    "message": "Any",
+    "description": "Bound origin when the preset is not tied to an origin."
+  },
+  "optionsAllTypes": {
+    "message": "All $COUNT$ types",
+    "description": "Summary when a preset selects every data type.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      }
+    }
+  },
+  "optionsTypesCount": {
+    "message": "$COUNT$ types",
+    "description": "Summary of a preset selecting many data types.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      }
+    }
+  },
+  "optionsDuplicate": {
+    "message": "Duplicate",
+    "description": "Action: copy a preset."
+  },
+  "optionsEdit": {
+    "message": "Edit",
+    "description": "Action: edit a preset."
+  },
+  "optionsDelete": {
+    "message": "Delete",
+    "description": "Action: delete a preset."
+  },
+  "optionsDuplicateAria": {
+    "message": "Duplicate preset $NAME$",
+    "description": "Accessible name of the duplicate button.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsEditAria": {
+    "message": "Edit preset $NAME$",
+    "description": "Accessible name of the edit button.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsDeleteAria": {
+    "message": "Delete preset $NAME$",
+    "description": "Accessible name of the delete button.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsDeleteConfirm": {
+    "message": "Delete the preset \"$NAME$\"?",
+    "description": "Confirmation before deleting a preset.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsPresetDeleted": {
+    "message": "Preset deleted.",
+    "description": "Status after deleting a preset."
+  },
+  "optionsPresetSaved": {
+    "message": "Preset saved.",
+    "description": "Status after saving a preset."
+  },
+  "optionsPresetsImported": {
+    "message": "$COUNT$ preset(s) imported.",
+    "description": "Status after a successful import.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      }
+    }
+  },
+  "optionsImportFailed": {
+    "message": "Import failed. Nothing was changed:",
+    "description": "Heading above import errors."
+  },
+  "optionsExported": {
+    "message": "Presets exported.",
+    "description": "Status after exporting presets."
+  },
+  "optionsEditorNewTitle": {
+    "message": "New preset",
+    "description": "Editor dialog title for a new preset."
+  },
+  "optionsEditorEditTitle": {
+    "message": "Edit preset",
+    "description": "Editor dialog title for an existing preset."
+  },
+  "optionsFieldName": {
+    "message": "Name",
+    "description": "Editor field label."
+  },
+  "optionsFieldId": {
+    "message": "ID",
+    "description": "Editor field label."
+  },
+  "optionsFieldIdHint": {
+    "message": "Lowercase letters, digits and hyphens. It cannot be changed after saving.",
+    "description": "Hint under the preset ID field."
+  },
+  "optionsFieldDataTypes": {
+    "message": "Data types",
+    "description": "Editor field label."
+  },
+  "optionsFieldCookieMode": {
+    "message": "Cookie mode",
+    "description": "Editor field label."
+  },
+  "optionsCookieModeExact": {
+    "message": "Exact: only this origin's cookies",
+    "description": "Cookie mode option."
+  },
+  "optionsCookieModeWide": {
+    "message": "Domain-wide: related subdomains too",
+    "description": "Cookie mode option."
+  },
+  "optionsFieldAfter": {
+    "message": "After cleaning",
+    "description": "Editor field label."
+  },
+  "optionsFieldStartPath": {
+    "message": "Start path",
+    "description": "Editor field label."
+  },
+  "optionsFieldStartPathHint": {
+    "message": "Opened on the target origin, for example /cart.",
+    "description": "Hint under the start path field."
+  },
+  "optionsFieldBound": {
+    "message": "Bound origin (optional)",
+    "description": "Editor field label."
+  },
+  "optionsFieldBoundHint": {
+    "message": "When set, the preset always runs on this origin.",
+    "description": "Hint under the bound origin field."
+  },
+  "optionsBoundPreview": {
+    "message": "Will be saved as $ORIGIN$",
+    "description": "Preview of the normalized origin.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "optionsFieldOrigins": {
+    "message": "Extra origins (optional)",
+    "description": "Editor field label."
+  },
+  "optionsFieldOriginsHint": {
+    "message": "One exact origin per line, for example https://example.com. At most 10 in total, bound origin included.",
+    "description": "Hint under the extra origins field."
+  },
+  "optionsFieldKeep": {
+    "message": "Cookies to keep (optional)",
+    "description": "Editor field label."
+  },
+  "optionsFieldKeepHint": {
+    "message": "Cookie names separated by commas. Values are never read.",
+    "description": "Hint under the keep-cookies field."
+  },
+  "optionsSave": {
+    "message": "Save",
+    "description": "Save button."
+  },
+  "optionsIdTaken": {
+    "message": "A preset with this ID already exists.",
+    "description": "Validation error."
+  },
+  "optionsSaveFailed": {
+    "message": "The preset could not be saved.",
+    "description": "Generic save error."
+  },
+  "optionsCopySuffix": {
+    "message": "$NAME$ (copy)",
+    "description": "Name given to a duplicated preset.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "QA checkout"
+      }
+    }
+  },
+  "optionsPermissionsDesc": {
+    "message": "Exact cookie access is requested the first time it is needed on an origin and can be revoked at any time. The extension never asks for access to all sites.",
+    "description": "Per-origin permissions description."
+  },
+  "optionsPermissionsEmpty": {
+    "message": "No origin has been granted access yet.",
+    "description": "Empty state of the granted origins list."
+  },
+  "optionsGrantKindCookies": {
+    "message": "Exact cookies",
+    "description": "Kind of a granted permission."
+  },
+  "optionsGrantedOn": {
+    "message": "granted $DATE$",
+    "description": "Grant date suffix.",
+    "placeholders": {
+      "date": {
+        "content": "$1",
+        "example": "21 Oct 2026"
+      }
+    }
+  },
+  "optionsRevoke": {
+    "message": "Revoke",
+    "description": "Button that revokes access to an origin."
+  },
+  "optionsRevokeAria": {
+    "message": "Revoke access to $ORIGIN$",
+    "description": "Accessible name of the revoke button.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "optionsRevoked": {
+    "message": "Access revoked for $ORIGIN$.",
+    "description": "Status after revoking.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "optionsRevokeFailed": {
+    "message": "Access could not be revoked for $ORIGIN$.",
+    "description": "Error after a failed revoke.",
+    "placeholders": {
+      "origin": {
+        "content": "$1",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "optionsInstallPermissions": {
+    "message": "Install-time permissions",
+    "description": "Heading of the install-time permission list."
+  },
+  "optionsPermBrowsingData": {
+    "message": "Clears site data for the origin you choose.",
+    "description": "Purpose of the browsingData permission."
+  },
+  "optionsPermActiveTab": {
+    "message": "Reads the address of the current tab, only when you open the extension.",
+    "description": "Purpose of the activeTab permission."
+  },
+  "optionsPermScripting": {
+    "message": "Clears session storage and counts items in the page you chose.",
+    "description": "Purpose of the scripting permission."
+  },
+  "optionsPermCookies": {
+    "message": "Lists and removes cookies of one exact origin, after you grant access to it.",
+    "description": "Purpose of the cookies permission."
+  },
+  "optionsPermStorage": {
+    "message": "Saves your presets, history and settings.",
+    "description": "Purpose of the storage permission."
+  },
+  "optionsPermContextMenus": {
+    "message": "Adds the right-click menu entries.",
+    "description": "Purpose of the contextMenus permission."
+  },
+  "optionsPermUnknown": {
+    "message": "Used by the extension.",
+    "description": "Fallback purpose for other permissions."
+  },
+  "optionsTestModeDesc": {
+    "message": "Let Playwright, Puppeteer or Selenium scripts trigger presets through a message. Pages can only clean their own origin.",
+    "description": "Test Mode description."
+  },
+  "optionsTestModeToggle": {
+    "message": "Enable Test Mode",
+    "description": "Accessible name of the Test Mode switch."
+  },
+  "optionsAllowedOrigins": {
+    "message": "Allowed origins",
+    "description": "Field label."
+  },
+  "optionsAllowedOriginsHint": {
+    "message": "Separate with commas or new lines. An origin without a port allows any port.",
+    "description": "Hint under the allowed origins field."
+  },
+  "optionsTestModeNote": {
+    "message": "Off by default. Domain-wide cookies are not available in Test Mode.",
+    "description": "Note under the Test Mode field."
+  },
+  "optionsSaveOrigins": {
+    "message": "Save origins",
+    "description": "Button saving the allowed origins."
+  },
+  "optionsTestModeSaved": {
+    "message": "Test Mode settings saved.",
+    "description": "Status after saving Test Mode."
+  },
+  "optionsTestModeInvalid": {
+    "message": "Test Mode settings were not saved:",
+    "description": "Heading above Test Mode validation errors."
+  },
+  "optionsProtocolLabel": {
+    "message": "Message protocol",
+    "description": "Label above the example message."
+  },
+  "optionsHistoryDesc": {
+    "message": "Keeps the last 20 cleanups on this device. No cookie values or storage contents are stored.",
+    "description": "History description."
+  },
+  "optionsHistoryToggle": {
+    "message": "Keep history",
+    "description": "Accessible name of the history switch."
+  },
+  "optionsHistoryEmpty": {
+    "message": "No cleanups recorded yet.",
+    "description": "Empty state of the history list."
+  },
+  "optionsHistoryOff": {
+    "message": "History is off. New cleanups are not recorded.",
+    "description": "Empty state when history is off."
+  },
+  "optionsHistoryListLabel": {
+    "message": "Recent cleanups",
+    "description": "Accessible name of the history list."
+  },
+  "optionsStatusOk": {
+    "message": "OK",
+    "description": "History entry result."
+  },
+  "optionsStatusFailed": {
+    "message": "Failed",
+    "description": "History entry result."
+  },
+  "optionsMoreOrigins": {
+    "message": "+$COUNT$ more",
+    "description": "Suffix when an entry covers more origins.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "4"
+      }
+    }
+  },
+  "optionsExportHistory": {
+    "message": "Export all (JSON)",
+    "description": "Button exporting the history."
+  },
+  "optionsHistoryExported": {
+    "message": "History exported.",
+    "description": "Status after export."
+  },
+  "optionsClearHistory": {
+    "message": "Clear history",
+    "description": "Button clearing the history."
+  },
+  "optionsClearHistoryConfirm": {
+    "message": "Delete all history entries on this device?",
+    "description": "Confirmation before clearing history."
+  },
+  "optionsHistoryCleared": {
+    "message": "History cleared.",
+    "description": "Status after clearing."
+  },
+  "optionsRecentOrigins": {
+    "message": "Recent origins",
+    "description": "Heading of the recent origins list."
+  },
+  "optionsRecentEmpty": {
+    "message": "No recent origins.",
+    "description": "Empty state."
+  },
+  "optionsClearRecent": {
+    "message": "Clear recent origins",
+    "description": "Button clearing recent origins."
+  },
+  "optionsRecentCleared": {
+    "message": "Recent origins cleared.",
+    "description": "Status after clearing."
+  },
+  "optionsSessionTitle": {
+    "message": "Test session",
+    "description": "Heading of the test session block."
+  },
+  "optionsSessionDesc": {
+    "message": "Mark the start of a test run. The popup can then limit a cleanup to data created since then.",
+    "description": "Test session description."
+  },
+  "optionsSessionStart": {
+    "message": "Start test session",
+    "description": "Button starting a test session."
+  },
+  "optionsSessionEnd": {
+    "message": "End session",
+    "description": "Button ending a test session."
+  },
+  "optionsSessionNone": {
+    "message": "No session is running.",
+    "description": "Test session state."
+  },
+  "optionsSessionStartedAt": {
+    "message": "Session started at $TIME$",
+    "description": "Test session state.",
+    "placeholders": {
+      "time": {
+        "content": "$1",
+        "example": "10:42"
+      }
+    }
+  },
+  "optionsShortcutsDesc": {
+    "message": "Keyboard shortcuts of the extension.",
+    "description": "Shortcuts description."
+  },
+  "optionsShortcutNotSet": {
+    "message": "Not set",
+    "description": "Shown when a command has no shortcut."
+  },
+  "optionsShortcutExecuteAction": {
+    "message": "Open AW Browser Cleaner",
+    "description": "Fallback description of the toolbar action command."
+  },
+  "optionsShortcutsEmpty": {
+    "message": "The extension defines no shortcuts.",
+    "description": "Empty state."
+  },
+  "optionsShortcutsHint": {
+    "message": "Change key combinations on the browser's shortcuts page:",
+    "description": "Hint above the shortcuts page address."
+  },
+  "optionsOpenShortcuts": {
+    "message": "Change shortcuts",
+    "description": "Button opening the browser shortcuts page."
   }
 }
