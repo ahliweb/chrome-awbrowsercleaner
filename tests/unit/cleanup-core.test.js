@@ -613,7 +613,7 @@ describe('executePlan', () => {
         expect(base.result.perOrigin[0].cookies).toEqual({ removed: 2, kept: 1, failed: 0 });
         // every remove stays on the target origin
         for (const c of base.calls.filter(x => x[0] === 'cookies.remove')) {
-            expect(c[1].url.startsWith(ORIGIN)).toBe(true);
+            expect(new URL(c[1].url).origin).toBe(ORIGIN);
         }
 
         const sharedId = 'wide|example.test|/|0|';
