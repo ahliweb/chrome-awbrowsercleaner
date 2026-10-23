@@ -7,7 +7,7 @@
  * unsupported schemes, malformed inputs.
  */
 
-const { normalizeTarget, validateOrigin } = require('../../origin-utils');
+import { normalizeTarget, validateOrigin } from '../../origin-utils.js';
 
 describe('normalizeTarget', () => {
     describe('valid HTTPS URLs', () => {
@@ -266,5 +266,15 @@ describe('validateOrigin', () => {
     test('rejects empty string', () => {
         const result = validateOrigin('');
         expect(result.valid).toBe(false);
+    });
+});
+
+describe('wildcard rejection', () => {
+    test.each(['*', '*.example.com', 'https://*.example.com', 'http://a*b.test:8080'])('normalizeTarget rejects %s', (input) => {
+        expect(normalizeTarget(input).valid).toBe(false);
+    });
+
+    test('validateOrigin rejects a wildcard host', () => {
+        expect(validateOrigin('https://*.example.com').valid).toBe(false);
     });
 });

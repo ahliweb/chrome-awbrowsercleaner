@@ -34,3 +34,40 @@ describe('Extension Packaging', () => {
         }).not.toThrow();
     });
 });
+
+describe('Runtime file list', () => {
+    const { RUNTIME_FILES } = require('../../scripts/package-files');
+    const shipped = new Set(RUNTIME_FILES);
+
+    test('every module imported by a shipped script is shipped too', () => {
+        const missing = [];
+        for (const file of RUNTIME_FILES.filter(f => f.endsWith('.js'))) {
+            const src = fs.readFileSync(path.join(ROOT_DIR, file), 'utf8');
+            for (const m of src.matchAll(/(?:\bfrom|\bimport)\s*\(?\s*['"]\.\/([^'"]+)['"]/g)) {
+                if (!shipped.has(m[1])) missing.push(`${file} -> ${m[1]}`);
+            }
+        }
+        expect(missing).toEqual([]);
+    });
+
+    test('every script and stylesheet referenced by a shipped page is shipped too', () => {
+        const missing = [];
+        for (const file of RUNTIME_FILES.filter(f => f.endsWith('.html'))) {
+            const html = fs.readFileSync(path.join(ROOT_DIR, file), 'utf8');
+            for (const m of html.matchAll(/(?:src|href)="([^"#:]+\.(?:js|css))"/g)) {
+                if (!shipped.has(m[1])) missing.push(`${file} -> ${m[1]}`);
+            }
+        }
+        expect(missing).toEqual([]);
+    });
+
+    test('manifest entry points are shipped', () => {
+        const manifest = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'manifest.json'), 'utf8'));
+        const entries = [
+            manifest.action && manifest.action.default_popup,
+            manifest.background && manifest.background.service_worker,
+            manifest.options_ui && manifest.options_ui.page
+        ].filter(Boolean);
+        for (const entry of entries) expect(shipped.has(entry)).toBe(true);
+    });
+});

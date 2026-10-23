@@ -1,144 +1,152 @@
 /**
- * AW Browser Cleaner - Chromium E2E Tests
+ * AW Browser Cleaner - E2E: extension loading, popup rendering and fixture sanity.
  *
- * Loads the unpacked extension in a real Chromium instance and verifies
- * cleanup operations against controlled test pages.
- *
- * Prerequisites:
- * - Puppeteer with Chromium browser installed
- * - Run: bunx puppeteer browsers install chrome
- *
- * These tests are designed for CI but can also run locally.
- * They verify the actual extension behavior in a real browser context.
+ * Needs an unbranded Chrome (Chrome for Testing / Chromium) via AW_CHROME_PATH.
+ * CI: missing Chrome or a failed extension load FAILS the run. Locally without Chrome the
+ * suite is skipped with a visible banner. See helpers.js for the fixture topology.
  */
 
-const path = require('path');
-const fs = require('fs');
+import { describe, test, expect, afterAll } from 'bun:test';
+import {
+    launchE2E, guarded, openPopupPage, getOfferedTypes, getLogs, readState, seedOrigin,
+    summarizeState, STATE_KINDS, SEED, resetBrowserState
+} from './helpers.js';
 
-// Skip E2E tests if Puppeteer browser is not available
-let puppeteer;
-try {
-    puppeteer = require('puppeteer');
-} catch (e) {
-    console.warn('Puppeteer not available — skipping E2E tests');
-    test.skip('E2E tests require Puppeteer with Chromium', () => {});
-}
+const env = await launchE2E();
+afterAll(async () => { await env?.close(); });
 
-if (puppeteer) {
-    const EXTENSION_PATH = path.resolve(__dirname, '..', '..');
-    const TEST_SERVER_PORT = 8933;
+const suite = env ? describe : describe.skip;
 
-    let browser;
-    let testServer;
-
-    beforeAll(async () => {
-        // Start test server on the configured port
-        const { createTestServer } = require('./test-server');
+suite('Extension loading', () => {
+    test('extension is installed with a valid id and answers on chrome-extension://', guarded(env, 'extension-loaded', async () => {
+        expect(env.extensionId).toMatch(/^[a-p]{32}$/);
+        const page = await env.browser.newPage();
         try {
-            testServer = await createTestServer(TEST_SERVER_PORT);
-        } catch (e) {
-            console.warn('Could not start test server:', e.message);
+            await page.goto(`chrome-extension://${env.extensionId}/popup.html`, { waitUntil: 'load' });
+            const info = await page.evaluate(() => ({
+                id: chrome.runtime.id,
+                name: chrome.i18n.getMessage('extensionName'),
+                version: chrome.runtime.getManifest().version,
+                hasBrowsingData: typeof chrome.browsingData?.remove === 'function'
+            }));
+            expect(info.id).toBe(env.extensionId);
+            expect(info.name).toBe('AW Browser Cleaner');
+            expect(info.version).toMatch(/^\d+\.\d+\.\d+$/);
+            expect(info.hasBrowsingData).toBe(true);
+        } finally {
+            await page.close();
         }
+    }));
 
-        // Locate Chrome executable if puppeteer default cache is empty
-        const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH ||
-            ['/usr/bin/google-chrome', '/usr/bin/chromium-browser', '/usr/bin/chromium'].find(p => fs.existsSync(p));
+    test('the browser is a real Chrome that runs the E2E fixtures', () => {
+        expect(env.chromeVersion).toMatch(/Chrome\/\d+/);
+        expect(Object.keys(env.origins)).toEqual(['A', 'B', 'A2', 'C']);
+        expect(new URL(env.origins.A).hostname).toBe('a.localtest.me');
+        expect(new URL(env.origins.C).hostname).toBe('127.0.0.1');
+    });
+});
 
-        const launchOptions = {
-            headless: 'new',
-            args: [
-                `--disable-extensions-except=${EXTENSION_PATH}`,
-                `--load-extension=${EXTENSION_PATH}`,
-                '--no-sandbox',
-                '--disable-setuid-sandbox'
-            ]
-        };
-
-        if (executablePath) {
-            launchOptions.executablePath = executablePath;
-        }
-
-        // Launch browser with extension
+suite('Popup rendering', () => {
+    test('popup renders its core controls', guarded(env, 'popup-renders', async () => {
+        const popup = await openPopupPage(env.browser, env.extensionId);
         try {
-            browser = await puppeteer.launch(launchOptions);
-        } catch (e) {
-            console.warn('Could not launch Chromium with extension:', e.message);
+            for (const selector of ['#originInput', '#clearBtn', '#selectAll', '#selectedCount', '#scopeNote[data-scope]', '#statusMessage', '#confirmArea']) {
+                expect(await popup.$(selector)).not.toBeNull();
+            }
+            expect(await popup.title()).toContain('AW Browser Cleaner');
+            expect(await popup.$eval('#clearBtn', (el) => el.textContent.trim().length)).toBeGreaterThan(0);
+
+            const types = await getOfferedTypes(popup);
+            expect(types.length).toBeGreaterThan(0);
+            expect(types).toContain('cookies');
+            expect(types).toContain('localStorage');
+            expect(new Set(types).size).toBe(types.length);
+
+            const count = await popup.$eval('#selectedCount', (el) => el.textContent);
+            expect(count).toMatch(new RegExp(`${types.length}`));
+        } finally {
+            await popup.close();
         }
-    });
+    }));
 
-    afterAll(async () => {
-        if (browser) {
-            await browser.close();
+    test('popup loads without uncaught page errors', guarded(env, 'popup-no-errors', async () => {
+        const before = getLogs(env.browser).length;
+        const popup = await openPopupPage(env.browser, env.extensionId);
+        await popup.close();
+        const errors = getLogs(env.browser).slice(before).filter((l) => /pageerror|console\.error/.test(l));
+        // The popup shows an "unsupported scheme" message for its own tab; that is not an uncaught error.
+        expect(errors).toEqual([]);
+    }));
+
+    test('popup localizes its labels (no raw i18n keys left)', guarded(env, 'popup-localized', async () => {
+        const popup = await openPopupPage(env.browser, env.extensionId);
+        try {
+            const leftovers = await popup.$$eval('[data-i18n]', (els) =>
+                els.filter((el) => el.textContent.trim() === el.getAttribute('data-i18n')).map((el) => el.getAttribute('data-i18n')));
+            expect(leftovers).toEqual([]);
+        } finally {
+            await popup.close();
         }
-        if (testServer) {
-            await new Promise(resolve => testServer.close(resolve));
+    }));
+});
+
+suite('Fixture servers (sanity for the other E2E suites)', () => {
+    test('seedOrigin creates every storage type on each origin', guarded(env, 'fixtures-seed', async () => {
+        await resetBrowserState(env.browser, Object.values(env.origins));
+        for (const origin of Object.values(env.origins)) {
+            const page = await env.browser.newPage();
+            try {
+                await seedOrigin(page, origin);
+                // sessionStorage is only visible in the tab that seeded it
+                const sameTab = await readState(env.browser, origin, { page });
+                expect(sameTab.sessionStorage[SEED.sessionStorage]).toBe('1');
+            } finally {
+                await page.close();
+            }
+            const state = await readState(env.browser, origin);
+            const summary = summarizeState(state, origin);
+            for (const kind of STATE_KINDS) expect([origin, kind, summary[kind]]).toEqual([origin, kind, 'present']);
+            expect(state.cookieInfo.find((c) => c.name === SEED.cookieHttpOnly)?.httpOnly).toBe(true);
+            expect(state.sessionStorage).toEqual({});
         }
-    });
+    }));
 
-    describe('Extension Loading', () => {
-        test('extension loads successfully in Chromium', async () => {
-            if (!browser) return;
+    test('cookie scoping of the fixtures: shared cookie on localtest.me only, none on the canary', guarded(env, 'fixtures-cookies', async () => {
+        const a = await readState(env.browser, env.origins.A);
+        const b = await readState(env.browser, env.origins.B);
+        const c = await readState(env.browser, env.origins.C);
+        expect(a.cookies).toContain(SEED.cookieShared);
+        expect(b.cookies).toContain(SEED.cookieShared);
+        expect(c.cookies).not.toContain(SEED.cookieShared);
+    }));
 
-            const targets = browser.targets();
-            const extensionTarget = targets.find(t =>
-                t.type() === 'service_worker' || t.url().includes('chrome-extension')
-            );
-            // Extension should load without errors
-            expect(browser.connected).toBe(true);
-        });
-    });
-
-    describe('Active Tab Origin Detection', () => {
-        test('detects origin from active tab', async () => {
-            if (!browser || !testServer) return;
-
-            const page = await browser.newPage();
-            await page.goto(`http://localhost:${TEST_SERVER_PORT}`, {
-                waitUntil: 'networkidle0'
-            });
-
-            // The extension popup would read the active tab URL
-            // We verify the normalizeTarget logic works with real URLs
-            const origin = await page.evaluate(() => {
-                return window.location.origin;
-            });
-
-            expect(origin).toBe(`http://localhost:${TEST_SERVER_PORT}`);
+    test('the HTTP cache is observable through the request counter', guarded(env, 'fixtures-http-cache', async () => {
+        await resetBrowserState(env.browser, [env.origins.A]);
+        const before = env.fixtures.requestCount(env.origins.A, '/asset.js');
+        const page = await env.browser.newPage();
+        try {
+            await seedOrigin(page, env.origins.A);
+            expect(env.fixtures.requestCount(env.origins.A, '/asset.js')).toBe(before + 1);
+            // a second fetch is answered from the HTTP cache: no new network request
+            await page.evaluate(async () => { await (await fetch('/asset.js')).text(); });
+            expect(env.fixtures.requestCount(env.origins.A, '/asset.js')).toBe(before + 1);
+            // the counter endpoint agrees with the server-side map
+            const viaEndpoint = await page.evaluate(async () => (await (await fetch('/__count?path=/asset.js')).json()).count);
+            expect(viaEndpoint).toBe(before + 1);
+        } finally {
             await page.close();
-        });
-    });
+        }
+    }));
 
-    describe('Storage Verification', () => {
-        test('test page sets localStorage correctly', async () => {
-            if (!browser || !testServer) return;
-
-            const page = await browser.newPage();
-            await page.goto(`http://localhost:${TEST_SERVER_PORT}`, {
-                waitUntil: 'networkidle0'
-            });
-
-            const value = await page.evaluate(() => {
-                return localStorage.getItem('aw_test_key');
-            });
-
-            expect(value).toBe('test_value');
+    test('cross-origin iframe page embeds the canary and seeds its sessionStorage', guarded(env, 'fixtures-iframe', async () => {
+        const page = await env.browser.newPage();
+        try {
+            await page.goto(env.fixtures.iframePageUrl(env.origins.A), { waitUntil: 'load' });
+            const frame = page.frames().find((f) => f.url().startsWith(env.origins.C));
+            expect(frame).toBeDefined();
+            await frame.waitForFunction((key) => sessionStorage.getItem(key) === 'frame', {}, SEED.sessionStorage);
+        } finally {
             await page.close();
-        });
-
-        test('test page sets cookie correctly', async () => {
-            if (!browser || !testServer) return;
-
-            const page = await browser.newPage();
-            await page.goto(`http://localhost:${TEST_SERVER_PORT}`, {
-                waitUntil: 'networkidle0'
-            });
-
-            const hasCookie = await page.evaluate(() => {
-                return document.cookie.includes('aw_test_cookie');
-            });
-
-            expect(hasCookie).toBe(true);
-            await page.close();
-        });
-    });
-}
+        }
+    }));
+});

@@ -52,7 +52,7 @@ Unlike the standard Chrome "Clear Browsing Data" dialog which often clears data 
 
 ### Prerequisites
 
-- [Bun](https://bun.sh/) runtime (v1.4+) — used for package management, test runner, and script execution.
+- [Bun](https://bun.sh/) runtime — the exact version is pinned in `.bun-version` (CI and release use the same file).
 - No Node.js, npm, or pnpm required.
 
 ### Setup
@@ -67,9 +67,9 @@ bun install
 
 | Script | Description |
 | ------ | ----------- |
-| `bun test` | Run all unit and E2E tests |
+| `bun run test` | Run unit tests, then E2E tests |
 | `bun run test:unit` | Run unit tests only |
-| `bun run test:e2e` | Run E2E tests only |
+| `bun run test:e2e` | Run E2E tests only (needs Chrome for Testing or Chromium, see below) |
 | `bun run lint` | Run ESLint |
 | `bun run check:version` | Verify version synchronization across `manifest.json`, `package.json`, and `VERSION` |
 | `bun run build:package` | Build deterministic release ZIP with SHA-256 checksum |
@@ -77,10 +77,26 @@ bun install
 | `bun run upload:cws` | Upload release package to Chrome Web Store (requires API credentials) |
 | `bun run setup:cws` | Interactive wizard to configure Chrome Web Store API credentials |
 
+### Running E2E tests
+
+The E2E suite loads the unpacked extension into a real browser and proves that data is actually deleted for the target origin only. It drives the popup, then reads cookies, localStorage, sessionStorage, IndexedDB, Cache Storage, Service Workers, OPFS and the HTTP cache on several fixture origins (`a.localtest.me`, `b.localtest.me`, a port variant and a `127.0.0.1` canary that must stay intact).
+
+Branded Google Chrome 137+ ignores extension-loading flags, so use **Chrome for Testing** or Chromium:
+
+```bash
+bunx @puppeteer/browsers install chrome@stable --path ~/.cache/chrome-for-testing
+AW_CHROME_PATH=/path/printed/above/chrome bun run test:e2e
+```
+
+- With `CI=true`, a missing browser or an extension that fails to load **fails** the run; it never passes silently.
+- Locally, without a browser, the suites are skipped with a visible banner.
+- The deletion matrix (data type × origin × result) is printed and written to `test-artifacts/e2e-matrix.md`; screenshots and console logs of failing tests are saved in `test-artifacts/`.
+
 ### CI/CD
 
-- **CI** (`.github/workflows/ci.yml`): Runs on push to `main` and PRs. Executes lint, tests, version check, and package build/validation.
-- **Release** (`.github/workflows/release.yml`): Triggered by pushing a `v*` tag. Builds, validates, creates GitHub Release with artifacts, and uploads to Chrome Web Store.
+- **CI** (`.github/workflows/ci.yml`): Runs on push to `main` and PRs. The `validate` job runs the version check, ESLint, unit tests and package build/validation. The `e2e` job runs the E2E suite on Chrome for Testing **stable** and **beta** (beta is non-blocking) and publishes the deletion matrix to the job summary.
+- **Release** (`.github/workflows/release.yml`): Triggered by pushing a `v*` tag. Builds, validates, attests build provenance, attaches an SBOM, creates the GitHub Release and uploads to the Chrome Web Store behind the protected `chrome-web-store` environment. See [docs/SUPPLY_CHAIN.md](docs/SUPPLY_CHAIN.md).
+- **Security**: CodeQL, OpenSSF Scorecard and Dependabot; all actions are pinned to commit SHAs.
 
 ### Chrome Web Store Automated Upload
 
