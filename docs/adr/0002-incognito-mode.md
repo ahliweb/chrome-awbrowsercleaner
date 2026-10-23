@@ -85,6 +85,13 @@ A cookie query without `storeId` (the fallback when `getCookieStoreId` returns
 mode the regular store, even for an incognito tab; in split mode the incognito
 store from the incognito instance.
 
+On Chrome for Testing 157 (beta, October 2026), `chrome.cookies.getAllCookieStores()`
+inside the incognito instance does not list the incognito tab in `tabIds`, so
+`getCookieStoreId` returns `undefined` there. With split mode this is safe:
+the fallback query is answered from the incognito store, and the E2E suite
+asserts the outcome (incognito cookies removed, regular profile unchanged)
+rather than the lookup itself.
+
 ## Decision
 
 1. **Use `"incognito": "split"`.** An incognito window then runs its own
