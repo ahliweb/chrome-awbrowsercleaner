@@ -220,5 +220,285 @@
   "presetCustom": {
     "message": "Kustom",
     "description": "Label shown when the current selection no longer matches any preset."
+  },
+  "commandCleanLast": {
+    "message": "Bersihkan origin ini dengan preset terakhir",
+    "description": "Description of the keyboard shortcut (manifest commands) that runs the last used preset on the active tab's origin. Shown on chrome://extensions/shortcuts."
+  },
+  "commandCleanLogout": {
+    "message": "Bersihkan origin ini dengan preset Keluar akun",
+    "description": "Description of the keyboard shortcut (manifest commands) that runs the built-in Log out preset on the active tab's origin. Shown on chrome://extensions/shortcuts."
+  },
+  "menuCleanWithPreset": {
+    "message": "Bersihkan origin ini dengan preset…",
+    "description": "Title of the parent context-menu item (toolbar icon and page right-click menu). Its sub-items are the preset names."
+  },
+  "unsupportedTitle": {
+    "message": "Halaman ini tidak bisa dibersihkan",
+    "description": "Title of the screen shown when the active tab is not an http(s) page."
+  },
+  "unsupportedBody": {
+    "message": "$ARG1$ bukan origin web. Ekstensi hanya bekerja untuk origin $ARG2$ dan $ARG3$.",
+    "description": "Explains why the tab cannot be cleaned. $1 is the tab's scheme (e.g. chrome://settings), $2 and $3 are the supported schemes (http://, https://).",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "chrome://settings"
+      },
+      "arg2": {
+        "content": "$2",
+        "example": "http://"
+      },
+      "arg3": {
+        "content": "$3",
+        "example": "https://"
+      }
+    }
+  },
+  "unsupportedBodyProtected": {
+    "message": "$ARG1$ dilindungi oleh Chrome. Ekstensi hanya bekerja untuk origin $ARG2$ dan $ARG3$.",
+    "description": "Same as unsupportedBody for protected web pages such as the Chrome Web Store. $1 is the host.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "chromewebstore.google.com"
+      },
+      "arg2": {
+        "content": "$2",
+        "example": "http://"
+      },
+      "arg3": {
+        "content": "$3",
+        "example": "https://"
+      }
+    }
+  },
+  "unsupportedUnknownPage": {
+    "message": "Halaman ini",
+    "description": "Fallback name of the active tab when its address is unknown."
+  },
+  "unsupportedManualLabel": {
+    "message": "Atau ketik URL target",
+    "description": "Label of the manual target input on the unsupported-page screen."
+  },
+  "unsupportedPreviewLabel": {
+    "message": "Dinormalisasi menjadi",
+    "description": "Label above the normalized origin preview."
+  },
+  "previewNotePathDropped": {
+    "message": "Path, query, dan hash dibuang",
+    "description": "Part of the normalization notes line."
+  },
+  "previewNoteDefaultScheme": {
+    "message": "skema default $ARG1$",
+    "description": "Part of the normalization notes line. $1 is the scheme, e.g. https.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "https"
+      }
+    }
+  },
+  "previewNoteDefaultPort": {
+    "message": "port $ARG1$",
+    "description": "Part of the normalization notes line. $1 is the default port, e.g. 443.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "443"
+      }
+    }
+  },
+  "unsupportedContinueBtn": {
+    "message": "Lanjut dengan origin ini",
+    "description": "Button that continues with the manually entered origin."
+  },
+  "unsupportedRecentLabel": {
+    "message": "Origin terakhir",
+    "description": "Heading of the recent origins list."
+  },
+  "relTimeJustNow": {
+    "message": "baru saja",
+    "description": "Relative time: less than a minute ago."
+  },
+  "relTimeMinutes": {
+    "message": "$ARG1$ mnt lalu",
+    "description": "Relative time in minutes. $1 is the number.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
+  },
+  "relTimeHours": {
+    "message": "$ARG1$ jam lalu",
+    "description": "Relative time in hours. $1 is the number.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "relTimeDays": {
+    "message": "$ARG1$ hari lalu",
+    "description": "Relative time in days. $1 is the number.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "resultTitle": {
+    "message": "Hasil pembersihan",
+    "description": "Title of the result screen."
+  },
+  "resultDone": {
+    "message": "Selesai",
+    "description": "Button that closes the result screen."
+  },
+  "resultCleanedIn": {
+    "message": "Bersih dalam $ARG1$ ms",
+    "description": "Result banner title. $1 is the duration in milliseconds.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "412"
+      }
+    }
+  },
+  "resultCleanedWithErrors": {
+    "message": "Dibersihkan dengan kesalahan",
+    "description": "Result banner title when something failed."
+  },
+  "resultAfterNone": {
+    "message": "Tab dibiarkan apa adanya.",
+    "description": "Banner sentence when no after-action ran."
+  },
+  "resultAfterReload": {
+    "message": "Tab dimuat ulang.",
+    "description": "Banner sentence after a normal reload."
+  },
+  "resultAfterHard": {
+    "message": "Tab dimuat ulang tanpa cache.",
+    "description": "Banner sentence after a hard reload."
+  },
+  "resultAfterStart": {
+    "message": "Halaman awal dibuka.",
+    "description": "Banner sentence after navigating to the start page."
+  },
+  "resultOriginsOne": {
+    "message": "Hanya 1 origin yang diproses.",
+    "description": "Banner sentence for a single origin."
+  },
+  "resultOriginsMany": {
+    "message": "$ARG1$ origin diproses.",
+    "description": "Banner sentence for several origins. $1 is the count.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "resultMoreErrors": {
+    "message": "+$ARG1$ lainnya",
+    "description": "Shown when there are more errors than the one listed. $1 is the count.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "resultColType": {
+    "message": "Tipe",
+    "description": "Result table header: data type."
+  },
+  "resultColBefore": {
+    "message": "Sebelum",
+    "description": "Result table header: count before cleaning."
+  },
+  "resultColAfter": {
+    "message": "Sesudah",
+    "description": "Result table header: count after cleaning."
+  },
+  "resultStorageUsage": {
+    "message": "Pemakaian storage",
+    "description": "Result table row: bytes used by the origin."
+  },
+  "resultKeptCookiesOne": {
+    "message": "1 cookie domain bersama sengaja dipertahankan ($ARG2$).",
+    "description": "Footnote for kept cookies, singular. $1 is the count, $2 the domain (e.g. .example.test).",
+    "placeholders": {
+      "arg2": {
+        "content": "$2",
+        "example": ".example.test"
+      }
+    }
+  },
+  "resultKeptCookiesMany": {
+    "message": "$ARG1$ cookie domain bersama sengaja dipertahankan ($ARG2$).",
+    "description": "Footnote for kept cookies, plural. $1 is the count, $2 the domain.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "3"
+      },
+      "arg2": {
+        "content": "$2",
+        "example": ".example.test"
+      }
+    }
+  },
+  "resultKeptCookiesNoDomainOne": {
+    "message": "1 cookie domain bersama sengaja dipertahankan.",
+    "description": "Footnote for kept cookies, singular, domain unknown."
+  },
+  "resultKeptCookiesNoDomainMany": {
+    "message": "$ARG1$ cookie domain bersama sengaja dipertahankan.",
+    "description": "Footnote for kept cookies, plural, domain unknown. $1 is the count.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "resultCopySummary": {
+    "message": "Salin ringkasan",
+    "description": "Button that copies a short text summary of the result."
+  },
+  "resultExportJson": {
+    "message": "Ekspor JSON",
+    "description": "Button that saves the report as a JSON file."
+  },
+  "resultExportMd": {
+    "message": "Markdown",
+    "description": "Button that saves the report as a Markdown file."
+  },
+  "resultCopied": {
+    "message": "Disalin",
+    "description": "Feedback after copying the summary."
+  },
+  "resultCopyFailed": {
+    "message": "Gagal menyalin",
+    "description": "Feedback when the clipboard write failed."
+  },
+  "resultExported": {
+    "message": "Diekspor: $ARG1$",
+    "description": "Screen-reader message after saving a report file. $1 is the file name.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1",
+        "example": "aw-cleaner-example.test-20261023-104218.json"
+      }
+    }
+  },
+  "resultExportFailed": {
+    "message": "Gagal mengekspor laporan",
+    "description": "Message when saving the report file failed."
   }
 }
