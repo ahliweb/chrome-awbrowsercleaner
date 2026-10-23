@@ -665,7 +665,7 @@ async function runBrowsingData(api, plan, origin, entry) {
  * @param {Plan} plan - Plan.
  * @returns {Promise<{action: string, ok: boolean, error?: string}>} Result.
  */
-async function runAfterAction(api, plan) {
+async function runAfterActionWith(api, plan) {
     const action = plan.after;
     if (action === 'none') return { action, ok: true };
     try {
@@ -690,12 +690,14 @@ async function runAfterAction(api, plan) {
  * individual steps are recorded in the result, never thrown.
  *
  * @param {Plan} plan - Plan to execute.
- * @param {{api?: Object, now?: Function}} [options] - Injected Chrome API and clock.
+ * @param {{api?: Object, now?: Function, deferAfter?: boolean}} [options] - Injected Chrome API
+ *   and clock. With `deferAfter`, the after-action is skipped and reported as deferred so the
+ *   caller can take an evidence snapshot first and then call runAfterAction().
  * @returns {Promise<{ok: boolean, startedAt: number, finishedAt: number, durationMs: number,
  *   perOrigin: Array<OriginResult>, after: {action: string, ok: boolean, error?: string}}>} Result.
  * @throws {ScopeGuardError} When the plan violates the Scope Guard.
  */
-export async function executePlan(plan, { api = globalThis.chrome, now = Date.now } = {}) {
+export async function executePlan(plan, { api = globalThis.chrome, now = Date.now, deferAfter = false } = {}) {
     const guard = validatePlan(plan, { now });
     if (!guard.ok) throw new ScopeGuardError(guard.errors);
 
@@ -714,7 +716,9 @@ export async function executePlan(plan, { api = globalThis.chrome, now = Date.no
         perOrigin.push(entry);
     }
 
-    const after = await runAfterAction(api, plan);
+    const after = deferAfter
+        ? { action: plan.after, ok: true, deferred: true }
+        : await runAfterActionWith(api, plan);
     const finishedAt = now();
     return {
         ok: after.ok && perOrigin.every(o => o.errors.length === 0),
@@ -724,4 +728,20 @@ export async function executePlan(plan, { api = globalThis.chrome, now = Date.no
         perOrigin,
         after
     };
+}
+
+/**
+ * Runs a validated plan's after-action (reload, hard reload or start page)
+ * for its active tab. Used after executePlan(plan, { deferAfter: true }).
+ * The after-action is not destructive, but the plan is still re-validated.
+ *
+ * @param {Plan} plan - Plan whose after-action to run.
+ * @param {{api?: Object, now?: Function}} [options] - Injected Chrome API and clock.
+ * @returns {Promise<{action: string, ok: boolean, error?: string}>} Result.
+ * @throws {ScopeGuardError} When the plan violates the Scope Guard.
+ */
+export async function runAfterAction(plan, { api = globalThis.chrome, now = Date.now } = {}) {
+    const guard = validatePlan(plan, { now });
+    if (!guard.ok) throw new ScopeGuardError(guard.errors);
+    return runAfterActionWith(api, plan);
 }

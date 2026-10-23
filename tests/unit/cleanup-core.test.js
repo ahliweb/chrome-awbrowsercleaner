@@ -19,6 +19,7 @@ import {
     requiresConfirmation,
     describePlan,
     executePlan,
+    runAfterAction,
     clearSessionStorageInFrame
 } from '../../cleanup-core.js';
 
@@ -730,5 +731,36 @@ describe('executePlan', () => {
         const result = await executePlan(plan(), { api, now: () => (t += 50) });
         expect(result.finishedAt - result.startedAt).toBe(result.durationMs);
         expect(result.durationMs).toBeGreaterThan(0);
+    });
+});
+
+describe('deferred after-action', () => {
+    const tabPlan = (after) => createPlan({
+        origins: [ORIGIN],
+        dataTypes: ['localStorage'],
+        after,
+        tab: { id: 7, origin: ORIGIN }
+    }).plan;
+
+    test('executePlan with deferAfter does not reload and reports the action as deferred', async () => {
+        const { api, calls } = fakeApi();
+        const result = await executePlan(tabPlan('hard'), { api, deferAfter: true });
+        expect(names(calls)).not.toContain('tabs.reload');
+        expect(result.after).toEqual({ action: 'hard', ok: true, deferred: true });
+        expect(result.ok).toBe(true);
+    });
+
+    test('runAfterAction runs the deferred reload with bypassCache', async () => {
+        const { api, calls } = fakeApi();
+        const after = await runAfterAction(tabPlan('hard'), { api });
+        expect(after).toEqual({ action: 'hard', ok: true });
+        expect(calls).toEqual([['tabs.reload', 7, { bypassCache: true }]]);
+    });
+
+    test('runAfterAction re-validates the plan before touching tabs', async () => {
+        const { api, calls } = fakeApi();
+        const bad = { ...tabPlan('reload'), origins: ['*'] };
+        await expect(runAfterAction(bad, { api })).rejects.toBeInstanceOf(ScopeGuardError);
+        expect(calls).toEqual([]);
     });
 });
