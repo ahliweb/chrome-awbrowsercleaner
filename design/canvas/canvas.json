@@ -1,0 +1,25 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-10-23T00:00:00Z"},
+  "title": "AW Browser Cleaner — Roadmap",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 1600, "h": 1320, "title": "Roadmap v1.3–v1.5"},
+    "Gap.dc.html": {"x": 1680, "y": 0, "w": 1600, "h": 1320, "title": "Analisis celah & cakupan data"},
+    "Standards.dc.html": {"x": 3360, "y": 0, "w": 1600, "h": 1320, "title": "Standar, regulasi & pembanding"},
+    "Style.dc.html": {"x": 0, "y": 1800, "w": 1180, "h": 1360, "title": "0 · Gaya visual profesional"},
+    "PopupMain.dc.html": {"x": 1260, "y": 1800, "w": 380, "h": 600, "title": "1 · Popup utama", "is_interactive": true, "radius": 10},
+    "PopupCookies.dc.html": {"x": 1720, "y": 1800, "w": 380, "h": 600, "title": "2 · Cookie presisi", "is_interactive": true, "radius": 10},
+    "PopupConfirm.dc.html": {"x": 2180, "y": 1800, "w": 380, "h": 600, "title": "3 · Konfirmasi lingkup", "radius": 10},
+    "PopupResult.dc.html": {"x": 2640, "y": 1800, "w": 380, "h": 600, "title": "4 · Hasil & bukti uji", "radius": 10},
+    "PopupUnsupported.dc.html": {"x": 3100, "y": 1800, "w": 380, "h": 600, "title": "5 · Halaman tidak didukung", "radius": 10},
+    "Options.dc.html": {"x": 3560, "y": 1800, "w": 1440, "h": 1360, "title": "6 · Options: preset, izin, Test Mode", "expand": "fill"}
+  },
+  "order": ["Main.dc.html", "Gap.dc.html", "Standards.dc.html", "Style.dc.html", "PopupMain.dc.html", "PopupCookies.dc.html", "PopupConfirm.dc.html", "PopupResult.dc.html", "PopupUnsupported.dc.html", "Options.dc.html"],
+  "notes": {
+    "title": {"x": 0, "y": -300, "text": "AW Browser Cleaner — rencana pengembangan untuk pengujian software (origin persis, bukan semua URL)", "kind": "title1", "maxW": 4960},
+    "uiTitle": {"x": 0, "y": 1500, "text": "Desain UI/UX profesional — popup 380×600 dan halaman Options", "kind": "title1", "maxW": 5000}
+  },
+  "designSystems": []
+}

@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Popup utama</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1d4ed8}a:hover{color:#1e3a8a}
+</style>
+</helmet>
+<div style="width: 380px; height: 600px; box-sizing: border-box; background: #ffffff; color: #111827; font-family: Inter, system-ui, sans-serif; font-size: 13px; display: flex; flex-direction: column">
+
+<div style="display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-bottom: 1px solid #e5e7eb">
+<img src="/_blob/e43c2f8444afb16fbf26f97c287f9606" alt="" style="width: 24px; height: 24px; border-radius: 5px">
+<div style="font-size: 14px; font-weight: 600; flex-grow: 1">AW Browser Cleaner</div>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #4b5563; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 4px; padding: 1px 6px">v1.3</span>
+<a href="Options.dc.html" aria-label="Pengaturan" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 6px; color: #4b5563">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+</a>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 10px 14px; flex-grow: 1; overflow: hidden">
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="target" style="font-size: 12px; font-weight: 600; color: #374151">Target origin</label>
+<div style="display: flex; gap: 6px">
+<input id="target" type="text" value="https://staging.app.example.test" spellcheck="false" style="flex-grow: 1; min-width: 0; height: 32px; box-sizing: border-box; background: #ffffff; border: 1px solid #d1d5db; border-radius: 6px; color: #111827; padding: 0 10px; font-family: 'JetBrains Mono', monospace; font-size: 12px">
+<button type="button" style="height: 32px; padding: 0 10px; border-radius: 6px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; font-family: Inter, sans-serif; font-size: 12px; font-weight: 500; cursor: pointer">Tab ini</button>
+</div>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #4b5563">
+<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+<span>Hanya origin ini. Origin lain tidak disentuh.</span>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="font-size: 12px; font-weight: 600; color: #374151">Preset</div>
+<div role="group" aria-label="Preset" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; padding: 2px; gap: 2px">
+<sc-for list="{{presets}}" as="p" hint-placeholder-count="4">
+<button type="button" aria-pressed="{{p.pressed}}" onClick="{{p.pick}}" style="height: 26px; border-radius: 4px; border: 0; font-size: 12px; font-weight: 500; cursor: pointer; font-family: Inter, sans-serif; background: {{p.bg}}; color: {{p.fg}}; box-shadow: {{p.shadow}}">{{p.label}}</button>
+</sc-for>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<div style="font-size: 12px; font-weight: 600; color: #374151">Data yang dibersihkan</div>
+<div style="font-size: 12px; color: #6b7280">{{countLabel}}</div>
+</div>
+<div style="border: 1px solid #e5e7eb; border-radius: 6px; overflow: hidden">
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; border-top: {{g.topBorder}}">
+<div style="font-size: 11px; font-weight: 600; color: #6b7280; padding: 6px 10px 2px; background: #f9fafb">{{g.title}}</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: #f9fafb; padding: 0 4px 4px">
+<sc-for list="{{g.items}}" as="it" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{it.pressed}}" onClick="{{it.toggle}}" style="display: flex; align-items: center; gap: 8px; height: 27px; padding: 0 6px; border-radius: 4px; background: transparent; border: 0; color: #111827; font-size: 13px; font-family: Inter, sans-serif; cursor: pointer; text-align: left">
+<span style="width: 14px; height: 14px; flex-shrink: 0; border-radius: 3px; display: flex; align-items: center; justify-content: center; background: {{it.boxBg}}; border: 1.5px solid {{it.boxBd}}">
+<sc-if value="{{it.on}}" hint-placeholder-val="{{ true }}"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg></sc-if>
+</span>
+<span style="flex-grow: 1">{{it.label}}</span>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b7280">{{it.meta}}</span>
+</button>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+<a href="PopupCookies.dc.html" style="display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 6px; background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; text-decoration: none; font-size: 12px">
+<span style="flex-grow: 1">Cookie presisi: <strong style="font-weight: 600">6 dihapus</strong>, 3 domain bersama dipertahankan</span>
+<span style="font-weight: 600; color: #1d4ed8">Atur</span>
+</a>
+</div>
+
+</div>
+
+<div style="padding: 10px 14px 12px; border-top: 1px solid #e5e7eb; background: #f9fafb; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<label for="reload" style="font-size: 12px; color: #374151">Setelah dibersihkan</label>
+<select id="reload" style="height: 28px; background: #ffffff; color: #111827; border: 1px solid #d1d5db; border-radius: 6px; padding: 0 6px; font-family: Inter, sans-serif; font-size: 12px">
+<option>Hard reload (abaikan cache)</option>
+<option>Reload</option>
+<option>Buka halaman awal</option>
+<option>Jangan reload</option>
+</select>
+</div>
+<a href="PopupConfirm.dc.html" style="height: 36px; border-radius: 6px; background: #1d4ed8; color: #ffffff; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none">
+Bersihkan origin ini
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 400; color: #dbeafe; border: 1px solid #3b5fd9; border-radius: 4px; padding: 0 5px">Alt+Shift+K</span>
+</a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":380,"height":600}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.presetMap = {
+      logout: ['cookies', 'session'],
+      fresh: ['cookies', 'session', 'local', 'idb', 'fs', 'cacheStorage', 'sw'],
+      stale: ['http', 'cacheStorage', 'sw'],
+      full: ['cookies', 'session', 'local', 'idb', 'fs', 'http', 'cacheStorage', 'sw']
+    };
+    this.state = { preset: 'fresh', on: this.toSet(this.presetMap.fresh) };
+  }
+  toSet(list) {
+    const s = {};
+    list.forEach((k) => { s[k] = true; });
+    return s;
+  }
+  renderVals() {
+    const on = this.state.on;
+    const presetDefs = [
+      { id: 'logout', label: 'Logout' },
+      { id: 'fresh', label: 'Fresh user' },
+      { id: 'stale', label: 'Stale assets' },
+      { id: 'full', label: 'Full reset' }
+    ];
+    const presets = presetDefs.map((p) => {
+      const sel = this.state.preset === p.id;
+      return {
+        label: p.label,
+        pressed: sel ? 'true' : 'false',
+        bg: sel ? '#ffffff' : 'transparent',
+        fg: sel ? '#111827' : '#4b5563',
+        shadow: sel ? '0 1px 2px rgba(17,24,39,0.12)' : 'none',
+        pick: () => this.setState({ preset: p.id, on: this.toSet(this.presetMap[p.id]) })
+      };
+    });
+    const mk = (key, label, meta) => ({
+      label: label,
+      meta: meta,
+      on: !!on[key],
+      pressed: on[key] ? 'true' : 'false',
+      boxBg: on[key] ? '#1d4ed8' : '#ffffff',
+      boxBd: on[key] ? '#1d4ed8' : '#9ca3af',
+      toggle: () => {
+        const next = Object.assign({}, this.state.on);
+        next[key] = !next[key];
+        this.setState({ on: next, preset: 'custom' });
+      }
+    });
+    const groups = [
+      { title: 'Sesi', topBorder: '0', items: [mk('cookies', 'Cookies', '9'), mk('session', 'Session', '4')] },
+      { title: 'Storage', topBorder: '1px solid #e5e7eb', items: [mk('local', 'Local Storage', '14'), mk('idb', 'IndexedDB', '2'), mk('fs', 'File Systems', '0')] },
+      { title: 'Cache & offline', topBorder: '1px solid #e5e7eb', items: [mk('http', 'HTTP Cache', '–'), mk('cacheStorage', 'Cache Storage', '3'), mk('sw', 'Service Workers', '1')] }
+    ];
+    const count = Object.keys(on).filter((k) => on[k]).length;
+    const label = this.state.preset === 'custom' ? 'Kustom · ' : '';
+    return { presets: presets, groups: groups, countLabel: label + count + ' dari 8 dipilih' };
+  }
+}
+</script>
+</body>
+</html>
