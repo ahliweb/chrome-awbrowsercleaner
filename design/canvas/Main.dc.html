@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Roadmap AW Browser Cleaner</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#93c5fd}a:hover{color:#bfdbfe}
+</style>
+</helmet>
+<div style="width: 1600px; height: 1320px; box-sizing: border-box; padding: 56px; background: #0f172a; color: #f8fafc; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; gap: 32px">
+
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; letter-spacing: 0.08em; color: #94a3b8; text-transform: uppercase">ahliweb/chrome-awbrowsercleaner · v1.2.0 → v1.5.0</div>
+<h1 style="margin: 0; font-size: 44px; font-weight: 800; letter-spacing: -0.02em">Roadmap pengembangan untuk kebutuhan pengujian software</h1>
+</div>
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #94a3b8; text-align: right; line-height: 1.6">17 issue · 3 milestone<br>1 epic payung</div>
+</div>
+
+<div style="display: flex; gap: 24px; align-items: center; padding: 22px 28px; border-radius: 12px; background: #172554; border: 1px solid #1d4ed8">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; color: #0f172a; background: #60a5fa; padding: 6px 10px; border-radius: 6px; white-space: nowrap">PRINSIP UTAMA</div>
+<div style="font-size: 20px; line-height: 1.45; font-weight: 500">Pembersihan hanya untuk <span style="font-family: 'JetBrains Mono', monospace; color: #93c5fd">scheme://host:port</span> dari URL target yang sudah dinormalisasi, tidak pernah semua URL. Tanpa wildcard, tanpa mode "hapus semua kecuali", tanpa API hapus global.</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; flex-grow: 1">
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 2px solid #ef4444">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #fca5a5">v1.3.0 · P0</div>
+<h2 style="margin: 0; font-size: 24px; font-weight: 700">Andal sebagai alat uji</h2>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #ef4444; color: #0f172a; padding: 2px 8px; border-radius: 4px">P0</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">bug · testing</span></div>
+<div style="font-size: 16px; font-weight: 600">E2E memverifikasi penghapusan nyata</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">Hentikan "lolos diam-diam"; matriks tipe × origin + canary origin lain.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #ef4444; color: #0f172a; padding: 2px 8px; border-radius: 4px">P0</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">refactor</span></div>
+<div style="font-size: 16px; font-weight: 600">Modul murni cleanup-core.js</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">Unit test mengimpor kode asli, bukan salinan; dipakai popup &amp; service worker.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #ef4444; color: #0f172a; padding: 2px 8px; border-radius: 4px">P0</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">security · exact-origin</span></div>
+<div style="font-size: 16px; font-weight: 600">Scope Guard</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">Satu gerbang API destruktif; tolak origins kosong, wildcard, excludeOrigins; fuzz test.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #ef4444; color: #0f172a; padding: 2px 8px; border-radius: 4px">P0</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">cookies · exact-origin</span></div>
+<div style="font-size: 16px; font-weight: 600">Exact Cookie Mode (default)</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">chrome.cookies + izin host opsional per origin; domain cookie bersama hanya jika dipilih.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #ef4444; color: #0f172a; padding: 2px 8px; border-radius: 4px">P0</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">storage</span></div>
+<div style="font-size: 16px; font-weight: 600">HTTP Cache &amp; File Systems (OPFS)</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">Filter origins didukung API; tanpa izin baru. Atasi aset basi pasca-deploy.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #ef4444; color: #0f172a; padding: 2px 8px; border-radius: 4px">P0</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">storage</span></div>
+<div style="font-size: 16px; font-weight: 600">sessionStorage + reload / hard reload</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">scripting + activeTab; hanya frame dengan location.origin = target.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #ef4444; color: #0f172a; padding: 2px 8px; border-radius: 4px">P0</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">ci</span></div>
+<div style="font-size: 16px; font-weight: 600">Chrome for Testing + pin Bun</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">Chrome 137 menolak --load-extension di build bermerek; matriks stable/beta.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #f59e0b; color: #0f172a; padding: 2px 8px; border-radius: 4px">P1</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">bug · ui</span></div>
+<div style="font-size: 16px; font-weight: 600">Label Select All, timer status, innerHTML</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">Klik pertama saat ini justru menghapus semua centang.</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 2px solid #f59e0b">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #fcd34d">v1.4.0 · P1/P2</div>
+<h2 style="margin: 0; font-size: 24px; font-weight: 700">Alur kerja tester</h2>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #f59e0b; color: #0f172a; padding: 2px 8px; border-radius: 4px">P1</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">ui · testing</span></div>
+<div style="font-size: 16px; font-weight: 600">Preset skenario uji</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">Logout, Fresh user, Stale assets, Client state, Full reset; ekspor/impor JSON untuk tim.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #f59e0b; color: #0f172a; padding: 2px 8px; border-radius: 4px">P1</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">ui · automation</span></div>
+<div style="font-size: 16px; font-weight: 600">Shortcut keyboard &amp; context menu</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">Satu tombol untuk origin tab aktif; konfirmasi cookie domain-wide tetap wajib.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #f59e0b; color: #0f172a; padding: 2px 8px; border-radius: 4px">P1</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">testing</span></div>
+<div style="font-size: 16px; font-weight: 600">Inspector sebelum/sesudah + laporan bukti</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">Diff jumlah data per tipe; ekspor JSON/Markdown tanpa nilai cookie.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #334155; color: #e2e8f0; padding: 2px 8px; border-radius: 4px">P2</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">storage · exact-origin</span></div>
+<div style="font-size: 16px; font-weight: 600">Rentang waktu (since)</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">Mempersempit lingkup: hanya data sejak sesi uji dimulai.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #334155; color: #e2e8f0; padding: 2px 8px; border-radius: 4px">P2</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">storage · exact-origin</span></div>
+<div style="font-size: 16px; font-weight: 600">Kumpulan origin eksplisit</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">app + api, maks 10; tiap entri origin persis, tanpa wildcard.</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 2px solid #60a5fa">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #93c5fd">v1.5.0 · P1/P2</div>
+<h2 style="margin: 0; font-size: 24px; font-weight: 700">Otomasi &amp; tata kelola</h2>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #334155; color: #e2e8f0; padding: 2px 8px; border-radius: 4px">P2</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">automation</span></div>
+<div style="font-size: 16px; font-weight: 600">Test Mode opt-in + panduan CDP</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">Halaman localhost hanya bisa membersihkan dirinya sendiri (sender.origin).</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #f59e0b; color: #0f172a; padding: 2px 8px; border-radius: 4px">P1</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">security · release</span></div>
+<div style="font-size: 16px; font-weight: 600">Supply chain &amp; provenance</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">Dependabot, CodeQL, Scorecard, SLSA attestation, actions di-pin SHA.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #f59e0b; color: #0f172a; padding: 2px 8px; border-radius: 4px">P1</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">docs</span></div>
+<div style="font-size: 16px; font-weight: 600">QA Playbook + privasi &amp; izin</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">Skenario OWASP WSTG; check:permissions di CI; selaras UU PDP.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 6px"><span style="font-size: 12px; font-weight: 700; background: #334155; color: #e2e8f0; padding: 2px 8px; border-radius: 4px">P2</span><span style="font-size: 12px; color: #cbd5e1; border: 1px solid #475569; padding: 1px 8px; border-radius: 4px">release · exact-origin</span></div>
+<div style="font-size: 16px; font-weight: 600">Incognito, profil, port Edge</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.45">Firefox ditunda: API-nya hanya kenal hostname, tidak bisa origin persis.</div>
+</div>
+<div style="margin-top: 8px; padding: 16px; border-radius: 10px; border: 1px dashed #475569; display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 14px; font-weight: 600; color: #e2e8f0">Dampak izin keseluruhan</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.55">Tambahan: scripting, cookies, storage, contextMenus, optional_host_permissions. Akses host hanya via activeTab atau diminta per origin, jadi tidak ada peringatan instalasi baru.</div>
+</div>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1600,"height":1320}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

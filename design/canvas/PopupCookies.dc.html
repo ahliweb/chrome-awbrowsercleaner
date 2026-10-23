@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Cookie presisi</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1d4ed8}a:hover{color:#1e3a8a}
+</style>
+</helmet>
+<div style="width: 380px; height: 600px; box-sizing: border-box; background: #ffffff; color: #111827; font-family: Inter, system-ui, sans-serif; font-size: 13px; display: flex; flex-direction: column">
+
+<div style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid #e5e7eb">
+<a href="PopupMain.dc.html" aria-label="Kembali" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 6px; color: #374151">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+</a>
+<div style="font-size: 14px; font-weight: 600; flex-grow: 1">Cookie presisi</div>
+<div style="font-size: 12px; color: #4b5563">{{summary}}</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 10px 14px 0">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #374151; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 6px 10px">https://staging.app.example.test</div>
+<div role="group" aria-label="Mode cookie" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; padding: 2px; gap: 2px">
+<sc-for list="{{modes}}" as="m" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{m.pressed}}" onClick="{{m.pick}}" style="height: 26px; border-radius: 4px; border: 0; font-family: Inter, sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; background: {{m.bg}}; color: {{m.fg}}; box-shadow: {{m.shadow}}">{{m.label}}</button>
+</sc-for>
+</div>
+</div>
+
+<div style="flex-grow: 1; overflow: hidden; padding: 8px 14px 0; display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{sections}}" as="s" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; border: 1px solid {{s.bd}}; border-radius: 6px; overflow: hidden">
+<div style="display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: {{s.headBg}}; font-size: 11px; font-weight: 600; color: {{s.headFg}}">
+<span style="flex-grow: 1">{{s.title}}</span><span style="font-family: 'JetBrains Mono', monospace; font-weight: 400">{{s.domain}}</span>
+</div>
+<sc-for list="{{s.rows}}" as="r" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{r.pressed}}" onClick="{{r.toggle}}" style="display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 10px; border: 0; border-top: 1px solid #f3f4f6; background: #ffffff; color: #111827; font-family: Inter, sans-serif; cursor: pointer; text-align: left">
+<span style="width: 14px; height: 14px; flex-shrink: 0; border-radius: 3px; display: flex; align-items: center; justify-content: center; background: {{r.boxBg}}; border: 1.5px solid {{r.boxBd}}">
+<sc-if value="{{r.on}}" hint-placeholder-val="{{ true }}"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg></sc-if>
+</span>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; flex-grow: 1">{{r.name}}</span>
+<span style="font-size: 11px; color: #6b7280">{{r.attrs}}</span>
+</button>
+</sc-for>
+</div>
+</sc-for>
+</div>
+
+<div style="padding: 10px 14px 12px; border-top: 1px solid #e5e7eb; background: #f9fafb; display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 12px; line-height: 1.45; color: {{noteFg}}">{{note}}</div>
+<a href="PopupMain.dc.html" style="height: 34px; border-radius: 6px; background: #1d4ed8; color: #ffffff; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; text-decoration: none">Simpan pilihan</a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":380,"height":600}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      mode: 'exact',
+      on: { session_id: true, csrf_token: true, ab_bucket: true, onboarding_step: true, embed_state: true, widget_sid: true, _ga: false, consent: false, sso_hint: false }
+    };
+  }
+  renderVals() {
+    const wide = this.state.mode === 'wide';
+    const on = this.state.on;
+    const row = (key, name, attrs, shared) => {
+      const isOn = shared && wide ? true : !!on[key];
+      return {
+        name: name, attrs: attrs, on: isOn,
+        pressed: isOn ? 'true' : 'false',
+        boxBg: isOn ? (shared ? '#b45309' : '#1d4ed8') : '#ffffff',
+        boxBd: isOn ? (shared ? '#b45309' : '#1d4ed8') : '#9ca3af',
+        toggle: () => {
+          if (shared && wide) return;
+          const next = Object.assign({}, this.state.on);
+          next[key] = !next[key];
+          this.setState({ on: next });
+        }
+      };
+    };
+    const sections = [
+      { title: 'Host-only', domain: 'staging.app.example.test', bd: '#e5e7eb', headBg: '#f9fafb', headFg: '#374151',
+        rows: [row('session_id', 'session_id', 'HttpOnly · Secure · Lax'), row('csrf_token', 'csrf_token', 'Secure · Strict'), row('ab_bucket', 'ab_bucket', 'Lax'), row('onboarding_step', 'onboarding_step', 'Lax')] },
+      { title: 'Partitioned (CHIPS)', domain: 'top-level: example.test', bd: '#e5e7eb', headBg: '#f9fafb', headFg: '#374151',
+        rows: [row('embed_state', '__Host-embed_state', 'Secure · None'), row('widget_sid', 'widget_sid', 'Secure · None')] },
+      { title: 'Domain bersama', domain: '.example.test', bd: '#fde68a', headBg: '#fffbeb', headFg: '#92400e',
+        rows: [row('_ga', '_ga', 'Lax', true), row('consent', 'consent', 'Lax', true), row('sso_hint', 'sso_hint', 'Secure · Lax', true)] }
+    ];
+    let count = 0;
+    sections.forEach((s) => s.rows.forEach((r) => { if (r.on) count += 1; }));
+    const pill = (id, label) => {
+      const sel = this.state.mode === id;
+      return { label: label, pressed: sel ? 'true' : 'false', bg: sel ? '#ffffff' : 'transparent', fg: sel ? '#111827' : '#4b5563', shadow: sel ? '0 1px 2px rgba(17,24,39,0.12)' : 'none', pick: () => this.setState({ mode: id }) };
+    };
+    return {
+      modes: [pill('exact', 'Origin persis (disarankan)'), pill('wide', 'Domain-wide')],
+      sections: sections,
+      summary: count + ' dari 9 dihapus',
+      note: wide ? 'Domain-wide: cookie .example.test juga dipakai api., www., dan environment lain. Mereka bisa ikut logout.' : 'Cookie domain bersama dipertahankan kecuali Anda mencentangnya. Nilai cookie tidak pernah ditampilkan.',
+      noteFg: wide ? '#92400e' : '#4b5563'
+    };
+  }
+}
+</script>
+</body>
+</html>

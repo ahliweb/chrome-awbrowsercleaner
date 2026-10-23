@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Pengaturan AW Browser Cleaner</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1d4ed8}a:hover{color:#1e3a8a}
+</style>
+</helmet>
+<div style="min-height: 1360px; box-sizing: border-box; background: #f9fafb; color: #111827; font-family: Inter, system-ui, sans-serif; font-size: 14px">
+
+<div style="background: #ffffff; border-bottom: 1px solid #e5e7eb">
+<div style="max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+<img src="/_blob/e43c2f8444afb16fbf26f97c287f9606" alt="" style="width: 28px; height: 28px; border-radius: 6px">
+<div style="font-size: 16px; font-weight: 600">AW Browser Cleaner</div>
+<div style="font-size: 14px; color: #4b5563">Pengaturan</div>
+<div style="flex-grow: 1"></div>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #4b5563; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 4px; padding: 2px 8px">v1.3.0</span>
+</div>
+</div>
+
+<div style="max-width: 1200px; margin: 0 auto; padding: 24px; display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+
+<nav aria-label="Bagian pengaturan" style="flex: 1 1 200px; max-width: 240px; display: flex; flex-direction: column; gap: 2px">
+<a href="#preset" aria-current="page" style="height: 34px; display: flex; align-items: center; padding: 0 12px; border-radius: 6px; background: #eff6ff; color: #1e3a8a; font-weight: 600; text-decoration: none; font-size: 14px">Preset</a>
+<a href="#izin" style="height: 34px; display: flex; align-items: center; padding: 0 12px; border-radius: 6px; color: #374151; text-decoration: none; font-size: 14px">Izin per origin</a>
+<a href="#testmode" style="height: 34px; display: flex; align-items: center; padding: 0 12px; border-radius: 6px; color: #374151; text-decoration: none; font-size: 14px">Test Mode</a>
+<a href="#riwayat" style="height: 34px; display: flex; align-items: center; padding: 0 12px; border-radius: 6px; color: #374151; text-decoration: none; font-size: 14px">Riwayat &amp; bukti</a>
+<a href="#shortcut" style="height: 34px; display: flex; align-items: center; padding: 0 12px; border-radius: 6px; color: #374151; text-decoration: none; font-size: 14px">Shortcut</a>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+
+<section id="preset" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px">
+<h2 style="margin: 0; font-size: 16px; font-weight: 600">Preset</h2>
+<p style="margin: 0; font-size: 13px; color: #4b5563">Kombinasi tipe data dan aksi lanjutan. Preset selalu dijalankan pada satu origin target.</p>
+</div>
+<button type="button" style="height: 34px; padding: 0 12px; border-radius: 6px; border: 1px solid #d1d5db; background: #ffffff; color: #111827; font-family: Inter, sans-serif; font-size: 13px; font-weight: 500">Impor JSON</button>
+<button type="button" style="height: 34px; padding: 0 12px; border-radius: 6px; border: 0; background: #1d4ed8; color: #ffffff; font-family: Inter, sans-serif; font-size: 13px; font-weight: 600">Preset baru</button>
+</div>
+<div style="overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 8px">
+<div style="min-width: 760px">
+<div style="display: grid; grid-template-columns: 1.3fr 2fr 0.8fr 1.1fr 1.4fr 0.8fr; gap: 12px; padding: 8px 14px; background: #f9fafb; font-size: 12px; font-weight: 600; color: #4b5563"><div>Nama</div><div>Tipe data</div><div>Cookie</div><div>Setelahnya</div><div>Origin terikat</div><div></div></div>
+<div style="display: grid; grid-template-columns: 1.3fr 2fr 0.8fr 1.1fr 1.4fr 0.8fr; gap: 12px; padding: 10px 14px; border-top: 1px solid #e5e7eb; font-size: 13px; align-items: center"><div style="font-weight: 600">Logout <span style="font-size: 11px; font-weight: 500; color: #4b5563; background: #f3f4f6; border-radius: 4px; padding: 1px 6px">bawaan</span></div><div style="color: #374151">Cookies, Session</div><div style="color: #15803d; font-weight: 500">Persis</div><div style="color: #374151">Reload</div><div style="color: #6b7280">Semua</div><div style="text-align: right"><a href="#preset" style="font-size: 13px; font-weight: 500">Duplikat</a></div></div>
+<div style="display: grid; grid-template-columns: 1.3fr 2fr 0.8fr 1.1fr 1.4fr 0.8fr; gap: 12px; padding: 10px 14px; border-top: 1px solid #e5e7eb; font-size: 13px; align-items: center"><div style="font-weight: 600">Fresh user <span style="font-size: 11px; font-weight: 500; color: #4b5563; background: #f3f4f6; border-radius: 4px; padding: 1px 6px">bawaan</span></div><div style="color: #374151">7 tipe, tanpa HTTP Cache</div><div style="color: #15803d; font-weight: 500">Persis</div><div style="color: #374151">Buka halaman awal</div><div style="color: #6b7280">Semua</div><div style="text-align: right"><a href="#preset" style="font-size: 13px; font-weight: 500">Duplikat</a></div></div>
+<div style="display: grid; grid-template-columns: 1.3fr 2fr 0.8fr 1.1fr 1.4fr 0.8fr; gap: 12px; padding: 10px 14px; border-top: 1px solid #e5e7eb; font-size: 13px; align-items: center"><div style="font-weight: 600">Stale assets <span style="font-size: 11px; font-weight: 500; color: #4b5563; background: #f3f4f6; border-radius: 4px; padding: 1px 6px">bawaan</span></div><div style="color: #374151">HTTP Cache, Cache Storage, SW</div><div style="color: #6b7280">—</div><div style="color: #374151">Hard reload</div><div style="color: #6b7280">Semua</div><div style="text-align: right"><a href="#preset" style="font-size: 13px; font-weight: 500">Duplikat</a></div></div>
+<div style="display: grid; grid-template-columns: 1.3fr 2fr 0.8fr 1.1fr 1.4fr 0.8fr; gap: 12px; padding: 10px 14px; border-top: 1px solid #e5e7eb; font-size: 13px; align-items: center"><div style="font-weight: 600">Full reset <span style="font-size: 11px; font-weight: 500; color: #4b5563; background: #f3f4f6; border-radius: 4px; padding: 1px 6px">bawaan</span></div><div style="color: #374151">8 tipe</div><div style="color: #15803d; font-weight: 500">Persis</div><div style="color: #374151">Hard reload</div><div style="color: #6b7280">Semua</div><div style="text-align: right"><a href="#preset" style="font-size: 13px; font-weight: 500">Duplikat</a></div></div>
+<div style="display: grid; grid-template-columns: 1.3fr 2fr 0.8fr 1.1fr 1.4fr 0.8fr; gap: 12px; padding: 10px 14px; border-top: 1px solid #e5e7eb; font-size: 13px; align-items: center; background: #fcfcfd"><div style="font-weight: 600">QA checkout</div><div style="color: #374151">Cookies, Session, Local, IndexedDB</div><div style="color: #15803d; font-weight: 500">Persis</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #374151">/cart</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #374151">http://localhost:5173</div><div style="text-align: right"><a href="#preset" style="font-size: 13px; font-weight: 500">Ubah</a></div></div>
+</div>
+</div>
+</section>
+
+<section id="izin" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h2 style="margin: 0; font-size: 16px; font-weight: 600">Izin per origin</h2>
+<p style="margin: 0; font-size: 13px; color: #4b5563">Akses cookie presisi diminta saat pertama dipakai di sebuah origin dan bisa dicabut kapan saja. Ekstensi tidak pernah meminta akses ke semua situs.</p>
+</div>
+<div style="border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden">
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; flex-wrap: wrap"><div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; flex-grow: 1">https://staging.app.example.test</div><div style="font-size: 12px; color: #4b5563">Cookies · diberikan 21 Okt 2026</div><button type="button" style="height: 30px; padding: 0 10px; border-radius: 6px; border: 1px solid #d1d5db; background: #ffffff; color: #111827; font-family: Inter, sans-serif; font-size: 12px; font-weight: 500">Cabut</button></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-top: 1px solid #e5e7eb; flex-wrap: wrap"><div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; flex-grow: 1">http://localhost:5173</div><div style="font-size: 12px; color: #4b5563">Cookies · diberikan 18 Okt 2026</div><button type="button" style="height: 30px; padding: 0 10px; border-radius: 6px; border: 1px solid #d1d5db; background: #ffffff; color: #111827; font-family: Inter, sans-serif; font-size: 12px; font-weight: 500">Cabut</button></div>
+</div>
+<div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center; font-size: 12px; color: #4b5563">
+<span style="font-weight: 600; color: #374151">Izin instalasi:</span>
+<span style="font-family: 'JetBrains Mono', monospace; background: #f3f4f6; border-radius: 4px; padding: 1px 6px">browsingData</span>
+<span style="font-family: 'JetBrains Mono', monospace; background: #f3f4f6; border-radius: 4px; padding: 1px 6px">activeTab</span>
+<span style="font-family: 'JetBrains Mono', monospace; background: #f3f4f6; border-radius: 4px; padding: 1px 6px">scripting</span>
+<span style="font-family: 'JetBrains Mono', monospace; background: #f3f4f6; border-radius: 4px; padding: 1px 6px">cookies</span>
+<span style="font-family: 'JetBrains Mono', monospace; background: #f3f4f6; border-radius: 4px; padding: 1px 6px">storage</span>
+<span style="font-family: 'JetBrains Mono', monospace; background: #f3f4f6; border-radius: 4px; padding: 1px 6px">contextMenus</span>
+</div>
+</section>
+
+<div style="display: flex; flex-wrap: wrap; gap: 24px">
+
+<section id="testmode" style="flex: 1 1 320px; min-width: 0; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: flex-start; gap: 12px">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px">
+<h2 style="margin: 0; font-size: 16px; font-weight: 600">Test Mode</h2>
+<p style="margin: 0; font-size: 13px; color: #4b5563; line-height: 1.5">Izinkan skrip Playwright, Puppeteer, atau Selenium memicu preset lewat pesan. Halaman hanya bisa membersihkan origin-nya sendiri.</p>
+</div>
+<button type="button" role="switch" aria-checked="false" aria-label="Aktifkan Test Mode" style="width: 40px; height: 24px; flex-shrink: 0; border-radius: 999px; border: 0; background: #d1d5db; padding: 2px; display: flex; justify-content: flex-start"><span style="width: 20px; height: 20px; border-radius: 999px; background: #ffffff; box-shadow: 0 1px 2px rgba(17,24,39,0.2)"></span></button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="allow" style="font-size: 12px; font-weight: 600; color: #374151">Origin yang diizinkan</label>
+<input id="allow" type="text" value="http://localhost/*, http://127.0.0.1/*" disabled style="height: 34px; box-sizing: border-box; border: 1px solid #e5e7eb; border-radius: 6px; padding: 0 10px; background: #f3f4f6; color: #4b5563; font-family: 'JetBrains Mono', monospace; font-size: 12px">
+<div style="font-size: 12px; color: #4b5563">Nonaktif secara default. Cookie domain-wide tidak tersedia di Test Mode.</div>
+</div>
+</section>
+
+<section id="riwayat" style="flex: 1 1 320px; min-width: 0; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: flex-start; gap: 12px">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px">
+<h2 style="margin: 0; font-size: 16px; font-weight: 600">Riwayat &amp; bukti</h2>
+<p style="margin: 0; font-size: 13px; color: #4b5563; line-height: 1.5">Simpan 20 cleanup terakhir di perangkat ini. Tanpa nilai cookie atau isi storage.</p>
+</div>
+<button type="button" role="switch" aria-checked="true" aria-label="Simpan riwayat" style="width: 40px; height: 24px; flex-shrink: 0; border-radius: 999px; border: 0; background: #1d4ed8; padding: 2px; display: flex; justify-content: flex-end"><span style="width: 20px; height: 20px; border-radius: 999px; background: #ffffff"></span></button>
+</div>
+<div style="border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; font-size: 12px">
+<div style="display: flex; gap: 10px; padding: 8px 12px"><span style="font-family: 'JetBrains Mono', monospace; color: #4b5563">10:42</span><span style="font-family: 'JetBrains Mono', monospace; flex-grow: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">staging.app.example.test</span><span style="color: #374151">Fresh user</span></div>
+<div style="display: flex; gap: 10px; padding: 8px 12px; border-top: 1px solid #f3f4f6"><span style="font-family: 'JetBrains Mono', monospace; color: #4b5563">10:15</span><span style="font-family: 'JetBrains Mono', monospace; flex-grow: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">localhost:5173</span><span style="color: #374151">QA checkout</span></div>
+<div style="display: flex; gap: 10px; padding: 8px 12px; border-top: 1px solid #f3f4f6"><span style="font-family: 'JetBrains Mono', monospace; color: #4b5563">09:58</span><span style="font-family: 'JetBrains Mono', monospace; flex-grow: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">localhost:5173</span><span style="color: #374151">Stale assets</span></div>
+</div>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<button type="button" style="height: 32px; padding: 0 12px; border-radius: 6px; border: 1px solid #d1d5db; background: #ffffff; color: #111827; font-family: Inter, sans-serif; font-size: 12px; font-weight: 500">Ekspor semua (JSON)</button>
+<button type="button" style="height: 32px; padding: 0 12px; border-radius: 6px; border: 1px solid #fecaca; background: #ffffff; color: #b91c1c; font-family: Inter, sans-serif; font-size: 12px; font-weight: 500">Hapus riwayat</button>
+</div>
+</section>
+
+</div>
+
+<section id="shortcut" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-size: 16px; font-weight: 600">Shortcut</h2>
+<div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px">
+<div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; border: 1px solid #d1d5db; border-radius: 4px; padding: 1px 6px; background: #f9fafb">Alt+Shift+K</span><span>Jalankan preset terakhir pada origin tab aktif</span></div>
+<div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; border: 1px solid #d1d5db; border-radius: 4px; padding: 1px 6px; background: #f9fafb">Alt+Shift+L</span><span>Preset Logout pada origin tab aktif</span></div>
+</div>
+<div style="font-size: 12px; color: #4b5563">Ubah kombinasi tombol di <span style="font-family: 'JetBrains Mono', monospace">chrome://extensions/shortcuts</span>.</div>
+</section>
+
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1360}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

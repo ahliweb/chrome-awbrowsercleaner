@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="id"><head>
+<meta charset="utf-8">
+<title>Analisis celah dan cakupan data — Analisis celah &amp; cakupan data</title>
+<meta name="generator" content="Claude Design canvas export">
+<style>
+@font-face{font-family:'Inter';font-style:normal;font-weight:100 900;src:url('../../assets/fonts/inter-latin-wght.woff2') format('woff2');}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:100 800;src:url('../../assets/fonts/jetbrains-mono-latin-wght.woff2') format('woff2');}
+</style>
+<style>
+body{margin:0}
+a{color:#93c5fd}a:hover{color:#bfdbfe}
+</style></head>
+<body>
+
+
+<div style="width: 1600px; height: 1320px; box-sizing: border-box; padding: 56px; background: #0f172a; color: #f8fafc; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; gap: 32px">
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; letter-spacing: 0.08em; color: #94a3b8; text-transform: uppercase">Analisis repo · kondisi v1.2.0</div>
+<h1 style="margin: 0; font-size: 44px; font-weight: 800; letter-spacing: -0.02em">Celah cakupan data dan lingkup cookie</h1>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px">
+
+<div style="grid-column: span 3; display: flex; flex-direction: column; gap: 0; background: #1e293b; border: 1px solid #334155; border-radius: 12px; overflow: hidden">
+<div style="display: grid; grid-template-columns: 1.4fr 1fr 1.3fr 1.2fr; gap: 12px; padding: 14px 20px; background: #0b1222; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #94a3b8">
+<div>Tipe data</div><div>v1.2.0</div><div>Target</div><div>Jalur API</div>
+</div>
+<div style="display: grid; grid-template-columns: 1.4fr 1fr 1.3fr 1.2fr; gap: 12px; padding: 12px 20px; border-top: 1px solid #334155; font-size: 15px; align-items: center">
+<div style="font-weight: 600">Cookies</div><div style="color: #fcd34d">Ya, selebar domain</div><div>Persis (host-only), domain-wide opsional</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #cbd5e1">chrome.cookies</div>
+</div>
+<div style="display: grid; grid-template-columns: 1.4fr 1fr 1.3fr 1.2fr; gap: 12px; padding: 12px 20px; border-top: 1px solid #334155; font-size: 15px; align-items: center">
+<div style="font-weight: 600">Session Storage</div><div style="color: #fca5a5">Tidak</div><div>Ya, frame origin target</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #cbd5e1">scripting</div>
+</div>
+<div style="display: grid; grid-template-columns: 1.4fr 1fr 1.3fr 1.2fr; gap: 12px; padding: 12px 20px; border-top: 1px solid #334155; font-size: 15px; align-items: center">
+<div style="font-weight: 600">Local Storage</div><div style="color: #6ee7b7">Ya</div><div>Ya</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #cbd5e1">browsingData</div>
+</div>
+<div style="display: grid; grid-template-columns: 1.4fr 1fr 1.3fr 1.2fr; gap: 12px; padding: 12px 20px; border-top: 1px solid #334155; font-size: 15px; align-items: center">
+<div style="font-weight: 600">IndexedDB</div><div style="color: #6ee7b7">Ya</div><div>Ya</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #cbd5e1">browsingData</div>
+</div>
+<div style="display: grid; grid-template-columns: 1.4fr 1fr 1.3fr 1.2fr; gap: 12px; padding: 12px 20px; border-top: 1px solid #334155; font-size: 15px; align-items: center">
+<div style="font-weight: 600">File Systems (OPFS)</div><div style="color: #fca5a5">Tidak</div><div>Ya</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #cbd5e1">browsingData</div>
+</div>
+<div style="display: grid; grid-template-columns: 1.4fr 1fr 1.3fr 1.2fr; gap: 12px; padding: 12px 20px; border-top: 1px solid #334155; font-size: 15px; align-items: center">
+<div style="font-weight: 600">Cache Storage</div><div style="color: #6ee7b7">Ya</div><div>Ya</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #cbd5e1">browsingData</div>
+</div>
+<div style="display: grid; grid-template-columns: 1.4fr 1fr 1.3fr 1.2fr; gap: 12px; padding: 12px 20px; border-top: 1px solid #334155; font-size: 15px; align-items: center">
+<div style="font-weight: 600">HTTP Cache</div><div style="color: #fca5a5">Tidak</div><div>Ya + hard reload</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #cbd5e1">browsingData</div>
+</div>
+<div style="display: grid; grid-template-columns: 1.4fr 1fr 1.3fr 1.2fr; gap: 12px; padding: 12px 20px; border-top: 1px solid #334155; font-size: 15px; align-items: center">
+<div style="font-weight: 600">Service Workers</div><div style="color: #6ee7b7">Ya</div><div>Ya</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #cbd5e1">browsingData</div>
+</div>
+<div style="display: grid; grid-template-columns: 1.4fr 1fr 1.3fr 1.2fr; gap: 12px; padding: 12px 20px; border-top: 1px solid #334155; font-size: 15px; align-items: center">
+<div style="font-weight: 600">Shared Storage, Storage Buckets</div><div style="color: #94a3b8">Tidak</div><div>Panduan otomasi</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #cbd5e1">CDP saja</div>
+</div>
+<div style="display: grid; grid-template-columns: 1.4fr 1fr 1.3fr 1.2fr; gap: 12px; padding: 12px 20px; border-top: 1px solid #334155; font-size: 15px; align-items: center; background: #1a1f2e">
+<div style="font-weight: 600">Riwayat, unduhan, form, password</div><div style="color: #94a3b8">Tidak</div><div style="color: #fca5a5; font-weight: 600">Tidak akan pernah</div><div style="font-size: 13px; color: #94a3b8">Tak bisa dibatasi ke origin</div>
+</div>
+</div>
+
+<div style="grid-column: span 2; display: flex; flex-direction: column; gap: 14px">
+<div style="font-size: 20px; font-weight: 700">Lingkup cookie untuk target</div>
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 15px; color: #93c5fd; background: #172554; border: 1px solid #1d4ed8; border-radius: 8px; padding: 10px 14px">https://www.example.test</div>
+<div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #94a3b8; padding: 0 12px">
+<div>Cookie</div><div>v1.2.0</div><div>Exact mode</div>
+</div>
+<div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 8px; align-items: center; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px; font-size: 14px">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 13px">www.example.test<br><span style="color: #94a3b8">host-only</span></div><div style="color: #fca5a5">Dihapus</div><div style="color: #fca5a5">Dihapus</div>
+</div>
+<div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 8px; align-items: center; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px; font-size: 14px">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 13px">.example.test<br><span style="color: #94a3b8">domain, dipakai bersama</span></div><div style="color: #fca5a5">Dihapus</div><div style="color: #fcd34d">Hanya jika dipilih</div>
+</div>
+<div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 8px; align-items: center; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px; font-size: 14px">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 13px">api.example.test<br><span style="color: #94a3b8">host-only</span></div><div style="color: #fca5a5">Dihapus</div><div style="color: #6ee7b7">Tidak disentuh</div>
+</div>
+<div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 8px; align-items: center; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px; font-size: 14px">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 13px">staging.example.test<br><span style="color: #94a3b8">environment lain</span></div><div style="color: #fca5a5">Dihapus</div><div style="color: #6ee7b7">Tidak disentuh</div>
+</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.55">Sumber: dokumentasi chrome.browsingData. Menghapus cookie untuk satu origin ikut menghapus semua cookie pada registrable domain-nya.</div>
+</div>
+
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="font-size: 20px; font-weight: 700">Temuan kode</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #94a3b8">tests/e2e/extension.test.js</div>
+<div style="font-size: 15px; font-weight: 600">if (!browser) return; → test PASS walau browser gagal</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.5">Tidak ada test yang menekan Clear Site Data lalu memeriksa data hilang.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #94a3b8">tests/unit/popup-logic.test.js</div>
+<div style="font-size: 15px; font-weight: 600">Menguji salinan typeMapping, bukan kode produksi</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.5">Logika popup terkunci di handler DOMContentLoaded.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #94a3b8">popup.html · popup.js</div>
+<div style="font-size: 15px; font-weight: 600">Semua tercentang, tombol berlabel "Select All"</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.5">Klik pertama menghapus semua centang; label tidak sinkron dengan checkbox.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #94a3b8">popup.js · showStatus()</div>
+<div style="font-size: 15px; font-weight: 600">setTimeout tidak dibatalkan</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.5">Pesan sukses bisa hilang lebih cepat; konfirmasi memakai innerHTML.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #94a3b8">.github/workflows/*.yml</div>
+<div style="font-size: 15px; font-weight: 600">bun-version: latest, actions tidak di-pin</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.5">contents: write di tingkat workflow; belum ada provenance.</div>
+</div>
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #94a3b8">Sudah kuat</div>
+<div style="font-size: 15px; font-weight: 600">Exact-origin, normalisasi input, izin minimal</div>
+<div style="font-size: 13px; color: #94a3b8; line-height: 1.5">Threat model, permission matrix, paket deterministik, i18n EN/ID.</div>
+</div>
+</div>
+</div>
+
+</div>
+
+
+
+
+</body></html>
