@@ -350,3 +350,25 @@ describe('infrastructure', () => {
         expect(await s.addRecentOrigin('https://a.test')).toBe(true);
     });
 });
+
+describe('pending confirmation', () => {
+    test('is returned once for the same origin while fresh, then cleared', async () => {
+        const settings = createSettings({ sync: fakeArea(), local: fakeArea(), session: fakeArea() });
+        expect(await settings.setPendingConfirmation({ presetId: 'full', origin: 'https://a.test' }, 1000)).toBe(true);
+        expect(await settings.takePendingConfirmation('https://a.test', 2000)).toEqual({ presetId: 'full', origin: 'https://a.test', at: 1000 });
+        expect(await settings.takePendingConfirmation('https://a.test', 2000)).toBeNull();
+    });
+
+    test('is discarded for another origin or when stale', async () => {
+        const settings = createSettings({ sync: fakeArea(), local: fakeArea(), session: fakeArea() });
+        await settings.setPendingConfirmation({ presetId: 'full', origin: 'https://a.test' }, 1000);
+        expect(await settings.takePendingConfirmation('https://b.test', 2000)).toBeNull();
+        await settings.setPendingConfirmation({ presetId: 'full', origin: 'https://a.test' }, 1000);
+        expect(await settings.takePendingConfirmation('https://a.test', 1000 + 60001)).toBeNull();
+    });
+
+    test('rejects non-exact origins', async () => {
+        const settings = createSettings({ sync: fakeArea(), local: fakeArea(), session: fakeArea() });
+        expect(await settings.setPendingConfirmation({ presetId: 'full', origin: 'https://a.test/path' })).toBe(false);
+    });
+});
