@@ -28,3 +28,6 @@ npm-debug.log*
 .env.*
 *.pem
 *.key
+
+# E2E output (screenshots, console logs, deletion matrix)
+test-artifacts/

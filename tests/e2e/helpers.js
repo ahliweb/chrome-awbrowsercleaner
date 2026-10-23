@@ -1,0 +1,767 @@
+/**
+ * AW Browser Cleaner - shared E2E helpers
+ * =======================================
+ *
+ * README: fixture topology
+ * ------------------------
+ * Two local HTTP servers (random free ports P1 and P2, bound to 127.0.0.1) are started per
+ * test file. Chrome is launched with `--host-resolver-rules="MAP *.localtest.me 127.0.0.1"`
+ * so no DNS is needed, and with `--unsafely-treat-insecure-origin-as-secure` for the
+ * localtest.me origins so Service Workers, Cache Storage and OPFS work over plain http.
+ *
+ *   origin   URL                          role
+ *   -------  ---------------------------  -------------------------------------------------
+ *   A        http://a.localtest.me:P1     the cleanup TARGET
+ *   B        http://b.localtest.me:P1     sibling subdomain (same registrable domain
+ *                                         localtest.me, same port)
+ *   A2       http://a.localtest.me:P2     port variant of A (same host, other port)
+ *   C        http://127.0.0.1:P2          CANARY, different host, must never be touched
+ *
+ * Every origin serves:
+ *   /seed                     blank page; sets the HttpOnly cookie `aw_httponly` via Set-Cookie
+ *   /blank                    blank page (no side effects), used for reading state
+ *   /asset.js                 Cache-Control: max-age=3600, counted per origin
+ *   /__count?path=/asset.js   JSON {count} - requests the server saw for that path on that origin
+ *   /sw.js                    trivial Service Worker
+ *   /with-canary-iframe       embeds the canary in a cross-origin iframe (/frame-seed sets
+ *                             sessionStorage inside that frame)
+ *
+ * `seedOrigin(page, origin)` creates, on that origin: host-only cookie `aw_host`, HttpOnly
+ * cookie `aw_httponly`, Domain=localtest.me cookie `aw_shared` (localtest.me hosts only),
+ * localStorage `aw_ls`, sessionStorage `aw_ss` (that tab only), IndexedDB `aw_idb`, Cache
+ * Storage `aw_cache`, OPFS file `aw_opfs.txt`, a Service Worker registration and one fetch
+ * of /asset.js (so it sits in the HTTP cache).
+ *
+ * `readState(browser, origin, { page })` reports what is left, from a fresh tab (or from
+ * `page` when sessionStorage of an existing tab matters).
+ *
+ * Cookies are not isolated by port or by subdomain (RFC 6265), so A, A2 and B share the
+ * `aw_shared` cookie and A/A2 share every cookie. The popup clears cookies domain-wide: a
+ * cookie cleanup of A is EXPECTED to remove the cookies of B and A2 too (registrable-domain
+ * behaviour), and must still leave the canary C untouched.
+ *
+ * Typical test file:
+ *
+ *   import { describe, test, expect, afterAll } from 'bun:test';
+ *   import { launchE2E, seedOrigin, readState, openPopupPage, setTarget, ... } from './helpers.js';
+ *   const env = await launchE2E();           // null => skipped locally (or failing test in CI)
+ *   afterAll(() => env?.close());
+ *   (env ? describe : describe.skip)('suite', () => { ... });
+ *
+ * Failure policy: when `CI` is set, a missing Chrome, a failed launch or an extension that
+ * did not load makes the run FAIL. Locally without Chrome the suites are skipped with a loud
+ * banner on stderr. Point AW_CHROME_PATH at an unbranded Chrome / Chromium / Chrome for
+ * Testing binary. Branded Chrome >= 137 ignores --load-extension, so the extension is
+ * installed through puppeteer's `browser.installExtension()` (pipe transport).
+ */
+
+import fs from 'node:fs';
+import http from 'node:http';
+import os from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { test } from 'bun:test';
+
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+export const EXTENSION_PATH = path.resolve(HERE, '..', '..');
+export const ARTIFACTS_DIR = path.join(EXTENSION_PATH, 'test-artifacts');
+
+/** Cookie / storage names created by seedOrigin. */
+export const SEED = {
+    cookieHost: 'aw_host',
+    cookieHttpOnly: 'aw_httponly',
+    cookieShared: 'aw_shared',
+    localStorage: 'aw_ls',
+    sessionStorage: 'aw_ss',
+    indexedDB: 'aw_idb',
+    cacheStorage: 'aw_cache',
+    opfs: 'aw_opfs.txt'
+};
+
+/** State kinds reported by readState and compared by the matrix. */
+export const STATE_KINDS = ['cookies', 'localStorage', 'indexedDB', 'cacheStorage', 'serviceWorkers', 'opfs', 'httpCache'];
+
+export function isCI() {
+    const v = String(process.env.CI || '').toLowerCase();
+    return v !== '' && v !== '0' && v !== 'false';
+}
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+function withTimeout(promise, ms, label) {
+    let timer;
+    const timeout = new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms} ms`)), ms);
+    });
+    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
+// ---------------------------------------------------------------------------
+// Fixture servers
+// ---------------------------------------------------------------------------
+
+const SW_SOURCE = `self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
+`;
+
+function htmlPage(title, body = '') {
+    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${title}</title></head><body>${body}</body></html>`;
+}
+
+function listen(server) {
+    return new Promise((resolve, reject) => {
+        server.once('error', reject);
+        server.listen(0, '127.0.0.1', () => resolve(server.address().port));
+    });
+}
+
+/**
+ * Starts the fixture servers and returns the origins and helpers.
+ * @returns {Promise<{origins: {A:string,B:string,A2:string,C:string}, ports: {p1:number,p2:number},
+ *   requestCount: (origin:string, urlPath?:string) => number, iframePageUrl: (origin:string) => string,
+ *   insecureAsSecure: string[], close: () => Promise<void>}>}
+ */
+export async function startFixtures() {
+    /** `${host:port}${path}` -> number of requests served. */
+    const counts = new Map();
+    let canaryOrigin = '';
+
+    const handler = (req, res) => {
+        const host = req.headers.host || '';
+        const url = new URL(req.url, `http://${host}`);
+        const p = url.pathname;
+        const send = (status, type, body, extra = {}) => {
+            res.writeHead(status, { 'Content-Type': type, ...extra });
+            res.end(body);
+        };
+
+        if (p === '/__count') {
+            const target = url.searchParams.get('path') || '/';
+            const count = counts.get(`${host}${target}`) || 0;
+            return send(200, 'application/json', JSON.stringify({ origin: `http://${host}`, path: target, count }), { 'Cache-Control': 'no-store' });
+        }
+        if (p === '/favicon.ico') return send(204, 'image/x-icon', '');
+
+        counts.set(`${host}${p}`, (counts.get(`${host}${p}`) || 0) + 1);
+
+        switch (p) {
+            case '/seed':
+                return send(200, 'text/html; charset=utf-8', htmlPage('seed', '<h1>seeded</h1>'), {
+                    'Cache-Control': 'no-store',
+                    'Set-Cookie': `${SEED.cookieHttpOnly}=1; Path=/; HttpOnly; SameSite=Lax`
+                });
+            case '/blank':
+                return send(200, 'text/html; charset=utf-8', htmlPage('blank'), { 'Cache-Control': 'no-store' });
+            case '/asset.js':
+                return send(200, 'application/javascript', '/* aw asset */', { 'Cache-Control': 'public, max-age=3600' });
+            case '/sw.js':
+                return send(200, 'application/javascript', SW_SOURCE, { 'Cache-Control': 'no-cache' });
+            case '/with-canary-iframe':
+                return send(200, 'text/html; charset=utf-8',
+                    htmlPage('iframe host', `<iframe id="canary" src="${canaryOrigin}/frame-seed" width="300" height="100"></iframe>`),
+                    { 'Cache-Control': 'no-store' });
+            case '/frame-seed':
+                return send(200, 'text/html; charset=utf-8',
+                    htmlPage('frame', `<script>sessionStorage.setItem('${SEED.sessionStorage}', 'frame');</script>`),
+                    { 'Cache-Control': 'no-store' });
+            default:
+                return send(404, 'text/plain', 'not found');
+        }
+    };
+
+    const server1 = http.createServer(handler);
+    const server2 = http.createServer(handler);
+    const [p1, p2] = await Promise.all([listen(server1), listen(server2)]);
+
+    const origins = {
+        A: `http://a.localtest.me:${p1}`,
+        B: `http://b.localtest.me:${p1}`,
+        A2: `http://a.localtest.me:${p2}`,
+        C: `http://127.0.0.1:${p2}`
+    };
+    canaryOrigin = origins.C;
+
+    return {
+        origins,
+        ports: { p1, p2 },
+        insecureAsSecure: [origins.A, origins.B, origins.A2],
+        requestCount(origin, urlPath = '/asset.js') {
+            return counts.get(`${new URL(origin).host}${urlPath}`) || 0;
+        },
+        iframePageUrl(origin) {
+            return `${origin}/with-canary-iframe`;
+        },
+        async close() {
+            await Promise.all([server1, server2].map((s) => new Promise((resolve) => {
+                s.closeAllConnections?.();
+                s.close(() => resolve());
+            })));
+        }
+    };
+}
+
+// ---------------------------------------------------------------------------
+// Chrome resolution, launch, extension loading
+// ---------------------------------------------------------------------------
+
+/** Per-browser bookkeeping: console logs and open popup pages. */
+const stateByBrowser = new WeakMap();
+
+function browserState(browser) {
+    let s = stateByBrowser.get(browser);
+    if (!s) {
+        s = { logs: [], popups: new Set() };
+        stateByBrowser.set(browser, s);
+    }
+    return s;
+}
+
+function attachLogging(browser, page) {
+    const { logs } = browserState(browser);
+    const tag = () => { try { return page.url(); } catch { return '?'; } };
+    page.on('console', (msg) => logs.push(`[${new Date().toISOString()}] console.${msg.type()} ${tag()} ${msg.text()}`));
+    page.on('pageerror', (err) => logs.push(`[${new Date().toISOString()}] pageerror ${tag()} ${err && err.stack ? err.stack : err}`));
+    page.on('requestfailed', (req) => logs.push(`[${new Date().toISOString()}] requestfailed ${req.url()} ${req.failure()?.errorText ?? ''}`));
+}
+
+/** Console output collected from every page of this browser so far. */
+export function getLogs(browser) {
+    return browserState(browser).logs.slice();
+}
+
+/**
+ * Finds the Chrome binary. In CI AW_CHROME_PATH is mandatory (Chrome for Testing is installed
+ * by the workflow). Locally AW_CHROME_PATH wins, then puppeteer's own browser cache.
+ * @returns {{path?: string, source?: string, error?: string, skippable?: boolean}}
+ */
+export function resolveChrome(puppeteer) {
+    const fromEnv = process.env.AW_CHROME_PATH;
+    if (fromEnv) {
+        if (!fs.existsSync(fromEnv)) return { error: `AW_CHROME_PATH points to a file that does not exist: ${fromEnv}` };
+        return { path: fromEnv, source: 'AW_CHROME_PATH' };
+    }
+    if (isCI()) {
+        return { error: 'AW_CHROME_PATH is not set. CI must install Chrome for Testing (see .github/workflows/ci.yml) and export its path.' };
+    }
+    try {
+        const p = puppeteer.executablePath();
+        if (p && fs.existsSync(p)) return { path: p, source: 'puppeteer browser cache' };
+    } catch { /* no cached browser */ }
+    return {
+        skippable: true,
+        error: 'No Chrome found. Set AW_CHROME_PATH to an unbranded Chrome / Chromium / Chrome for Testing binary, ' +
+            'or run `bunx @puppeteer/browsers install chrome@stable`.'
+    };
+}
+
+/**
+ * Launches Chrome with the extension and the fixture servers.
+ * Throws on any problem; callers normally use launchE2E() instead.
+ */
+export async function launchBrowser({ puppeteer, chromePath, fixtures }) {
+    const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'aw-e2e-profile-'));
+    const args = [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--enable-unsafe-extension-debugging',
+        '--no-first-run',
+        '--no-default-browser-check',
+        '--disable-search-engine-choice-screen',
+        '--disable-background-networking',
+        '--disable-component-update',
+        '--password-store=basic',
+        '--host-resolver-rules=MAP *.localtest.me 127.0.0.1',
+        `--unsafely-treat-insecure-origin-as-secure=${fixtures.insecureAsSecure.join(',')}`
+    ];
+    const browser = await puppeteer.launch({
+        executablePath: chromePath,
+        headless: true,
+        pipe: true,
+        enableExtensions: true,
+        userDataDir,
+        args,
+        timeout: 60000
+    });
+    browser.__awUserDataDir = userDataDir;
+    browserState(browser);
+
+    // Capture logs of every page, including popups opened by the tests and extension workers.
+    browser.on('targetcreated', async (target) => {
+        try {
+            if (target.type() === 'page') {
+                const page = await target.page();
+                if (page) attachLogging(browser, page);
+            } else if (target.type() === 'service_worker') {
+                const worker = await target.worker();
+                worker?.on?.('console', (msg) => browserState(browser).logs.push(`[sw] console.${msg.type()} ${target.url()} ${msg.text()}`));
+            }
+        } catch { /* target vanished */ }
+    });
+    for (const page of await browser.pages()) attachLogging(browser, page);
+
+    return browser;
+}
+
+/** Installs the unpacked extension and proves it is really loaded. Returns its id. */
+export async function loadExtension(browser) {
+    const id = await withTimeout(browser.installExtension(EXTENSION_PATH), 30000, 'browser.installExtension');
+    if (!/^[a-p]{32}$/.test(id)) throw new Error(`Extension id looks wrong: ${id}`);
+    const manifest = JSON.parse(fs.readFileSync(path.join(EXTENSION_PATH, 'manifest.json'), 'utf8'));
+    const page = await browser.newPage();
+    try {
+        const response = await page.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load', timeout: 20000 });
+        if (!response || !response.ok()) throw new Error(`popup.html did not load from the installed extension (${id}).`);
+        const runtimeId = await page.evaluate(() => (typeof chrome !== 'undefined' && chrome.runtime ? chrome.runtime.id : null));
+        if (runtimeId !== id) throw new Error(`chrome.runtime.id is ${runtimeId} on the popup page, expected ${id}; the extension did not load.`);
+        const version = await page.evaluate(() => chrome.runtime.getManifest().version);
+        if (version !== manifest.version) throw new Error(`Loaded extension version ${version} differs from manifest.json ${manifest.version}.`);
+    } finally {
+        await page.close();
+    }
+    return id;
+}
+
+function banner(lines) {
+    const bar = '='.repeat(78);
+    console.warn(`\n${bar}\n${lines.join('\n')}\n${bar}\n`);
+}
+
+/**
+ * Prepares the whole E2E environment (fixture servers, Chrome, extension).
+ *
+ * Returns a context object, or `null` when the suites must not run:
+ *  - CI set:     any problem registers a FAILING test and returns null (the run fails loudly).
+ *  - local:      no Chrome available => a loud banner and a skipped placeholder test; any other
+ *                problem (Chrome present but launch/extension broken) still fails.
+ *
+ * Call it with top-level await at the start of a test file.
+ */
+export async function launchE2E() {
+    let fixtures;
+    let browser;
+    const fail = (error) => {
+        const message = error instanceof Error ? error.message : String(error);
+        banner(['AW E2E: ENVIRONMENT ERROR' + (isCI() ? ' (CI: run fails)' : ''), message]);
+        test('E2E environment must be available (Chrome launches and the extension loads)', () => {
+            throw error instanceof Error ? error : new Error(message);
+        });
+        return Promise.allSettled([browser?.close(), fixtures?.close()]).then(() => null);
+    };
+
+    let puppeteer;
+    try {
+        puppeteer = (await import('puppeteer')).default;
+    } catch (e) {
+        if (isCI()) return fail(new Error(`puppeteer could not be imported: ${e.message}`));
+        banner(['AW E2E: SKIPPED - puppeteer is not installed (run `bun install`).']);
+        test.skip('E2E skipped: puppeteer is not installed', () => {});
+        return null;
+    }
+
+    const chrome = resolveChrome(puppeteer);
+    if (chrome.error) {
+        if (chrome.skippable) {
+            banner(['AW E2E: SKIPPED - ' + chrome.error, 'These tests are skipped locally. In CI they fail instead.']);
+            test.skip(`E2E skipped: ${chrome.error}`, () => {});
+            return null;
+        }
+        return fail(new Error(chrome.error));
+    }
+
+    try {
+        fixtures = await startFixtures();
+        browser = await withTimeout(launchBrowser({ puppeteer, chromePath: chrome.path, fixtures }), 90000, 'Chrome launch');
+        const extensionId = await loadExtension(browser);
+        const chromeVersion = await browser.version();
+        console.log(`AW E2E: ${chromeVersion} (${chrome.source}: ${chrome.path}), extension ${extensionId}, ` +
+            `origins ${Object.values(fixtures.origins).join(' ')}`);
+        return {
+            browser,
+            extensionId,
+            fixtures,
+            origins: fixtures.origins,
+            chromeVersion,
+            chromePath: chrome.path,
+            async close() {
+                try { await browser.close(); } catch { /* already closed */ }
+                await fixtures.close();
+                try { fs.rmSync(browser.__awUserDataDir, { recursive: true, force: true }); } catch { /* best effort */ }
+            }
+        };
+    } catch (e) {
+        return fail(new Error(`E2E environment failed to start with ${chrome.path}: ${e && e.message ? e.message : e}`));
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Seeding and reading state
+// ---------------------------------------------------------------------------
+
+/** Runs inside the page. Must be self-contained. */
+async function seedInPage(names) {
+    const failed = [];
+    const attempt = async (label, fn) => {
+        try { await fn(); } catch (e) { failed.push(`${label}: ${e && e.message ? e.message : e}`); }
+    };
+    await attempt('cookies', async () => {
+        document.cookie = `${names.cookieHost}=1; path=/`;
+        if (location.hostname.endsWith('localtest.me')) {
+            document.cookie = `${names.cookieShared}=1; domain=localtest.me; path=/`;
+        }
+    });
+    await attempt('localStorage', async () => localStorage.setItem(names.localStorage, '1'));
+    await attempt('sessionStorage', async () => sessionStorage.setItem(names.sessionStorage, '1'));
+    await attempt('indexedDB', () => new Promise((resolve, reject) => {
+        const req = indexedDB.open(names.indexedDB, 1);
+        req.onupgradeneeded = () => req.result.createObjectStore('s');
+        req.onsuccess = () => { req.result.close(); resolve(); };
+        req.onerror = () => reject(req.error);
+    }));
+    await attempt('cacheStorage', async () => {
+        const cache = await caches.open(names.cacheStorage);
+        await cache.put('/aw-cached', new Response('x'));
+    });
+    await attempt('opfs', async () => {
+        const dir = await navigator.storage.getDirectory();
+        const handle = await dir.getFileHandle(names.opfs, { create: true });
+        const writable = await handle.createWritable();
+        await writable.write('x');
+        await writable.close();
+    });
+    await attempt('serviceWorker', async () => {
+        await navigator.serviceWorker.register('/sw.js');
+        await navigator.serviceWorker.ready;
+    });
+    await attempt('httpCache', async () => {
+        const res = await fetch('/asset.js');
+        await res.text();
+    });
+    return { failed };
+}
+
+/** Runs inside the page. Must be self-contained. */
+async function readInPage() {
+    const out = {};
+    const safe = async (key, fn, fallback) => {
+        try { out[key] = await fn(); } catch (e) { out[key] = fallback; out.errors = (out.errors || []).concat(`${key}: ${e && e.message ? e.message : e}`); }
+    };
+    await safe('localStorage', async () => Object.fromEntries(Object.entries(localStorage)), {});
+    await safe('sessionStorage', async () => Object.fromEntries(Object.entries(sessionStorage)), {});
+    await safe('indexedDB', async () => (await indexedDB.databases()).map((d) => d.name).sort(), []);
+    await safe('cacheStorage', async () => (await caches.keys()).sort(), []);
+    await safe('serviceWorkers', async () => (await navigator.serviceWorker.getRegistrations()).length, 0);
+    await safe('opfs', async () => {
+        const dir = await navigator.storage.getDirectory();
+        const names = [];
+        for await (const [name] of dir.entries()) names.push(name);
+        return names.sort();
+    }, []);
+    await safe('httpCache', async () => {
+        try {
+            const res = await fetch('/asset.js', { cache: 'only-if-cached', mode: 'same-origin' });
+            return res.ok;
+        } catch {
+            return false;
+        }
+    }, false);
+    return out;
+}
+
+/**
+ * Seeds every storage type on `origin` using `page` (navigates the page to origin/seed).
+ * sessionStorage lives in that tab only. Throws when a storage type could not be seeded.
+ */
+export async function seedOrigin(page, origin) {
+    await page.goto(`${origin}/seed`, { waitUntil: 'load', timeout: 20000 });
+    const { failed } = await page.evaluate(seedInPage, SEED);
+    if (failed.length) throw new Error(`Seeding ${origin} failed: ${failed.join('; ')}`);
+}
+
+/**
+ * Reads what is stored for `origin`.
+ * Cookies come from CDP Network.getCookies (HttpOnly visible), as [{name, httpOnly, domain}] in
+ * `cookieInfo` and sorted names in `cookies`. Pass `{ page }` to read from an existing tab (needed
+ * for sessionStorage); otherwise a fresh tab is opened on origin/blank and closed again.
+ * @returns {Promise<{cookies:string[], cookieInfo:object[], localStorage:object, sessionStorage:object,
+ *   indexedDB:string[], cacheStorage:string[], serviceWorkers:number, opfs:string[], httpCache:boolean}>}
+ */
+export async function readState(browser, origin, { page: existing } = {}) {
+    const page = existing || await browser.newPage();
+    let cdp;
+    try {
+        if (!existing) await page.goto(`${origin}/blank`, { waitUntil: 'load', timeout: 20000 });
+        else if (new URL(page.url()).origin !== origin) throw new Error(`readState: page is on ${page.url()}, not ${origin}`);
+        const inPage = await page.evaluate(readInPage);
+        cdp = await page.createCDPSession();
+        const { cookies } = await cdp.send('Network.getCookies', { urls: [`${origin}/`] });
+        const cookieInfo = cookies.map((c) => ({ name: c.name, httpOnly: c.httpOnly, domain: c.domain }));
+        return { ...inPage, cookies: cookies.map((c) => c.name).sort(), cookieInfo };
+    } finally {
+        try { await cdp?.detach(); } catch { /* page gone */ }
+        if (!existing) await page.close();
+    }
+}
+
+/** Wipes cookies, site data and HTTP cache of the given origins directly through CDP (test reset). */
+export async function resetBrowserState(browser, origins) {
+    const page = await browser.newPage();
+    try {
+        await page.goto('about:blank');
+        const cdp = await page.createCDPSession();
+        await cdp.send('Network.clearBrowserCookies');
+        await cdp.send('Network.clearBrowserCache');
+        for (const origin of origins) {
+            await cdp.send('Storage.clearDataForOrigin', { origin, storageTypes: 'all' });
+        }
+        await cdp.detach();
+    } finally {
+        await page.close();
+    }
+}
+
+/** Cookie names expected on a fully seeded origin. */
+export function seededCookieNames(origin) {
+    const names = [SEED.cookieHost, SEED.cookieHttpOnly];
+    if (new URL(origin).hostname.endsWith('localtest.me')) names.push(SEED.cookieShared);
+    return names.sort();
+}
+
+/**
+ * Condenses a state into 'present' | 'empty' | 'partial' per state kind (sessionStorage excluded:
+ * it is only meaningful for the tab that seeded it).
+ */
+export function summarizeState(state, origin) {
+    const verdict = (have, want) => (have === want ? 'present' : have === 0 ? 'empty' : 'partial');
+    const hasAll = (list, names) => names.filter((n) => list.includes(n)).length;
+    const cookieWant = seededCookieNames(origin);
+    return {
+        cookies: verdict(hasAll(state.cookies, cookieWant), cookieWant.length),
+        localStorage: verdict(hasAll(Object.keys(state.localStorage), [SEED.localStorage]), 1),
+        indexedDB: verdict(hasAll(state.indexedDB, [SEED.indexedDB]), 1),
+        cacheStorage: verdict(hasAll(state.cacheStorage, [SEED.cacheStorage]), 1),
+        serviceWorkers: verdict(Math.min(state.serviceWorkers, 1), 1),
+        opfs: verdict(hasAll(state.opfs, [SEED.opfs]), 1),
+        httpCache: verdict(state.httpCache ? 1 : 0, 1)
+    };
+}
+
+/** Seeds A, B, A2 and C (each in its own short-lived tab, closed afterwards). */
+export async function seedAll(browser, origins) {
+    for (const origin of [origins.A, origins.B, origins.A2, origins.C]) {
+        const page = await browser.newPage();
+        try {
+            await seedOrigin(page, origin);
+        } finally {
+            await page.close();
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Popup helpers
+// ---------------------------------------------------------------------------
+
+/** Opens chrome-extension://<id>/popup.html in a normal tab and waits until it rendered. */
+export async function openPopupPage(browser, extensionId) {
+    const page = await browser.newPage();
+    browserState(browser).popups.add(page);
+    page.on('close', () => browserState(browser).popups.delete(page));
+    await page.goto(`chrome-extension://${extensionId}/popup.html`, { waitUntil: 'load', timeout: 20000 });
+    await page.waitForSelector('#clearBtn', { visible: true, timeout: 10000 });
+    await page.waitForFunction(() => {
+        const el = document.getElementById('selectedCount');
+        return Boolean(el && el.textContent.trim());
+    }, { timeout: 10000 });
+    return page;
+}
+
+/** Values of all data-type checkboxes the popup currently offers, in DOM order. */
+export async function getOfferedTypes(popup) {
+    return popup.$$eval('.checkbox-grid input[type="checkbox"]', (els) => els.map((e) => e.value));
+}
+
+/** Types whose checkbox is currently checked. */
+export async function getSelectedTypes(popup) {
+    return popup.$$eval('.checkbox-grid input[type="checkbox"]', (els) => els.filter((e) => e.checked).map((e) => e.value));
+}
+
+/** Types the popup offers, read from a throwaway popup tab. */
+export async function readOfferedTypes(browser, extensionId) {
+    const popup = await openPopupPage(browser, extensionId);
+    try {
+        return await getOfferedTypes(popup);
+    } finally {
+        await popup.close();
+    }
+}
+
+/** Types `origin` into the popup's target field (fires input/change events). */
+export async function setTarget(popup, origin) {
+    await popup.$eval('#originInput', (input, value) => {
+        input.value = value;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+    }, origin);
+}
+
+/** Checks exactly the given data types (by checkbox value) with real clicks. */
+export async function selectTypes(popup, keys) {
+    const wanted = new Set(keys);
+    const offered = await getOfferedTypes(popup);
+    const unknown = [...wanted].filter((k) => !offered.includes(k));
+    if (unknown.length) throw new Error(`Popup does not offer data type(s): ${unknown.join(', ')} (offered: ${offered.join(', ')})`);
+    for (const value of offered) {
+        const handle = await popup.$(`.checkbox-grid input[type="checkbox"][value="${value}"]`);
+        const checked = await handle.evaluate((el) => el.checked);
+        if (checked !== wanted.has(value)) await handle.evaluate((el) => el.click());
+        await handle.dispose();
+    }
+    const now = await getSelectedTypes(popup);
+    if (now.length !== wanted.size || !now.every((k) => wanted.has(k))) {
+        throw new Error(`selectTypes failed: wanted [${[...wanted]}], checked [${now}]`);
+    }
+}
+
+/** Clicks "Select all" until every checkbox is checked. */
+export async function selectAllTypes(popup) {
+    const allChecked = () => popup.$$eval('.checkbox-grid input[type="checkbox"]', (els) => els.every((e) => e.checked));
+    if (!(await allChecked())) await popup.click('#selectAll');
+    if (!(await allChecked())) throw new Error('"Select all" did not check every data type');
+}
+
+export async function clickClear(popup) {
+    await popup.click('#clearBtn');
+}
+
+export async function clickConfirm(popup) {
+    await popup.click('#confirmBtn');
+}
+
+export async function clickCancel(popup) {
+    await popup.click('#cancelBtn');
+}
+
+export async function pressEscape(popup) {
+    await popup.keyboard.press('Escape');
+}
+
+/** True while the confirmation panel is showing. */
+export async function isConfirming(popup) {
+    return popup.evaluate(() => {
+        const area = document.getElementById('confirmArea');
+        return Boolean(area) && !area.classList.contains('hidden') && !area.hidden && document.body.classList.contains('is-confirming');
+    });
+}
+
+/** Waits until the confirmation panel is showing. */
+export async function waitForConfirm(popup, timeout = 5000) {
+    await popup.waitForFunction(() => {
+        const area = document.getElementById('confirmArea');
+        return Boolean(area) && !area.classList.contains('hidden') && !area.hidden && document.body.classList.contains('is-confirming');
+    }, { timeout });
+}
+
+/** Waits until the confirmation panel is gone. */
+export async function waitForNoConfirm(popup, timeout = 5000) {
+    await popup.waitForFunction(() => {
+        const area = document.getElementById('confirmArea');
+        return !area || area.classList.contains('hidden') || area.hidden;
+    }, { timeout });
+    await popup.waitForFunction(() => !document.body.classList.contains('is-confirming'), { timeout });
+}
+
+/**
+ * Waits for #statusMessage to show a message of the given kind ('success' | 'error' | 'info').
+ * @returns {Promise<string>} the message text
+ */
+export async function waitForStatus(popup, kind = 'success', timeout = 20000) {
+    await popup.waitForFunction((k) => {
+        const el = document.getElementById('statusMessage');
+        return Boolean(el) && el.classList.contains(k) && !el.classList.contains('hidden') && el.textContent.trim() !== '';
+    }, { timeout }, kind);
+    return popup.$eval('#statusMessage', (el) => el.textContent.trim());
+}
+
+/**
+ * Full cleanup through the popup UI: set target, select types, click clear, confirm when the
+ * confirmation panel appears, wait for success.
+ * @param {object} [opts] { types?: string[] | 'all', confirm?: boolean }
+ * @returns {Promise<{confirmed: boolean, status: string}>}
+ */
+export async function runCleanup(popup, origin, { types = 'all', confirm = true } = {}) {
+    await setTarget(popup, origin);
+    if (types === 'all') await selectAllTypes(popup);
+    else await selectTypes(popup, types);
+    await clickClear(popup);
+
+    const outcome = await popup.waitForFunction(() => {
+        const area = document.getElementById('confirmArea');
+        if (area && !area.classList.contains('hidden') && !area.hidden) return 'confirm';
+        const status = document.getElementById('statusMessage');
+        if (status && !status.classList.contains('hidden') && status.textContent.trim()) {
+            if (status.classList.contains('success')) return 'success';
+            if (status.classList.contains('error')) return 'error:' + status.textContent.trim();
+        }
+        return false;
+    }, { timeout: 20000 }).then((h) => h.jsonValue());
+
+    if (String(outcome).startsWith('error:')) throw new Error(`Popup reported an error: ${outcome.slice(6)}`);
+    let confirmed = false;
+    if (outcome === 'confirm') {
+        if (!confirm) return { confirmed: false, status: '' };
+        await clickConfirm(popup);
+        confirmed = true;
+    }
+    const status = await waitForStatus(popup, 'success');
+    return { confirmed, status };
+}
+
+// ---------------------------------------------------------------------------
+// Failure artifacts
+// ---------------------------------------------------------------------------
+
+export function slugify(name) {
+    return String(name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80) || 'test';
+}
+
+export function writeArtifact(fileName, content) {
+    fs.mkdirSync(ARTIFACTS_DIR, { recursive: true });
+    const file = path.join(ARTIFACTS_DIR, fileName);
+    fs.writeFileSync(file, content);
+    return file;
+}
+
+/** Saves a screenshot of every open popup tab and the collected console logs. */
+export async function saveFailureArtifacts(browser, name, error) {
+    const slug = slugify(name);
+    const { logs, popups } = browserState(browser);
+    let index = 0;
+    for (const page of popups) {
+        try {
+            if (page.isClosed()) continue;
+            fs.mkdirSync(ARTIFACTS_DIR, { recursive: true });
+            await page.screenshot({ path: path.join(ARTIFACTS_DIR, `${slug}-popup${index ? `-${index}` : ''}.png`), fullPage: true });
+            index += 1;
+        } catch { /* page died */ }
+    }
+    const header = `Test: ${name}\nError: ${error && error.stack ? error.stack : error}\n\n--- console / page errors (${logs.length}) ---\n`;
+    writeArtifact(`${slug}.console.log`, header + logs.join('\n') + '\n');
+}
+
+/**
+ * Wraps a test body: when it throws, popup screenshots and console logs are saved to
+ * test-artifacts/ before the error is re-thrown.
+ *   test('name', guarded(env, 'name', async () => { ... }));
+ */
+export function guarded(env, name, fn) {
+    return async (...args) => {
+        try {
+            return await fn(...args);
+        } catch (error) {
+            await saveFailureArtifacts(env.browser, name, error).catch(() => {});
+            throw error;
+        }
+    };
+}
+
+export { sleep };
