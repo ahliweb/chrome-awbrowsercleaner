@@ -6,6 +6,10 @@ Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/) dan pr
 
 ## [Unreleased]
 
+### Changed
+
+- ESLint dinaikkan ke 10 dengan flat config `eslint.config.js` (menggantikan `.eslintrc.json`); aturan `no-restricted-syntax` Scope Guard dipertahankan persis (#52).
+
 ## [v1.3.0] - 2026-10-27
 
 Rilis ini menuntaskan roadmap v1.3–v1.5 (epic #43): AW Browser Cleaner menjadi alat pembersih **origin persis** untuk pengujian software. Prinsipnya tetap: setiap penghapusan membawa daftar origin `scheme://host:port` yang eksplisit; tidak pernah global, wildcard, atau mode "hapus semua kecuali".

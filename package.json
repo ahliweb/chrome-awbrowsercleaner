@@ -18,6 +18,7 @@
   "devDependencies": {
     "@puppeteer/browsers": "3.2.6",
     "eslint": "^10.13.0",
+    "globals": "^17.13.0",
     "puppeteer": "25.16.0"
   },
   "author": "AhliWeb.com",
