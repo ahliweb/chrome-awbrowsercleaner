@@ -6,6 +6,24 @@ Ekstensi Target:
 - **Nama**: AW Browser Cleaner
 - **Extension ID**: `njflkejajbifofomeebakgebgcincepf`
 
+## Konfigurasi yang dipakai saat ini
+
+| Bagian | Nilai |
+| --- | --- |
+| Akun Google | `indosaputra@gmail.com` (punya akses publisher **AhliWeb.com**) |
+| Project Google Cloud | `aw-browser-cleaner-cws`, khusus upload ekstensi ini, terpisah dari project lain |
+| API | Chrome Web Store API aktif |
+| OAuth consent screen | "AW Browser Cleaner Release", External, **In production** (home page `https://ahliweb.com`, privacy `https://ahliweb.com/privacy-browser-ext/`, domain `ahliweb.com`) |
+| OAuth client | `aw-browser-cleaner-cws-upload`, tipe **Desktop** (cocok dengan alur loopback `localhost:8933` di wizard) |
+
+Status **In production** wajib: pada status *Testing*, Google mencabut refresh token setelah 7 hari, sehingga `.env` dan GitHub Secrets akan basi sebelum rilis berikutnya. Aplikasi ini tidak diverifikasi Google, jadi layar persetujuan menampilkan peringatan "Google belum memverifikasi aplikasi ini". Untuk pemilik akun, pilih **Advanced → Go to AW Browser Cleaner Release**.
+
+### Dipakai ulang otomatis
+
+- `bun run setup:cws` menyimpan `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET`, `CWS_REFRESH_TOKEN`, `CWS_EXTENSION_ID` dan `CWS_AUTO_PUBLISH` ke `.env` di root repo (izin `0600`, diabaikan git) **dan** ke GitHub Secrets.
+- Bun memuat `.env` otomatis, jadi `bun run upload:cws` saat update berikutnya langsung memakainya, dan menjalankan ulang `bun run setup:cws` memakai nilai yang sama tanpa bertanya lagi (misalnya untuk menyalin ulang ke GitHub Secrets).
+- Refresh token baru diperlukan hanya bila dicabut (ganti password, cabut akses di <https://myaccount.google.com/permissions>, atau token tidak dipakai selama 6 bulan). Hapus baris `CWS_REFRESH_TOKEN` di `.env`, lalu jalankan `bun run setup:cws` lagi.
+
 ---
 
 ## Ringkasan Alur Kerja
