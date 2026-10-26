@@ -195,7 +195,7 @@ Issue #37.
   3. In the popup, set **Time range** to "Since test session started" (the option shows the start time) and run the cleanup.
   4. In Options, choose **End session**.
 - **Expected result.** Data created since the start is removed; older data of the same origin is kept where Chrome supports a time range. Not every storage type honors it precisely: the popup says so, and some types are removed completely. Exact cookies cannot be limited by time; the popup explains this and asks you to choose All time or the domain-wide mode.
-- **Verified Chrome behavior.** `tests/e2e/since-matrix.test.js` seeds old data, waits 3 s, seeds new data and cleans origin A with `since` set between the two (Chrome/141.0.7390.37, `chrome.browsingData.remove` with `origins` and `since`; output in `test-artifacts/since-matrix.md`). Re-run it on the Chrome version you test with; do not assume the table stays the same.
+- **Verified Chrome behavior.** `tests/e2e/since-matrix.test.js` seeds old data, waits 3 s, seeds new data and cleans origin A with `since` set between the two (Chrome/141.0.7390.37, `chrome.browsingData.remove` with `origins` and `since`; output in `test-artifacts/since-matrix.md`). Re-run it on the Chrome version you test with; do not assume the table stays the same. The *Settle* column shows how long after the cleanup resolved the new data was actually gone, and how many re-reads that took. Any re-read above 0 means Chrome finished deleting asynchronously (seen once for localStorage on Chrome beta, #54), so wait briefly before you read the after-state by hand.
 
   | Data type | Old data (before the start time) | New data (after the start time) |
   | --- | --- | --- |
