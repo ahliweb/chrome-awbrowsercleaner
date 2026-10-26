@@ -29,7 +29,6 @@ export const COOKIE_MODES = Object.freeze(['exact', 'domainWide']);
 const ID_PATTERN = /^[a-z0-9][a-z0-9-]{0,39}$/;
 // RFC 6265 `token` characters (cookie-name).
 const COOKIE_NAME_PATTERN = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
-// eslint-disable-next-line no-control-regex
 const CONTROL_CHARS = /[\u0000-\u001f\u007f-\u009f]/;
 const MAX_NAME_LENGTH = 60;
 const MAX_START_PATH_LENGTH = 200;

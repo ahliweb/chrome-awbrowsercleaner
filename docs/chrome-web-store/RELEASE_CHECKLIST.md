@@ -52,7 +52,7 @@ The Web Store ZIP must contain runtime assets only.
 
 Expected runtime files: exactly the list in [`scripts/package-files.js`](../../scripts/package-files.js) (`RUNTIME_FILES`). `bun run validate:package` fails on any missing or extra entry, and a unit test fails if a shipped page or module references a file that is not in the list.
 
-Exclude: `.git/`, `.github/`, `docs/`, `tests/`, `scripts/`, `node_modules/`, `dist/`, `bun.lock`, `package.json`, `.eslintrc.json`, `verification_test.html`, `.env*`, secrets/tokens, editor files, local build artifacts.
+Exclude: `.git/`, `.github/`, `docs/`, `tests/`, `scripts/`, `node_modules/`, `dist/`, `bun.lock`, `package.json`, `eslint.config.js`, `verification_test.html`, `.env*`, secrets/tokens, editor files, local build artifacts.
 
 - [ ] Clean package generated (`bun run build:package`).
 - [ ] SHA-256 checksum generated.
