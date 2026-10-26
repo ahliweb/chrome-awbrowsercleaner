@@ -12,6 +12,7 @@ Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/) dan pr
 
 ### Fixed
 
+- `setup:cws` menulis `.env` (berisi client secret dan refresh token) dengan izin `0600`; dokumentasi mencatat project Google Cloud khusus `aw-browser-cleaner-cws` dan alasan consent screen harus *In production*.
 - Workflow rilis: job upload Chrome Web Store kini gagal (`STRICT_UPLOAD=true`) bila kredensial CWS kosong, alih-alih hijau padahal upload dilewati.
 - E2E matriks `since` tidak lagi menunggu tetap 500 ms; kini membaca ulang hingga 3 detik dan mencatat waktu *settle* serta jumlah pembacaan ulang per tipe data, sehingga penghapusan asinkron Chrome terukur, tidak menjadi flaky (#54).
 

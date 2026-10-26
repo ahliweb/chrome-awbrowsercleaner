@@ -226,7 +226,10 @@ async function main() {
         `CWS_AUTO_PUBLISH=true`
     ].join('\n') + '\n';
 
-    fs.writeFileSync(path.join(ROOT_DIR, '.env'), envContent, 'utf8');
+    // Owner-only: the file holds the OAuth client secret and refresh token.
+    const envPath = path.join(ROOT_DIR, '.env');
+    fs.writeFileSync(envPath, envContent, { encoding: 'utf8', mode: 0o600 });
+    fs.chmodSync(envPath, 0o600);
     console.log('  ✓ File .env lokal berhasil dibuat!');
 
     // 6. Jalankan Verifikasi Dry-run
