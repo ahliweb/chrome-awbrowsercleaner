@@ -60,11 +60,11 @@ Exclude: `.git/`, `.github/`, `docs/`, `tests/`, `scripts/`, `node_modules/`, `d
 - [ ] Release ZIP manually inspected (`unzip -l dist/*.zip`).
 - [ ] Release ZIP loaded/tested in Chromium before submission.
 - [ ] Verify provenance: `gh attestation verify dist/aw-browser-cleaner-vX.Y.Z.zip --repo ahliweb/chrome-awbrowsercleaner`
-- [ ] GitHub Release `vX.Y.Z` has the `aw-browser-cleaner-vX.Y.Z.zip.sigstore.json`
-      and `aw-browser-cleaner-vX.Y.Z.zip.intoto.jsonl` assets. List them with:
+- [ ] GitHub Release `vX.Y.Z` has the `aw-browser-cleaner-vX.Y.Z.sigstore.json`
+      and `aw-browser-cleaner-vX.Y.Z.intoto.jsonl` assets. List them with:
       `gh release view vX.Y.Z --repo ahliweb/chrome-awbrowsercleaner --json assets --jq '.assets[].name'`
 - [ ] Offline provenance check passes with the downloaded bundle:
-      `gh attestation verify aw-browser-cleaner-vX.Y.Z.zip --repo ahliweb/chrome-awbrowsercleaner --bundle aw-browser-cleaner-vX.Y.Z.zip.sigstore.json`
+      `gh attestation verify aw-browser-cleaner-vX.Y.Z.zip --repo ahliweb/chrome-awbrowsercleaner --bundle aw-browser-cleaner-vX.Y.Z.sigstore.json` (repeat for the Edge zip)
 
 ## 6. Regression tests
 
