@@ -42,9 +42,9 @@ This document describes the controls that protect the AW Browser Cleaner build a
 Releases run only for tags matching `v*`, in this order:
 
 1. **`build`**: version check against the source files, ESLint, unit tests (`bun run test:unit`), packaging, package validation, and a CycloneDX SBOM of the dependencies. Outputs the zip, its SHA-256 file, and the SBOM as a single artifact.
-2. **`attest`**: generates a signed build provenance attestation for the zip (`actions/attest-build-provenance`). This job is separate from `build` so the OIDC token (`id-token: write`) is never available to the dependency install or build steps. It also exports the attestation as two release assets:
-   - `aw-browser-cleaner-vX.Y.Z.zip.sigstore.json`: the full Sigstore bundle.
-   - `aw-browser-cleaner-vX.Y.Z.zip.intoto.jsonl`: the DSSE envelope with the
+2. **`attest`**: generates a signed build provenance attestation for the zip (`actions/attest-build-provenance`). This job is separate from `build` so the OIDC token (`id-token: write`) is never available to the dependency install or build steps. It also exports the attestation as two release assets. A single provenance statement lists every zip of the release (Chrome and Edge) as a subject, so the assets are named after the release, not after one zip:
+   - `aw-browser-cleaner-vX.Y.Z.sigstore.json`: the full Sigstore bundle.
+   - `aw-browser-cleaner-vX.Y.Z.intoto.jsonl`: the DSSE envelope with the
      in-toto SLSA provenance statement.
 3. **`release`**: runs only after `build` and `attest` succeed. Creates the
    GitHub release with the zip, the SHA-256 file, the SBOM, and the two
@@ -111,7 +111,7 @@ gh release download vX.Y.Z --repo ahliweb/chrome-awbrowsercleaner
    `.sigstore.json` release asset:
 
    ```bash
-   gh attestation verify aw-browser-cleaner-vX.Y.Z.zip --repo ahliweb/chrome-awbrowsercleaner --bundle aw-browser-cleaner-vX.Y.Z.zip.sigstore.json
+   gh attestation verify aw-browser-cleaner-vX.Y.Z.zip --repo ahliweb/chrome-awbrowsercleaner --bundle aw-browser-cleaner-vX.Y.Z.sigstore.json
    ```
 
 ## Updating pinned SHAs

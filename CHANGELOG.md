@@ -43,7 +43,8 @@ Rilis ini menuntaskan roadmap v1.3–v1.5 (epic #43): AW Browser Cleaner menjadi
   adalah satu-satunya lockfile; ekosistem `npm` gagal memperbarui
   `bun.lock` (#40).
 - **Provenance rilis**: bundle attestation diekspor sebagai aset rilis
-  `*.sigstore.json` dan `*.intoto.jsonl` agar bisa diverifikasi secara
+  `aw-browser-cleaner-vX.Y.Z.sigstore.json` dan `.intoto.jsonl` (satu pernyataan
+  untuk ZIP Chrome dan Edge) agar bisa diverifikasi secara
   offline dan terlihat oleh OpenSSF Scorecard (#40).
 - **Cache workflow rilis**: `oven-sh/setup-bun` di workflow rilis memakai
   `no-cache: true` sehingga build rilis tidak memulihkan cache yang mungkin
