@@ -205,3 +205,5 @@ jobs:
           CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
           CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
           CWS_AUTO_PUBLISH: ${{ vars.CWS_AUTO_PUBLISH }}
+          # A release that reached this approved job must upload or fail; never skip silently.
+          STRICT_UPLOAD: 'true'
