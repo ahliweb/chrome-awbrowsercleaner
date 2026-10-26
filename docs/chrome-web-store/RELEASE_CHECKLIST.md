@@ -60,6 +60,11 @@ Exclude: `.git/`, `.github/`, `docs/`, `tests/`, `scripts/`, `node_modules/`, `d
 - [ ] Release ZIP manually inspected (`unzip -l dist/*.zip`).
 - [ ] Release ZIP loaded/tested in Chromium before submission.
 - [ ] Verify provenance: `gh attestation verify dist/aw-browser-cleaner-vX.Y.Z.zip --repo ahliweb/chrome-awbrowsercleaner`
+- [ ] GitHub Release `vX.Y.Z` has the `aw-browser-cleaner-vX.Y.Z.zip.sigstore.json`
+      and `aw-browser-cleaner-vX.Y.Z.zip.intoto.jsonl` assets. List them with:
+      `gh release view vX.Y.Z --repo ahliweb/chrome-awbrowsercleaner --json assets --jq '.assets[].name'`
+- [ ] Offline provenance check passes with the downloaded bundle:
+      `gh attestation verify aw-browser-cleaner-vX.Y.Z.zip --repo ahliweb/chrome-awbrowsercleaner --bundle aw-browser-cleaner-vX.Y.Z.zip.sigstore.json`
 
 ## 6. Regression tests
 
@@ -123,5 +128,5 @@ Edge ships the same Chromium MV3 package. Build, submission and test steps for E
 | ------- | ---------- | -------- | ----------------------------------------------------------- |
 | 1.1     | 2026-08-22 | —        | Initial Chrome Web Store release                            |
 | 1.2.0   | 2026-09-20 | `v1.2.0` | Production hardening, permission minimization, localization |
-| 1.3.0   | 2026-10-23 | `v1.3.0` | Exact-origin tester workflows (roadmap v1.3–v1.5, epic #43) |
+| 1.3.0   | 2026-10-27 | `v1.3.0` | Exact-origin tester workflows (roadmap v1.3–v1.5, epic #43) |
 

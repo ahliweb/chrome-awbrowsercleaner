@@ -115,7 +115,12 @@ Releases are cut by maintainers.
 2. Move the `[Unreleased]` entries of `CHANGELOG.md` under a new heading `## [vX.Y.Z] - YYYY-MM-DD`. The release notes are taken from that section.
 3. Run `bun run check:version vX.Y.Z` (also checks the changelog heading), `bun run check:permissions`, `bun run lint`, `bun run test`, `bun run build:package` and `bun run validate:package`. Walk through [docs/chrome-web-store/RELEASE_CHECKLIST.md](docs/chrome-web-store/RELEASE_CHECKLIST.md).
 4. Commit as `chore(release): bump version to X.Y.Z and finalize changelog`, merge to `main`.
-5. Tag and push: `git tag vX.Y.Z && git push origin vX.Y.Z`. The release workflow builds, validates, attests provenance, attaches the ZIP, its SHA-256 file and an SBOM to the GitHub Release, and then waits in the protected `chrome-web-store` environment. A maintainer approves the upload to the Chrome Web Store there. See [docs/SUPPLY_CHAIN.md](docs/SUPPLY_CHAIN.md).
+5. Tag and push: `git tag vX.Y.Z && git push origin vX.Y.Z`. The release
+   workflow builds, validates, attests provenance, attaches the ZIP, its
+   SHA-256 file, an SBOM and the two provenance assets (`.sigstore.json`,
+   `.intoto.jsonl`) to the GitHub Release, and then waits in the protected
+   `chrome-web-store` environment. A maintainer approves the upload to the
+   Chrome Web Store there. See [docs/SUPPLY_CHAIN.md](docs/SUPPLY_CHAIN.md).
 6. Verify the release (checksum and `gh attestation verify`, see the same document), update the public privacy policy page if it changed, and confirm the Store listing.
 
 ## Reporting security problems

@@ -1,7 +1,8 @@
 version: 2
 
 updates:
-  - package-ecosystem: "npm"
+  # bun.lock is the only lockfile; the npm ecosystem cannot update it.
+  - package-ecosystem: "bun"
     directory: "/"
     schedule:
       interval: "weekly"

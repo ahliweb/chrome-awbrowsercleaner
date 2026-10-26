@@ -8,8 +8,10 @@ This document describes the controls that protect the AW Browser Cleaner build a
 
 ### Dependabot (`.github/dependabot.yml`)
 
-- Checks the npm dependencies and the GitHub Actions weekly.
-- npm minor and patch updates to development dependencies are grouped into a single pull request.
+- Checks the Bun dependencies (ecosystem `bun`, because `bun.lock` is the only
+  lockfile) and the GitHub Actions weekly.
+- Minor and patch updates to development dependencies are grouped into a
+  single pull request.
 - Updates to pinned GitHub Actions SHAs are proposed automatically (see [Updating pinned SHAs](#updating-pinned-shas)).
 
 ### CodeQL (`.github/workflows/codeql.yml`)
@@ -40,20 +42,32 @@ This document describes the controls that protect the AW Browser Cleaner build a
 Releases run only for tags matching `v*`, in this order:
 
 1. **`build`**: version check against the source files, ESLint, unit tests (`bun run test:unit`), packaging, package validation, and a CycloneDX SBOM of the dependencies. Outputs the zip, its SHA-256 file, and the SBOM as a single artifact.
-2. **`attest`**: generates a signed build provenance attestation for the zip (`actions/attest-build-provenance`). This job is separate from `build` so the OIDC token (`id-token: write`) is never available to the dependency install or build steps.
-3. **`release`**: runs only after `build` and `attest` succeed. Creates the GitHub release with the zip, the SHA-256 file, and the SBOM. Release notes are taken from the matching `## [vX.Y.Z]` section of `CHANGELOG.md`.
+2. **`attest`**: generates a signed build provenance attestation for the zip (`actions/attest-build-provenance`). This job is separate from `build` so the OIDC token (`id-token: write`) is never available to the dependency install or build steps. It also exports the attestation as two release assets:
+   - `aw-browser-cleaner-vX.Y.Z.zip.sigstore.json`: the full Sigstore bundle.
+   - `aw-browser-cleaner-vX.Y.Z.zip.intoto.jsonl`: the DSSE envelope with the
+     in-toto SLSA provenance statement.
+3. **`release`**: runs only after `build` and `attest` succeed. Creates the
+   GitHub release with the zip, the SHA-256 file, the SBOM, and the two
+   provenance assets. The attestation store alone is not enough, because
+   offline verifiers and OpenSSF Scorecard's Signed-Releases check look for the
+   provenance on the release itself. Release notes are taken from the matching
+   `## [vX.Y.Z]` section of `CHANGELOG.md`.
 4. **`publish-cws`**: uploads the zip to the Chrome Web Store. It runs in the protected `chrome-web-store` environment (see below).
+
+The `build` and `publish-cws` jobs run `oven-sh/setup-bun` with
+`no-cache: true`, so a release build never restores a dependency cache that
+another workflow could have written.
 
 #### Protected `chrome-web-store` environment
 
 The Chrome Web Store upload waits for approval from a required reviewer. This gate exists because the upload uses store credentials and can publish to users.
 
-- The environment must be created by a repository maintainer in **Settings → Environments → New environment**, named exactly `chrome-web-store`.
-- Enable **Required reviewers** and add the maintainers who may approve store uploads.
-- If a deployment branch or tag rule is set on the environment, it must allow `v*` tags. Otherwise the `publish-cws` job will be rejected.
+- Current configuration (**Settings → Environments → `chrome-web-store`**): required reviewer `ahliweb`, and a deployment rule that only allows tags matching `v*`. A run from any other ref is rejected.
+- Add further maintainers who may approve store uploads as required reviewers there.
 - Store credentials (`CWS_*` secrets) and the extension ID (`CWS_EXTENSION_ID` variable) remain repository-level settings.
+- `CWS_AUTO_PUBLISH` is `true`, so an approved upload is also submitted for publishing. Approval is the last human check before users receive the build.
 
-Until the environment exists with required reviewers, `publish-cws` still runs, but without the approval gate.
+If the environment is ever deleted, GitHub recreates it on the next release run without protection rules, and `publish-cws` then runs without the approval gate.
 
 ### Build provenance (SLSA Build L2)
 
@@ -68,7 +82,14 @@ Until the environment exists with required reviewers, `publish-cws` still runs, 
 
 ## Verifying a release
 
-Download the zip, its `.sha256` file, and the `sbom.cdx.json` file from the release page. Replace `X.Y.Z` with the version you are checking.
+Download the zip, its `.sha256` file, the `sbom.cdx.json` file, and the
+`.sigstore.json` and `.intoto.jsonl` provenance files from the release page.
+Replace `X.Y.Z` with the version you are checking. To download all release
+assets at once:
+
+```bash
+gh release download vX.Y.Z --repo ahliweb/chrome-awbrowsercleaner
+```
 
 1. **Check the file integrity** (run in the folder that holds the downloaded files):
 
@@ -85,6 +106,13 @@ Download the zip, its `.sha256` file, and the `sbom.cdx.json` file from the rele
    ```
 
    A successful check confirms that the zip was built by this repository's release workflow from a tagged commit.
+
+   To verify offline with the downloaded provenance bundle, pass the
+   `.sigstore.json` release asset:
+
+   ```bash
+   gh attestation verify aw-browser-cleaner-vX.Y.Z.zip --repo ahliweb/chrome-awbrowsercleaner --bundle aw-browser-cleaner-vX.Y.Z.zip.sigstore.json
+   ```
 
 ## Updating pinned SHAs
 

@@ -6,7 +6,7 @@ Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/) dan pr
 
 ## [Unreleased]
 
-## [v1.3.0] - 2026-10-23
+## [v1.3.0] - 2026-10-27
 
 Rilis ini menuntaskan roadmap v1.3–v1.5 (epic #43): AW Browser Cleaner menjadi alat pembersih **origin persis** untuk pengujian software. Prinsipnya tetap: setiap penghapusan membawa daftar origin `scheme://host:port` yang eksplisit; tidak pernah global, wildcard, atau mode "hapus semua kecuali".
 
@@ -39,6 +39,15 @@ Rilis ini menuntaskan roadmap v1.3–v1.5 (epic #43): AW Browser Cleaner menjadi
 - **Scope Guard**: origin kosong, wildcard (termasuk `%2A` yang dihasilkan parser URL Chrome), path, `excludeOrigins`, lebih dari 10 origin, tipe data terlarang, dan `since` di masa depan ditolak sebelum API apa pun dipanggil; ESLint melarang `chrome.browsingData`/`chrome.cookies.remove` di luar `cleanup-core.js`; uji fuzz 4000 input (#33).
 - **Supply chain**: action dipin ke SHA, izin workflow minimal per job, attestation provenance SLSA, SBOM CycloneDX, CodeQL, OpenSSF Scorecard, Dependabot, upload Chrome Web Store di balik environment terproteksi (#40).
 - `check:permissions` memastikan setiap izin manifest terdokumentasi di permission matrix dan kebijakan privasi (#42).
+- **Dependabot**: ekosistem diubah dari `npm` ke `bun` karena `bun.lock`
+  adalah satu-satunya lockfile; ekosistem `npm` gagal memperbarui
+  `bun.lock` (#40).
+- **Provenance rilis**: bundle attestation diekspor sebagai aset rilis
+  `*.sigstore.json` dan `*.intoto.jsonl` agar bisa diverifikasi secara
+  offline dan terlihat oleh OpenSSF Scorecard (#40).
+- **Cache workflow rilis**: `oven-sh/setup-bun` di workflow rilis memakai
+  `no-cache: true` sehingga build rilis tidak memulihkan cache yang mungkin
+  ditulis workflow lain (#40).
 
 ### Fixed
 
