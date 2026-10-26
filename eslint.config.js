@@ -33,9 +33,6 @@ module.exports = [
     { ignores: ['node_modules/**', 'dist/**', 'test-artifacts/**'] },
     {
         files: ['**/*.js'],
-        // ESLint 8 did not report unused disable directives; keep that so shipped
-        // runtime files need no edit (presets.js has a harmless legacy directive).
-        linterOptions: { reportUnusedDisableDirectives: 'off' },
         languageOptions: {
             ecmaVersion: 'latest',
             sourceType: 'module',
