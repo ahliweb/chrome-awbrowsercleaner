@@ -127,4 +127,5 @@ Jika Anda ingin mengunggah langsung dari komputer lokal tanpa melalui GitHub Act
 
 - File `.env`, `.env.*`, `*.pem`, dan `*.key` telah didaftarkan dalam `.gitignore` sehingga kredensial tidak akan pernah ter-commit ke git repository.
 - Workflow GitHub Actions menggunakan GitHub Encrypted Secrets dan tidak mencetak nilai rahasia ke build logs.
-- Jika secrets belum dikonfigurasi di GitHub, GitHub Actions rilis akan menampilkan peringatan dan melewati langkah upload secara aman (*graceful skip*) tanpa menggagalkan pembuatan rilis GitHub.
+- Jika secrets belum dikonfigurasi (kosong atau `placeholder`), job `publish-cws` di workflow rilis **gagal** (`STRICT_UPLOAD=true`) dengan daftar secret yang hilang. GitHub Release tetap sudah dibuat karena job `release` berjalan lebih dulu. Setelah secrets diisi, jalankan ulang hanya job yang gagal (`gh run rerun <run-id> --failed`) lalu setujui lagi di environment `chrome-web-store`.
+- Saat dijalankan lokal tanpa `STRICT_UPLOAD`, `bun run upload:cws` tetap menampilkan peringatan dan melewati upload (*graceful skip*).
