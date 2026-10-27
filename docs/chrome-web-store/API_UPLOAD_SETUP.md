@@ -147,3 +147,7 @@ Jika Anda ingin mengunggah langsung dari komputer lokal tanpa melalui GitHub Act
 - Workflow GitHub Actions menggunakan GitHub Encrypted Secrets dan tidak mencetak nilai rahasia ke build logs.
 - Jika secrets belum dikonfigurasi (kosong atau `placeholder`), job `publish-cws` di workflow rilis **gagal** (`STRICT_UPLOAD=true`) dengan daftar secret yang hilang. GitHub Release tetap sudah dibuat karena job `release` berjalan lebih dulu. Setelah secrets diisi, jalankan ulang hanya job yang gagal (`gh run rerun <run-id> --failed`) lalu setujui lagi di environment `chrome-web-store`.
 - Saat dijalankan lokal tanpa `STRICT_UPLOAD`, `bun run upload:cws` tetap menampilkan peringatan dan melewati upload (*graceful skip*).
+
+## Troubleshooting
+
+- **`400 Publish condition not met ... Privacy practices tab`**: paket sudah ter-upload sebagai draf (`uploadState: SUCCESS`), tetapi tab **Privasi** di Developer Dashboard belum lengkap. Ini biasanya terjadi karena ada izin baru tanpa justifikasi. Isi justifikasi dari `docs/chrome-web-store/STORE_LISTING.md`, klik **Simpan draf**, lalu klik **Kirim untuk ditinjau** di dashboard. Menjalankan ulang job tidak perlu karena paketnya sudah ada. Kasus ini terjadi pada v1.3.0, yang menambah `contextMenus`, `cookies`, `scripting`, dan `storage`.
