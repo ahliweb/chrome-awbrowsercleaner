@@ -8,6 +8,8 @@ Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/) dan pr
 
 ### Changed
 
+- Earned the OpenSSF Best Practices "passing" badge (project 15987) and added it to the README.
+
 - `SECURITY.md` states the 14-day acknowledgement time and the private GitHub reporting channel.
 
 - Documented the `main` branch protection (required checks, no force-push or deletion, no required review).
