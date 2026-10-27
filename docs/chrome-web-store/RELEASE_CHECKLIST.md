@@ -31,7 +31,7 @@ Current published version: `1.2.0`
 
 - [ ] Repository `PRIVACY.md` matches shipped behavior.
 - [ ] Public privacy policy at <https://ahliweb.com/privacy-browser-ext/> matches shipped behavior.
-- [ ] Store Privacy tab matches final permissions and data handling.
+- [ ] Store Privacy tab matches final permissions and data handling. Every permission in `manifest.json` needs a justification there (copy from `STORE_LISTING.md`) **before** the tag is pushed: otherwise the API upload succeeds but submission fails with `400 Publish condition not met`.
 - [ ] Cookie behavior is disclosed accurately: cookie removal may affect a registrable domain and related subdomains.
 - [ ] No analytics/tracking claim is made unless verified against all packaged code.
 
