@@ -8,6 +8,8 @@ Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/) dan pr
 
 ### Changed
 
+- Documented the `main` branch protection (required checks, no force-push or deletion, no required review).
+
 - Added fast-check property tests for the Scope Guard (`scope-guard.property.test.js`), so generated and shrunk inputs are checked beside the seeded fuzz corpus.
 
 - ESLint dinaikkan ke 10 dengan flat config `eslint.config.js` (menggantikan `.eslintrc.json`); aturan `no-restricted-syntax` Scope Guard dipertahankan persis (#52).

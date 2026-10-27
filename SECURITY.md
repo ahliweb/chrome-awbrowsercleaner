@@ -63,7 +63,7 @@ The controls below are described in detail in [docs/threat-model.md](docs/threat
 | Control | What it enforces |
 | --- | --- |
 | Exact origins only | Every deletion targets an explicit list of `scheme://host:port` origins. No wildcard, no bare host, no "everything except". |
-| Scope Guard (`validatePlan`) | Rejects empty, wildcard, `exclude*` and malformed input before any Chrome API is called. Covered by a 4000-input fuzz test. |
+| Scope Guard (`validatePlan`) | Rejects empty, wildcard, `exclude*` and malformed input before any Chrome API is called. Covered by a 4000-input fuzz test and fast-check property tests. |
 | Single deletion gate | Only `executePlan` in `cleanup-core.js` may call `chrome.browsingData.*` or `chrome.cookies.remove`; an ESLint rule fails the build otherwise. |
 | Exact Cookie Mode | The default. Domain-wide cookie removal needs a red confirmation. Cookie values are never read into the UI, reports or storage. |
 | Confirmation and pending confirmation | Shortcuts and the context menu never run a dangerous plan; they open the popup with a 60-second pending confirmation. |
