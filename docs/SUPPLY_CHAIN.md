@@ -27,8 +27,7 @@ This document describes the controls that protect the AW Browser Cleaner build a
 
 ### Branch protection on `main`
 
-`main` requires these status checks before a change can land: `Lint, Unit Tests & Package Validation`, `E2E (Chrome stable)`, `E2E (Chrome beta)` and `CodeQL (javascript-typescript)`. Force-pushes and branch deletion are blocked and conversations must be resolved. A pull request review is **not** required (single maintainer), and administrators can bypass the rules in an emergency. Scorecard therefore still reports the Code-Review check as open.
-- Results are published to the public Scorecard API, uploaded to code scanning, and kept as a workflow artifact for 5 days.
+`main` requires these status checks before a change can land: `Lint, Unit Tests & Package Validation`, `E2E (Chrome stable)`, `E2E (Chrome beta)` and `CodeQL (javascript-typescript)`. It also requires **one approving review** from someone other than the author (stale approvals are dismissed on new pushes). Force-pushes and branch deletion are blocked and conversations must be resolved. Administrators are not forced to follow these rules, so the maintainer can bypass them in an emergency; the bypass should stay the exception, because Scorecard's Code-Review check only counts changesets that someone else approved and reaches a high score only as reviewed pull requests accumulate.
 
 ### SHA pinning
 
