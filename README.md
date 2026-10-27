@@ -1,6 +1,7 @@
 # AW Browser Cleaner
 
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ahliweb/chrome-awbrowsercleaner/badge)](https://scorecard.dev/viewer/?uri=github.com/ahliweb/chrome-awbrowsercleaner)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/15987/badge)](https://www.bestpractices.dev/projects/15987)
 
 Powered by AhliWeb.com
 
