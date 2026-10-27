@@ -16,7 +16,7 @@
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
-const { execSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DEFAULT_EXTENSION_ID = 'njflkejajbifofomeebakgebgcincepf';
@@ -134,9 +134,11 @@ async function captureOAuthCodeWithLocalServer(clientId, clientSecret) {
 
 function setGitHubSecret(secretName, secretValue) {
     try {
-        execSync(`gh secret set ${secretName} -b "${secretValue.replace(/"/g, '\\"')}"`, {
+        // No shell and no argv: the value goes over stdin, so it is neither interpreted nor visible in `ps`.
+        execFileSync('gh', ['secret', 'set', secretName], {
             cwd: ROOT_DIR,
-            stdio: 'pipe'
+            input: secretValue,
+            stdio: ['pipe', 'pipe', 'pipe']
         });
         console.log(`  ✓ GitHub Secret '${secretName}' berhasil disetel!`);
         return true;

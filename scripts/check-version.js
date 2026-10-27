@@ -69,7 +69,7 @@ function checkVersions(expectedTag) {
 
         // Check CHANGELOG heading
         const changelog = fs.readFileSync(changelogPath, 'utf8');
-        const headingRegex = new RegExp(`##\\s*\\[?v?${expectedNorm.replace(/\\./g, '\\.')}\\]?`, 'i');
+        const headingRegex = new RegExp(`##\\s*\\[?v?${expectedNorm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\]?`, 'i');
         if (!headingRegex.test(changelog)) {
             errors.push(`CHANGELOG.md is missing release heading for [v${expectedNorm}]`);
         }
