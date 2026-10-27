@@ -126,6 +126,6 @@ The table between the markers below is read by `scripts/check-permissions.js`. K
 ## Verification & Testing
 
 - **Documentation check**: `bun run check:permissions` (`scripts/check-permissions.js`) runs in CI after ESLint. It fails when a manifest entry is missing from the table above, when this table lists an entry the manifest no longer has, when an install-time permission is missing from `PRIVACY.md`, or when `host_permissions` exists. Its tests are in `tests/unit/check-permissions.test.js`.
-- **Scope Guard unit tests**: `tests/unit/cleanup-core.test.js` and `tests/unit/scope-guard.fuzz.test.js` prove that no plan reaches a Chrome API unless it targets exact origins.
+- **Scope Guard unit tests**: `tests/unit/cleanup-core.test.js` , `tests/unit/scope-guard.fuzz.test.js` (seeded corpus) and `tests/unit/scope-guard.property.test.js` (fast-check properties) prove that no plan reaches a Chrome API unless it targets exact origins.
 - **Background tests**: `tests/unit/background.test.js` covers shortcuts, the context menu and Test Mode (including `COOKIE_PERMISSION_MISSING`).
 - **E2E**: `tests/e2e/` loads the unpacked extension in Chrome for Testing and proves deletion per origin.

@@ -98,7 +98,7 @@ Shortcuts, the context menu, Test Mode and presets each add a way to start a cle
 
 A call to `chrome.browsingData.remove` with an empty `origins` list, a wildcard or an `excludeOrigins` filter removes data globally or for "everything except" a list.
 
-**Mitigation:** `validatePlan` rejects empty, wildcard and `excludeOrigins` inputs **before any API call**; `buildRemovalOptions` always emits an explicit origin array with `originTypes.unprotectedWeb` and never `excludeOrigins`; one API call is made per origin. A **4000-input fuzz test** (`tests/unit/scope-guard.fuzz.test.js`) checks that no accepted input is anything other than an exact origin.
+**Mitigation:** `validatePlan` rejects empty, wildcard and `excludeOrigins` inputs **before any API call**; `buildRemovalOptions` always emits an explicit origin array with `originTypes.unprotectedWeb` and never `excludeOrigins`; one API call is made per origin. A **4000-input fuzz test** (`tests/unit/scope-guard.fuzz.test.js`) checks that no accepted input is anything other than an exact origin, and fast-check property tests (`tests/unit/scope-guard.property.test.js`) assert the same invariants on generated and shrunk inputs.
 
 ### T10 — Untrusted page triggers deletion (Test Mode)
 
