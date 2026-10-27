@@ -8,6 +8,8 @@ Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/) dan pr
 
 ### Changed
 
+- `main` now requires one approving review (reviewer: `ahliwebcom`), to meet the OpenSSF Scorecard Code-Review check.
+
 - Earned the OpenSSF Best Practices "passing" badge (project 15987) and added it to the README.
 
 - `SECURITY.md` states the 14-day acknowledgement time and the private GitHub reporting channel.
