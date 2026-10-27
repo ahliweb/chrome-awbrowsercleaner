@@ -19,6 +19,10 @@ Report security issues to:
 
 **<browser@ahliweb.com>**
 
+You can also report privately through GitHub: <https://github.com/ahliweb/chrome-awbrowsercleaner/security/advisories/new>. Private reports are visible only to the maintainers.
+
+**Response times.** The maintainers acknowledge a report within 14 days, usually sooner, and give a first assessment (accepted, needs more information, or not a vulnerability) in the same reply or shortly after. Confirmed vulnerabilities are fixed with priority and published as a Chrome Web Store update and a GitHub release whose notes describe the fix. Reporters are credited unless they ask not to be.
+
 Use a subject that starts with `[security]` and include, when possible:
 
 - affected version (Settings → Extensions, or `manifest.json`),

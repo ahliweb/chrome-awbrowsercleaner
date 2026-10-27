@@ -8,6 +8,8 @@ Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/) dan pr
 
 ### Changed
 
+- `SECURITY.md` states the 14-day acknowledgement time and the private GitHub reporting channel.
+
 - Documented the `main` branch protection (required checks, no force-push or deletion, no required review).
 
 - Added fast-check property tests for the Scope Guard (`scope-guard.property.test.js`), so generated and shrunk inputs are checked beside the seeded fuzz corpus.
