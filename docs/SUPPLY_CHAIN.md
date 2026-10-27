@@ -24,6 +24,7 @@ This document describes the controls that protect the AW Browser Cleaner build a
 
 - Evaluates the repository against the OpenSSF Scorecard checks (branch protection, pinned dependencies, token permissions, code review, vulnerabilities, and others).
 - Runs on pushes to `main`, weekly, and on branch protection rule changes.
+- Results are published to the public Scorecard API, uploaded to code scanning, and kept as a workflow artifact for 5 days.
 
 ### Branch protection on `main`
 
