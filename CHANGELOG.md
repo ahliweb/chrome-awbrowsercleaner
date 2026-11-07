@@ -8,6 +8,8 @@ Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/) dan pr
 
 ### Changed
 
+- Dev dependencies: `eslint` 10.13.0 -> 10.14.0 and `globals` 17.13.0 -> 17.14.0. Bun (`.bun-version` 1.4.4) and the pinned GitHub Actions were already current.
+
 - `main` now requires one approving review (reviewer: `ahliwebcom`), to meet the OpenSSF Scorecard Code-Review check.
 
 - Earned the OpenSSF Best Practices "passing" badge (project 15987) and added it to the README.
