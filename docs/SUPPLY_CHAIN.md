@@ -14,21 +14,26 @@ This document describes the controls that protect the AW Browser Cleaner build a
   single pull request.
 - Updates to pinned GitHub Actions SHAs are proposed automatically (see [Updating pinned SHAs](#updating-pinned-shas)).
 
-### CodeQL (`.github/workflows/codeql.yml`)
+### Security leg: gitleaks, `bun audit`, OpenGrep (`.github/workflows/keamanan.yml`)
 
-- Static analysis for `javascript-typescript` on pull requests to `main`, pushes to `main`, and weekly.
-- Runs with `build-mode: none`, so no build step runs before analysis.
-- Results are uploaded to GitHub code scanning.
+Job `keamanan / sast-rahasia-dependensi`, run on pull requests to `main`, pushes to `main` and manual dispatch. It replaced CodeQL under the internal cross-portfolio standard (DL-098): GitHub's CodeQL terms restrict use on non-open-source code and in CI without GitHub Advanced Security, and one path is used for every repository.
+
+- **gitleaks** (version pinned, checksum verified, `--redact`) scans only the commit range of the event (`base..head` on pull requests, the pushed range on pushes), never the whole history.
+- **`bun audit --audit-level=high`** checks the Bun dependencies. This is the only dependency audit in the pipeline.
+- **OpenGrep** (v2.1.0, binary pinned by SHA256) runs `tools/ci/sast/opengrep-scan.ts` with a vendored copy of `opengrep/opengrep-rules` (commit `f1d2b562b414`, JavaScript and TypeScript only) plus local rules in `tools/ci/sast/rules/lokal/`. No registry rules are used and no telemetry is sent.
+- The gate fails only on new ERROR findings that are not in `tools/ci/sast/baseline.json`. The baseline only shrinks: existing entries may be removed (`baseline --rapikan`), and an entry may be added only by hand, with a non-empty reason, reviewed in the pull request. WARNING and INFO findings are reported, not gated.
+- Results are not uploaded to GitHub code scanning. They are in the job log and in `ringkasan.json` under the runner temp directory.
+- Compared with CodeQL, OpenGrep has limited inter-procedural dataflow analysis, so it can miss taint paths that CodeQL finds across functions.
 
 ### OpenSSF Scorecard (`.github/workflows/scorecard.yml`)
 
 - Evaluates the repository against the OpenSSF Scorecard checks (branch protection, pinned dependencies, token permissions, code review, vulnerabilities, and others).
 - Runs on pushes to `main`, weekly, and on branch protection rule changes.
-- Results are published to the public Scorecard API, uploaded to code scanning, and kept as a workflow artifact for 5 days.
+- Results are published to the public Scorecard API, uploaded to code scanning (SARIF, through `github/codeql-action/upload-sarif`; this is only an uploader, not CodeQL analysis), and kept as a workflow artifact for 5 days.
 
 ### Branch protection on `main`
 
-`main` requires these status checks before a change can land: `Lint, Unit Tests & Package Validation`, `E2E (Chrome stable)`, `E2E (Chrome beta)` and `CodeQL (javascript-typescript)`. It also requires **one approving review** from someone other than the author (stale approvals are dismissed on new pushes). Force-pushes and branch deletion are blocked and conversations must be resolved. Administrators are not forced to follow these rules, so the maintainer can bypass them in an emergency; the bypass should stay the exception, because Scorecard's Code-Review check only counts changesets that someone else approved and reaches a high score only as reviewed pull requests accumulate.
+`main` requires these status checks before a change can land: `Lint, Unit Tests & Package Validation`, `E2E (Chrome stable)`, `E2E (Chrome beta)` and `keamanan / sast-rahasia-dependensi`. It also requires **one approving review** from someone other than the author (stale approvals are dismissed on new pushes). Force-pushes and branch deletion are blocked and conversations must be resolved. Administrators are not forced to follow these rules, so the maintainer can bypass them in an emergency; the bypass should stay the exception, because Scorecard's Code-Review check only counts changesets that someone else approved and reaches a high score only as reviewed pull requests accumulate.
 
 ### SHA pinning
 
@@ -132,7 +137,7 @@ These mappings describe how the controls support each requirement. They are not 
 |---|---|---|
 | Dependabot, SHA pinning of actions, SBOM | 5.21 Managing information security in the ICT supply chain | Source and build dependencies are known and pinned |
 | Build provenance attestation (`attest` job) | 5.21 Managing information security in the ICT supply chain | Build L2: signed provenance from a hosted build platform |
-| CodeQL, OpenSSF Scorecard, lint and unit tests in `build` | 8.25 Secure development life cycle | Build steps verify the code before packaging |
+| gitleaks, `bun audit`, OpenGrep, OpenSSF Scorecard, lint and unit tests in `build` | 8.25 Secure development life cycle | Build steps verify the code before packaging |
 | Protected `chrome-web-store` environment with required reviewers, release only after build and attest succeed | 8.32 Change management | Release is gated on a reviewed, traceable build |
 | Minimal `permissions`, `persist-credentials: false`, release jobs limited to version tags | 8.25 Secure development life cycle (least privilege) | Build platform isolates the build from the release credentials |
 
@@ -140,5 +145,6 @@ These mappings describe how the controls support each requirement. They are not 
 
 - `.github/dependabot.yml`
 - `.github/workflows/release.yml`
-- `.github/workflows/codeql.yml`
+- `.github/workflows/keamanan.yml`
+- `tools/ci/sast/`
 - `.github/workflows/scorecard.yml`

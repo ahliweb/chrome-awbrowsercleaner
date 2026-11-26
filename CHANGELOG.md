@@ -8,6 +8,8 @@ Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/) dan pr
 
 ### Changed
 
+- Replaced CodeQL with a security leg of gitleaks, `bun audit` and OpenGrep (`.github/workflows/keamanan.yml`, required check `keamanan / sast-rahasia-dependensi`), under the internal cross-portfolio standard (DL-098). The SAST gate fails only on new ERROR findings outside `tools/ci/sast/baseline.json`; results are no longer uploaded to code scanning.
+
 - `main` now requires one approving review (reviewer: `ahliwebcom`), to meet the OpenSSF Scorecard Code-Review check.
 
 - Earned the OpenSSF Best Practices "passing" badge (project 15987) and added it to the README.
