@@ -116,7 +116,7 @@ Cookie values or storage contents leak into the evidence report, history, export
 
 A compromised dependency, GitHub Action or release credential ships malicious code to users.
 
-**Mitigation:** actions pinned to commit **SHAs**, build **provenance** attestation, a CycloneDX **SBOM**, **CodeQL**, OpenSSF **Scorecard**, Dependabot, minimal workflow permissions, and the Chrome Web Store upload behind a **protected environment** with required reviewers. See [SUPPLY_CHAIN.md](SUPPLY_CHAIN.md).
+**Mitigation:** actions pinned to commit **SHAs**, build **provenance** attestation, a CycloneDX **SBOM**, **gitleaks**, **`bun audit`**, **OpenGrep** (SAST), OpenSSF **Scorecard**, Dependabot, minimal workflow permissions, and the Chrome Web Store upload behind a **protected environment** with required reviewers. See [SUPPLY_CHAIN.md](SUPPLY_CHAIN.md).
 
 ## Control mapping
 
@@ -128,7 +128,7 @@ Mapping describes how controls support the clause; it is not a certification sta
 | Unit and E2E deletion matrix, permission checks | T1, T2, T4, T9 | 8.29 Security testing in development and acceptance | Verification that the objective holds |
 | Confirmation levels, Exact Cookie Mode, Test Mode limits | T2, T8, T10 | 8.26 Application security requirements | Security functional requirements derived from the objective |
 | Redaction and report guard | T11 | 8.26 Application security requirements; 8.28 Secure coding | Information flow: no values leave the TOE |
-| Pinned actions, provenance, SBOM, CodeQL, Scorecard, protected environment | T5, T7, T12 | 5.21 Managing information security in the ICT supply chain; 8.25 Secure development life cycle | Operational environment assumptions made explicit and checked |
+| Pinned actions, provenance, SBOM, gitleaks, OpenGrep, Scorecard, protected environment | T5, T7, T12 | 5.21 Managing information security in the ICT supply chain; 8.25 Secure development life cycle | Operational environment assumptions made explicit and checked |
 | `check:permissions`, privacy and store documentation | T4, T6 | 8.26 Application security requirements | Security problem definition kept in sync with the TOE |
 
 ## Risk treatment priority

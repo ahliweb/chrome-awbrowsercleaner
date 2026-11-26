@@ -1,0 +1,40 @@
+{
+  "versi": 1,
+  "entri": [
+    {
+      "rule": "javascript.lang.security.detect-child-process",
+      "path": "scripts/build-package.js",
+      "fingerprint": "df6ea60de62dcb8fc576cc9f28f5b5d38e6c4183c08825ab16940e53669dc30e",
+      "alasan": "temuan lama saat adopsi 2026-11-27",
+      "baris": 90
+    },
+    {
+      "rule": "javascript.lang.security.detect-child-process",
+      "path": "scripts/validate-package.js",
+      "fingerprint": "aeb7064faa693bf70ed9df607ea1b7edba393abd43d42f86ae53d21f95dd2b4a",
+      "alasan": "temuan lama saat adopsi 2026-11-27",
+      "baris": 99
+    },
+    {
+      "rule": "javascript.lang.security.detect-child-process",
+      "path": "scripts/validate-package.js",
+      "fingerprint": "e24e3077112bd82d0daaad2c7fd71e98c5eb69c971c06a55b160ee32f60ec617",
+      "alasan": "temuan lama saat adopsi 2026-11-27",
+      "baris": 99
+    },
+    {
+      "rule": "javascript.lang.security.detect-child-process",
+      "path": "tests/unit/package.test.js",
+      "fingerprint": "4b78221d14ea6ccf9a519ce8bce727f224a02c8c36ed113705fcb31f0c59d90a",
+      "alasan": "temuan lama saat adopsi 2026-11-27",
+      "baris": 84
+    },
+    {
+      "rule": "javascript.lang.security.detect-insecure-websocket",
+      "path": "tests/unit/scope-guard.fuzz.test.js",
+      "fingerprint": "fb22061ad8bb743595d932cb606fe6267631ee40ece04f99054c608d47d9225a",
+      "alasan": "temuan lama saat adopsi 2026-11-27",
+      "baris": 32
+    }
+  ]
+}

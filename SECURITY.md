@@ -75,7 +75,7 @@ The controls below are described in detail in [docs/threat-model.md](docs/threat
 | No permanent host access | `host_permissions` must not exist. Per-origin access is optional and revocable. `bun run check:permissions` enforces this and keeps [docs/PERMISSION_MATRIX.md](docs/PERMISSION_MATRIX.md) and `PRIVACY.md` in sync with the manifest. |
 | Report redaction | `assertNoSensitiveValues` blocks value-bearing keys; history stores a six-field whitelist. |
 | No `innerHTML` | The UI is built with `createElement` and `textContent`; tests check the popup and Options sources. |
-| Supply chain | Actions pinned to commit SHAs, build provenance, SBOM, CodeQL, OpenSSF Scorecard, Dependabot, and the Web Store upload behind a protected environment. See [docs/SUPPLY_CHAIN.md](docs/SUPPLY_CHAIN.md). |
+| Supply chain | Actions pinned to commit SHAs, build provenance, SBOM, gitleaks, `bun audit` and OpenGrep (SAST, `ci-keamanan` workflow), OpenSSF Scorecard, Dependabot, and the Web Store upload behind a protected environment. See [docs/SUPPLY_CHAIN.md](docs/SUPPLY_CHAIN.md). |
 
 ## Coordinated disclosure
 

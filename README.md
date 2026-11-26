@@ -115,7 +115,7 @@ AW_CHROME_PATH=/path/printed/above/chrome bun run test:e2e
 
 - **CI** (`.github/workflows/ci.yml`): Runs on push to `main` and PRs. The `validate` job runs the version check, ESLint, the permission documentation check, unit tests and package build/validation. The `e2e` job runs the E2E suite and the automation example on Chrome for Testing **stable** and **beta** (beta is non-blocking) and publishes the deletion matrix to the job summary.
 - **Release** (`.github/workflows/release.yml`): Triggered by pushing a `v*` tag. Builds, validates, attests build provenance, attaches an SBOM, creates the GitHub Release and uploads to the Chrome Web Store behind the protected `chrome-web-store` environment. See [docs/SUPPLY_CHAIN.md](docs/SUPPLY_CHAIN.md).
-- **Security**: CodeQL, OpenSSF Scorecard and Dependabot; all actions are pinned to commit SHAs.
+- **Security**: gitleaks, `bun audit` and OpenGrep (SAST), OpenSSF Scorecard and Dependabot; all actions are pinned to commit SHAs.
 
 ### Chrome Web Store Automated Upload
 
