@@ -20,10 +20,11 @@ Job `keamanan / sast-rahasia-dependensi`, run on pull requests to `main`, pushes
 
 - **gitleaks** (version pinned, checksum verified, `--redact`) scans only the commit range of the event (`base..head` on pull requests, the pushed range on pushes), never the whole history.
 - **`bun audit --audit-level=high`** checks the Bun dependencies. This is the only dependency audit in the pipeline.
-- **OpenGrep** (v2.1.0, binary pinned by SHA256) runs `tools/ci/sast/opengrep-scan.ts` with a vendored copy of `opengrep/opengrep-rules` (commit `f1d2b562b414`, JavaScript and TypeScript only) plus local rules in `tools/ci/sast/rules/lokal/`. No registry rules are used and no telemetry is sent.
+- **OpenGrep** (v2.1.0, binary pinned by SHA256) runs `tools/ci/sast/opengrep-scan.ts` with a vendored copy of `opengrep/opengrep-rules` (commit `f1d2b562b414`: 203 JavaScript and TypeScript rules plus 9 `yaml/github-actions` rules for workflows, 212 in total) plus local rules in `tools/ci/sast/rules/lokal/`. No registry rules are used and no telemetry is sent.
 - The gate fails only on new ERROR findings that are not in `tools/ci/sast/baseline.json`. The baseline only shrinks: existing entries may be removed (`baseline --rapikan`), and an entry may be added only by hand, with a non-empty reason, reviewed in the pull request. WARNING and INFO findings are reported, not gated.
 - Results are not uploaded to GitHub code scanning. They are in the job log and in `ringkasan.json` under the runner temp directory.
 - Compared with CodeQL, OpenGrep has limited inter-procedural dataflow analysis, so it can miss taint paths that CodeQL finds across functions.
+- Workflow analysis that CodeQL provided is replaced by the nine `yaml/github-actions` pattern rules. They match patterns in the workflow files; their depth is not equivalent to CodeQL dataflow analysis.
 
 ### OpenSSF Scorecard (`.github/workflows/scorecard.yml`)
 
